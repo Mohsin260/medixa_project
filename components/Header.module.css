@@ -1,0 +1,30 @@
+.variant {
+  display: block;
+  color: #a6a6a6;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+
+.deleteButton {
+  padding: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.empty {
+  margin: 0;
+  color: #7c7b7b;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.more {
+  margin: 12px 0 0;
+  color: #a6a6a6;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0;
+}
