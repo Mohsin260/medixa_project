@@ -401,7 +401,13 @@ Version      : 1.0
 @media only screen and (min-width: 481px) and (max-width: 767px) {
     /*modal*/
     .product-modal.modal-dialog {
-        display: none;
+        display: block !important;
+        width: 95% !important;
+        max-width: 96vw !important;
+        margin: 15px auto !important;
+    }
+    .product-modal .modal-content {
+        padding: 16px 12px !important;
     }
     .header-top-left {
         margin-bottom: 30px;
@@ -626,7 +632,13 @@ Version      : 1.0
 @media only screen and (min-width: 240px) and (max-width: 480px) {
     /*modal*/
     .product-modal.modal-dialog {
-        display: none;
+        display: block !important;
+        width: 95% !important;
+        max-width: 96vw !important;
+        margin: 15px auto !important;
+    }
+    .product-modal .modal-content {
+        padding: 16px 12px !important;
     }
     /*home1*/
     .header-top-left {
@@ -646,7 +658,16 @@ Version      : 1.0
         margin-right: 10px;
     }
     .htr-search {
-        display: none!important;
+        display: block !important;
+        width: 100% !important;
+        margin: 8px 0 12px !important;
+        float: none !important;
+    }
+    .htr-search .htr-search-content {
+        width: 100% !important;
+    }
+    .htr-search .htr-search-content input {
+        width: 100% !important;
     }
     .login-register-content {
         left: -12px;

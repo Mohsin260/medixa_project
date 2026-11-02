@@ -5,12 +5,12 @@ export default function Newsletter() {
         <div className="row">
           <div className="col-md-6 col-md-offset-3 col-xs-12">
             <div className="newsletter-content">
-              <h2>Get Exclusive Offers & Updates</h2>
-              <p>Subscribe for exclusive early access and new collection drops.</p>
+              <h2>Healthcare Heroes Circle</h2>
+              <p>Subscribe for priority access to new scrub color drops, sizing restocks, and exclusive hospital team discounts.</p>
               <div className="newsletter-form">
-                <form action="#">
-                  <input type="email" placeholder="Enter your mail" name="EMAIL" />
-                  {" "}
+                <form action="#" onSubmit={(e) => { e.preventDefault(); alert('Thank you for subscribing to Medixa Healthcare Circle!'); }}>
+                  <input type="email" placeholder="Enter your email address…" name="EMAIL" required />
+                  {' '}
                   <input className="hvr-bs" type="submit" value="Subscribe" name="subscribe" />
                 </form>
               </div>

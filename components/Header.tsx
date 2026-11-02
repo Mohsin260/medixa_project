@@ -1,12 +1,59 @@
 'use client';
 
 /* eslint-disable @next/next/no-html-link-for-pages -- legacy theme scripts require full page loads */
+import { useEffect, useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart';
+import { useWishlist } from '@/lib/wishlist';
 import { formatPrice } from '@/lib/products';
 import styles from './Header.module.css';
 
 export default function Header() {
+  const router = useRouter();
   const { items, count, subtotal, removeFromCart } = useCart();
+  const { items: wishlistItems } = useWishlist();
+  const favCount = wishlistItems.length;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cartOpen, setCartOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (!target.closest('#top_cart_container')) {
+        setCartOpen(false);
+      }
+      if (!target.closest('#account_container')) {
+        setAccountOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearchSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/shop');
+    }
+  };
 
   return (
     <header>
@@ -14,438 +61,473 @@ export default function Header() {
         <div className="container">
           <div className="row">
             <div className="col-md-5 col-sm-4 col-xs-12">
-              <div className="header-top-left">
+              <div className="header-top-left" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                 <div className="logo">
                   <a href="/">
-                    <img src="/img/logo.png" alt="" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/img/logo.png" alt="Medixa Pakistan" style={{ maxHeight: 44, width: 'auto' }} />
                   </a>
                 </div>
-                {" "}
-                <div className="htl-title">
-                  <span>We are open 9 am - 10pm</span>
+                {' '}
+                <div className="htl-title hidden-xs">
+                  <span>Nationwide Delivery · 9 am - 9 pm</span>
                 </div>
+
+                {/* Mobile Menu Hamburger (Visible on small screens) */}
+                <button
+                  type="button"
+                  onClick={() => setMobileNavOpen(true)}
+                  aria-label="Toggle navigation menu"
+                  className="visible-xs visible-sm"
+                  style={{
+                    background: '#1f6b52',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: 6,
+                    padding: '8px 12px',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontWeight: 700,
+                  }}
+                >
+                  <i className="fa fa-bars"></i>
+                  <span>MENU</span>
+                </button>
               </div>
             </div>
-            {" "}
+            {' '}
             <div className="col-md-7 col-sm-8 col-xs-12">
               <div className="header-top-right">
+                {/* Search Bar */}
                 <div className="htr-search">
-                  <form action="#">
+                  <form onSubmit={handleSearchSubmit}>
                     <div className="htr-search-content">
-                      <input type="text" placeholder="Search here..." />
-                      {" "}
-                      <button>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search scrub suits, sizes, colors…"
+                      />
+                      {' '}
+                      <button type="submit" aria-label="Search">
                         <i className="fa fa-search"></i>
                       </button>
                     </div>
                   </form>
                 </div>
-                {" "}
-                <div className="login-or-register">
-                  <span id="login_register">Login or Register</span>
-                  {" "}
-                  <div className="login-register-content" id="login_register_content">
-                    <div className="lrc-login">
-                      <h4 className="lrc-title">My account</h4>
-                      <div className="lrc-login-form">
-                        <form action="#">
-                          <div className="account-name">
-                            <i className="fa fa-user"></i>
-                            {" "}
-                            <input type="text" placeholder="Account name" />
-                          </div>
-                          <div className="password">
-                            <i className="fa fa-lock"></i>
-                            {" "}
-                            <input type="password" placeholder="Password" />
-                          </div>
-                          <div className="remember-help">
-                            <input type="checkbox" />
-                            {" "}
-                            <label>remember me</label>
-                            {" "}
-                            <a href="#">Help ?</a>
-                          </div>
-                          <div className="lrc-submit">
-                            <input className="hvr-bs" type="submit" value="Login" />
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                    <div className="lrc-register">
-                      <h4 className="lrc-title">Or register</h4>
-                      <div className="lrc-register-form">
-                        <form action="#">
-                          <input type="text" placeholder="Your mail" />
-                          {" "}
-                          <input type="password" placeholder="Password" />
-                          <div className="lrc-register-btn">
-                            <input className="hvr-bs" type="submit" value="Register" />
-                          </div>
-                        </form>
-                      </div>
-                      <div className="or-register-to">
-                        <span>or register to</span>
-                        <ul>
-                          <li>
-                            <a href="#">
-                              <i className="fa fa-facebook"></i>
-                            </a>
-                          </li>
-                          {" "}
-                          <li>
-                            <a href="#">
-                              <i className="fa fa-twitter"></i>
-                            </a>
-                          </li>
-                          {" "}
-                          <li>
-                            <a href="#">
-                              <i className="fa fa-instagram"></i>
-                            </a>
-                          </li>
-                          {" "}
-                          <li>
-                            <a href="#">
-                              <i className="fa fa-google"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {" "}
-                <div className="top-checkout">
-                  <a href="/checkout">Checkout</a>
-                </div>
-                {" "}
-                <div className="top-cart">
-                  <span id="top_cart">
-                    <i className="fa fa-shopping-basket"></i>
-                    Cart
-                    {" "}
-                    <span className="cart-number">({count})</span>
+                {' '}
+                {/* Account / Login */}
+                <div className="login-or-register" id="account_container" style={{ position: 'relative' }}>
+                  <span
+                    id="login_register"
+                    onClick={() => {
+                      setAccountOpen((prev) => !prev);
+                      setCartOpen(false);
+                    }}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    Account
                   </span>
-                  {" "}
-                  <div className="my-cart" id="my_cart">
-                    <div className="my-cart-products">
-                      {items.length ? (
-                        <>
-                          {items.slice(0, 3).map((item) => (
-                            <div className="single-mcp clearfix" key={item.id}>
-                              <div className="single-mcp-img">
-                                <a href={`/products/${item.slug}`}>
-                                  <img src={item.image} alt={item.title} />
-                                </a>
-                              </div>
-                              {" "}
-                              <div className="single-mcp-content">
-                                <a className="mcp-product-name" href={`/products/${item.slug}`}>
-                                  {item.title}
-                                </a>
-                                <span className="mcp-pro-quantity">
-                                  {item.quantity} x{" "}
-                                  <span className="mcp-pro-price">{formatPrice(item.price)}</span>
-                                </span>
-                                <span className={styles.variant}>
-                                  {item.color} / {item.size}
-                                </span>
-                              </div>
-                              {" "}
-                              <button
-                                type="button"
-                                className={`mcp-pro-delete ${styles.deleteButton}`}
-                                onClick={() => removeFromCart(item.id)}
-                                aria-label={`Remove ${item.title} from cart`}
-                                title="Remove from cart"
-                              >
-                                <i className="fa fa-times"></i>
-                              </button>
-                            </div>
-                          ))}
-                          {items.length > 3 ? (
-                            <p className={styles.more}>+ {items.length - 3} more item(s)</p>
-                          ) : null}
-                        </>
-                      ) : (
-                        <p className={styles.empty}>Your cart is empty.</p>
+                  {' '}
+                  {accountOpen && (
+                    <div
+                      className="login-register-content"
+                      id="login_register_content"
+                      style={{ display: 'block', position: 'absolute', top: 40, left: -90, zIndex: 100 }}
+                    >
+                      <div className="lrc-login">
+                        <h4 className="lrc-title">Customer Portal</h4>
+                        <div style={{ padding: '10px 0' }}>
+                          <p style={{ fontSize: 12, color: '#688277', marginBottom: 14 }}>
+                            Sign in to manage your medical scrub orders and saved addresses.
+                          </p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            <a
+                              href="/auth/sign-in"
+                              className="hvr-bs"
+                              style={{
+                                display: 'block',
+                                textAlign: 'center',
+                                background: '#1f6b52',
+                                color: '#ffffff',
+                                padding: '9px 16px',
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                              }}
+                            >
+                              Sign In
+                            </a>
+                            <a
+                              href="/auth/sign-up"
+                              style={{
+                                display: 'block',
+                                textAlign: 'center',
+                                background: '#f1f6f3',
+                                color: '#1f6b52',
+                                padding: '9px 16px',
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                              }}
+                            >
+                              Create Account
+                            </a>
+                            <a
+                              href="/track-order"
+                              style={{
+                                display: 'block',
+                                textAlign: 'center',
+                                background: '#fafcfb',
+                                color: '#446056',
+                                border: '1px solid #dbe5e0',
+                                padding: '8px 16px',
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                marginTop: 2,
+                              }}
+                            >
+                              Track Your Order
+                            </a>
+                            <a
+                              href="/favourite"
+                              style={{
+                                display: 'block',
+                                textAlign: 'center',
+                                background: '#fafcfb',
+                                color: '#446056',
+                                border: '1px solid #dbe5e0',
+                                padding: '8px 16px',
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                marginTop: 2,
+                              }}
+                            >
+                              ❤️ My Favourites
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {' '}
+                {/* Favourites Icon Link */}
+                <div
+                  className="header-favourite"
+                  style={{
+                    display: 'inline-block',
+                    marginRight: 28,
+                    verticalAlign: 'middle',
+                  }}
+                >
+                  <a
+                    href="/favourite"
+                    title="View Saved Favourites"
+                    aria-label="View Saved Favourites"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      color: '#a6a6a6',
+                      textDecoration: 'none',
+                      fontSize: 12,
+                      fontWeight: 400,
+                      cursor: 'pointer',
+                      transition: 'color 0.2s',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ff4c6b')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a6a6')}
+                  >
+                    <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                      <i
+                        className={favCount > 0 ? 'fa fa-heart' : 'fa fa-heart-o'}
+                        style={{
+                          fontSize: 14,
+                          color: favCount > 0 ? '#ff4c6b' : 'inherit',
+                        }}
+                      />
+                      {favCount > 0 && (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            top: -7,
+                            right: -9,
+                            background: '#ff4c6b',
+                            color: '#ffffff',
+                            borderRadius: '50%',
+                            minWidth: 15,
+                            height: 15,
+                            fontSize: 9,
+                            fontWeight: 700,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            lineHeight: 1,
+                            padding: '0 2px',
+                          }}
+                        >
+                          {favCount}
+                        </span>
                       )}
-                    </div>
-                    <div className="my-cart-total-cost">
-                      <span>Total cost</span>
-                      {" "}
-                      <span className="cost">{formatPrice(subtotal)}</span>
-                    </div>
-                    <div className="viewcart-checkout">
-                      <a className="viewcart" href="/cart">View cart</a>
-                      <a className="checkout" href="/checkout">Check out</a>
+                    </span>
+                    <span className="hidden-xs" style={{ color: 'inherit' }}>
+                      Favourites
+                    </span>
+                  </a>
+                </div>
+                {' '}
+                {/* Cart Trigger */}
+                <div className="top-cart" id="top_cart_container" style={{ position: 'relative' }}>
+                  <div
+                    className="top-cart-title"
+                    id="my_cart_title"
+                    onClick={() => {
+                      setCartOpen((prev) => !prev);
+                      setAccountOpen(false);
+                    }}
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', userSelect: 'none' }}
+                  >
+                    <span className="my-cart-icon" style={{ marginRight: 8, color: '#1f6b52', fontSize: 15 }}>
+                      <i className="fa fa-shopping-cart"></i>
+                    </span>
+                    {' '}
+                    <div className="my-cart-content" style={{ display: 'inline-block' }}>
+                      <span className="cart-title" style={{ fontSize: 12, color: '#7c7b7b', marginRight: 4 }}>My cart:</span>
+                      <span className="pro-count" style={{ fontSize: 12, fontWeight: 700, color: '#173c35' }}>
+                        {count} {count === 1 ? 'item' : 'items'}
+                      </span>
                     </div>
                   </div>
+                  {' '}
+                  {cartOpen && (
+                    <div
+                      className="my-cart"
+                      id="my_cart_popup"
+                      style={{
+                        display: 'block',
+                        position: 'absolute',
+                        right: 0,
+                        top: 40,
+                        zIndex: 100,
+                      }}
+                    >
+                      <div className="my-cart-popup-content">
+                        {items.length > 0 ? (
+                          <>
+                            {items.slice(0, 3).map((item) => (
+                              <div key={item.id} className="single-mcp">
+                                <div className="mcp-img">
+                                  <a href={`/products/${item.slug}`}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={item.image} alt={item.title} />
+                                  </a>
+                                </div>
+                                <div className="mcp-content">
+                                  <a className="mcp-title" href={`/products/${item.slug}`}>
+                                    {item.title}
+                                  </a>
+                                  <span className="mcp-qty">
+                                    {item.quantity} x <span className="mcp-price">{formatPrice(item.price)}</span>
+                                  </span>
+                                  <span className={styles.variant}>
+                                    {item.color} / {item.size}
+                                  </span>
+                                </div>
+                                {' '}
+                                <button
+                                  type="button"
+                                  className={`mcp-pro-delete ${styles.deleteButton}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromCart(item.id);
+                                  }}
+                                  aria-label={`Remove ${item.title} from cart`}
+                                  title="Remove from cart"
+                                >
+                                  <i className="fa fa-times"></i>
+                                </button>
+                              </div>
+                            ))}
+                            {items.length > 3 ? (
+                              <p className={styles.more}>+ {items.length - 3} more item(s)</p>
+                            ) : null}
+                          </>
+                        ) : (
+                          <p className={styles.empty}>Your medical scrubs cart is empty.</p>
+                        )}
+                      </div>
+                      <div className="my-cart-total-cost">
+                        <span>Total cost</span>
+                        {' '}
+                        <span className="cost">{formatPrice(subtotal)}</span>
+                      </div>
+                      <div className="viewcart-checkout">
+                        <a className="viewcart" href="/cart">View cart</a>
+                        <a className="checkout" href="/checkout">Check out</a>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Main Desktop Navigation Menu */}
       <div className="menu-area hidden-sm hidden-xs">
         <div className="container">
           <div className="row">
-            <div className="col-md-8">
+            <div className="col-md-9">
               <div className="menu">
                 <nav>
                   <ul className="menu-list">
-                    <li className="active">
-                      <a href="">HOME</a>
+                    <li>
+                      <a href="/">HOME</a>
+                    </li>
+                    {' '}
+                    <li>
+                      <a href="/shop?category=Men">MEN&apos;S SCRUBS</a>
                       <ul className="menu-dropdown">
                         <li>
-                          <a href="01_Home-Page.html">Home One</a>
+                          <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits (Round Neck)</a>
                         </li>
                         <li>
-                          <a href="02_Home-Page.html">Home Two</a>
+                          <a href="/products/forte-v-neck-male-medical-scrubs-pakistan">Forte Scrub Suits (V-Neck)</a>
                         </li>
                         <li>
-                          <a href="03_Home-Page.html">Home Three</a>
-                          <ul className="thirdlevel-menu">
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                          </ul>
+                          <a href="/shop?category=Men">All Men&apos;s Scrubs</a>
                         </li>
                       </ul>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">ABOUT</a>
+                      <a href="/shop?category=Women">WOMEN&apos;S SCRUBS</a>
+                      <span className="hot">POPULAR</span>
+                      <ul className="menu-dropdown">
+                        <li>
+                          <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits (V-Neck)</a>
+                        </li>
+                        <li>
+                          <a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">Rebel Scrub Suits (Collar Neck)</a>
+                        </li>
+                        <li>
+                          <a href="/shop?category=Women">All Women&apos;s Scrubs</a>
+                        </li>
+                      </ul>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">SHOP</a>
+                      <a href="/shop">COLLECTIONS</a>
                       <div className="mega-menu-area">
                         <div className="row">
                           <div className="col-md-6">
                             <div className="mega-menu-part">
                               <div className="mega-menu-content">
-                                <a className="mega-menu-title" href="#">Shop Women</a>
+                                <a className="mega-menu-title" href="/shop?category=Men">Men&apos;s Lineup</a>
                                 <ul>
                                   <li>
-                                    <a href="#">Men’s Clothing</a>
+                                    <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Tailored Scrubs</a>
                                   </li>
                                   <li>
-                                    <a href="#">Tops</a>
+                                    <a href="/products/forte-v-neck-male-medical-scrubs-pakistan">Forte Active V-Neck</a>
+                                  </li>
+                                  <li>
+                                    <a href="/shop?category=Men">All Men&apos;s Medical Apparel</a>
                                   </li>
                                   <li className="special-collection">
-                                    <a href="#">SUMMER CLOTH</a>
-                                  </li>
-                                  <li>
-                                    <a href="#">T-Shirts</a>
-                                  </li>
-                                  <li>
-                                    <a href="#">Lifestyle</a>
-                                  </li>
-                                  <li>
-                                    <a href="#">Bras</a>
+                                    <a href="/shop">ZERO-FADING GUARANTEE</a>
                                   </li>
                                 </ul>
                               </div>
-                              {" "}
+                              {' '}
                               <div className="mega-menu-img">
-                                <img src="/img/mega-menu/menu1.jpg" alt="" />
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src="/img/real-product-images/regal/regal-thumbnail.webp" alt="Men's Scrubs" style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
                               </div>
                             </div>
                           </div>
-                          {" "}
+                          {' '}
                           <div className="col-md-6">
                             <div className="mega-menu-part">
                               <div className="mega-menu-content">
-                                <a className="mega-menu-title" href="#">Shop Girl</a>
+                                <a className="mega-menu-title" href="/shop?category=Women">Women&apos;s Lineup</a>
                                 <ul>
                                   <li>
-                                    <a href="#">Men’s Clothing</a>
+                                    <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Tailored Silhouette</a>
                                   </li>
                                   <li>
-                                    <a href="#">Tops</a>
+                                    <a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">Rebel Collar &amp; V-Neck</a>
                                   </li>
                                   <li>
-                                    <a href="#">T-Shirts</a>
+                                    <a href="/shop?category=Women">All Women&apos;s Medical Apparel</a>
                                   </li>
-                                  <li>
-                                    <a href="#">Lifestyle</a>
-                                  </li>
-                                  <li>
-                                    <a href="#">Bras</a>
+                                  <li className="special-collection">
+                                    <a href="/shop">4-WAY ERGONOMIC STRETCH</a>
                                   </li>
                                 </ul>
                               </div>
-                              {" "}
+                              {' '}
                               <div className="mega-menu-img">
-                                <img src="/img/mega-menu/menu2.jpg" alt="" />
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src="/img/real-product-images/muse/muse-thumbnail.webp" alt="Women's Scrubs" style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">WOMEN</a>
-                      <span className="hot">HOT</span>
+                      <a href="/track-order">TRACK ORDER</a>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">ACCESSORIES</a>
+                      <a href="/size-guide">SIZE GUIDE</a>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">WATCHES</a>
+                      <a href="/blog">JOURNAL</a>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">BLOG</a>
+                      <a href="/about">ABOUT</a>
                     </li>
-                    {" "}
+                    {' '}
                     <li>
-                      <a href="#">PAGES</a>
-                      <ul className="menu-dropdown">
-                        <li>
-                          <a href="04_Shop-Grid-Left-Sidebar.html">Shop Left Sidebar</a>
-                          <ul className="thirdlevel-menu">
-                            <li>
-                              <a href="05_Shop-Grid-Right-Sidebar.html">Shop Right Sidebar</a>
-                            </li>
-                            <li>
-                              <a href="06_Shop-No-Sidebar-Fullwith.html">Shop No sidebar</a>
-                            </li>
-                            <li>
-                              <a href="08_Simple-Single-Product.html">Simple Single Product</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="/cart">Cart Page</a>
-                          <ul className="thirdlevel-menu">
-                            <li>
-                              <a href="10_Checkout.html">Checkout</a>
-                            </li>
-                            <li>
-                              <a href="11_Wishlist.html">Wishlist</a>
-                            </li>
-                            <li>
-                              <a href="12_Order-Traker-page.html">Order Tracker</a>
-                            </li>
-                            <li>
-                              <a href="13_My-Account.html">My Account</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="14_About-Us.html">About Us</a>
-                          <ul className="thirdlevel-menu">
-                            <li>
-                              <a href="15_NewsBlog.html">News Blog</a>
-                            </li>
-                            <li>
-                              <a href="16_NewsBlog-Single-page.html">News Blog Single</a>
-                            </li>
-                            <li>
-                              <a href="17_Contact-Us.html">Contact us</a>
-                            </li>
-                            <li>
-                              <a href="18_Product-Comparison-Page.html">Product Comparison</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="20_404-page.html">404</a>
-                          <ul className="thirdlevel-menu">
-                            <li>
-                              <a href="21_Comming-Soon-Page.html">Coming Soon</a>
-                            </li>
-                          </ul>
-                        </li>
-                      </ul>
+                      <a href="/contact">CONTACT</a>
                     </li>
                   </ul>
                 </nav>
               </div>
             </div>
-            {" "}
-            <div className="col-md-4">
+            {' '}
+            <div className="col-md-3">
               <div className="menu-area-right">
-                <div className="my-account">
-                  <a href="#">My Account</a>
-                  <ul className="menu-right-dropdown">
-                    <li>
-                      <a href="#">Your Account</a>
-                    </li>
-                    <li>
-                      <a href="#">His Account</a>
-                    </li>
-                    <li>
-                      <a href="#">Her Account</a>
-                    </li>
-                  </ul>
-                </div>
-                {" "}
                 <div className="currency">
-                  <a href="#">USD</a>
-                  <ul className="menu-right-dropdown">
-                    <li>
-                      <a href="#">GBP</a>
-                    </li>
-                    <li>
-                      <a href="#">EUR</a>
-                    </li>
-                    <li>
-                      <a href="#">CNY</a>
-                    </li>
-                  </ul>
+                  <a href="#">PKR (Rs)</a>
                 </div>
-                {" "}
-                <div className="language">
-                  <a href="#">
-                    <img src="/img/flag/english.png" alt="" />
-                    English
-                  </a>
-                  <ul className="menu-right-dropdown">
-                    <li>
-                      <a href="#">
-                        <img src="/img/flag/arabic.png" alt="" />
-                        Arabic
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/img/flag/chinese.png" alt="" />
-                        Chinese
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/img/flag/hibru.png" alt="" />
-                        Hibru
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/img/flag/spanish.png" alt="" />
-                        Spanish
-                      </a>
-                    </li>
-                  </ul>
+                {' '}
+                <div className="my-account">
+                  <a href="/auth/sign-in">Login</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {" "}
+
+      {/* Mobile Menu */}
       <div className="mobile-menu-area visible-xs visible-sm">
         <div className="container">
           <div className="row">
@@ -454,128 +536,50 @@ export default function Header() {
                 <nav id="mobile_menu_active">
                   <ul className="menu-list">
                     <li>
-                      <a href="01_Home-Page.html">HOME</a>
+                      <a href="/">HOME</a>
+                    </li>
+                    <li>
+                      <a href="/shop?category=Men">MEN&apos;S SCRUBS</a>
                       <ul>
-                        <li>
-                          <a href="01_Home-Page.html">Home One</a>
-                        </li>
-                        <li>
-                          <a href="02_Home-Page.html">Home Two</a>
-                        </li>
-                        <li>
-                          <a href="03_Home-Page.html">Home Three</a>
-                          <ul>
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                            <li>
-                              <a href="#">Thirdlevel</a>
-                            </li>
-                          </ul>
-                        </li>
+                        <li><a href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits</a></li>
+                        <li><a href="/products/forte-v-neck-male-medical-scrubs-pakistan">Forte V-Neck Scrubs</a></li>
+                        <li><a href="/shop?category=Men">All Men&apos;s Scrubs</a></li>
                       </ul>
                     </li>
                     <li>
-                      <a href="#">ABOUT</a>
-                    </li>
-                    <li>
-                      <a href="#">SHOP</a>
+                      <a href="/shop?category=Women">WOMEN&apos;S SCRUBS</a>
                       <ul>
-                        <li>
-                          <a href="#">Men’s Clothing</a>
-                        </li>
-                        <li>
-                          <a href="#">Tops</a>
-                        </li>
-                        <li className="special-collection">
-                          <a href="#">SUMMER CLOTH</a>
-                        </li>
-                        <li>
-                          <a href="#">T-Shirts</a>
-                        </li>
-                        <li>
-                          <a href="#">Lifestyle</a>
-                        </li>
-                        <li>
-                          <a href="#">Bras</a>
-                        </li>
+                        <li><a href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits</a></li>
+                        <li><a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">Rebel Scrub Suits</a></li>
+                        <li><a href="/shop?category=Women">All Women&apos;s Scrubs</a></li>
                       </ul>
                     </li>
                     <li>
-                      <a href="#">WOMEN</a>
+                      <a href="/shop">ALL SCRUB COLLECTIONS</a>
                     </li>
                     <li>
-                      <a href="#">ACCESSORIES</a>
+                      <a href="/track-order">TRACK YOUR ORDER</a>
                     </li>
                     <li>
-                      <a href="#">WATCHES</a>
+                      <a href="/size-guide">SIZE CHART & GUIDE</a>
                     </li>
                     <li>
-                      <a href="#">BLOG</a>
+                      <a href="/blog">CLINICAL JOURNAL</a>
                     </li>
                     <li>
-                      <a href="#">PAGES</a>
-                      <ul>
-                        <li>
-                          <a href="04_Shop-Grid-Left-Sidebar.html">Shop Left Sidebar</a>
-                          <ul>
-                            <li>
-                              <a href="05_Shop-Grid-Right-Sidebar.html">Shop Right Sidebar</a>
-                            </li>
-                            <li>
-                              <a href="06_Shop-No-Sidebar-Fullwith.html">Shop No sidebar</a>
-                            </li>
-                            <li>
-                              <a href="08_Simple-Single-Product.html">Simple Single Product</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="/cart">Cart Page</a>
-                          <ul>
-                            <li>
-                              <a href="10_Checkout.html">Checkout</a>
-                            </li>
-                            <li>
-                              <a href="11_Wishlist.html">Wishlist</a>
-                            </li>
-                            <li>
-                              <a href="12_Order-Traker-page.html">Order Tracker</a>
-                            </li>
-                            <li>
-                              <a href="13_My-Account.html">My Account</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="14_About-Us.html">About Us</a>
-                          <ul>
-                            <li>
-                              <a href="15_NewsBlog.html">News Blog</a>
-                            </li>
-                            <li>
-                              <a href="16_NewsBlog-Single-page.html">News Blog Single</a>
-                            </li>
-                            <li>
-                              <a href="17_Contact-Us.html">Contact us</a>
-                            </li>
-                            <li>
-                              <a href="18_Product-Comparison-Page.html">Product Comparison</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="20_404-page.html">404</a>
-                          <ul>
-                            <li>
-                              <a href="21_Comming-Soon-Page.html">Coming Soon</a>
-                            </li>
-                          </ul>
-                        </li>
-                      </ul>
+                      <a href="/about">ABOUT MEDIXA</a>
+                    </li>
+                    <li>
+                      <a href="/contact">CONTACT & WHATSAPP</a>
+                    </li>
+                    <li>
+                      <a href="/favourite">MY FAVOURITES</a>
+                    </li>
+                    <li>
+                      <a href="/cart">MY CART ({count})</a>
+                    </li>
+                    <li>
+                      <a href="/auth/sign-in">MY ACCOUNT</a>
                     </li>
                   </ul>
                 </nav>
@@ -584,7 +588,272 @@ export default function Header() {
           </div>
         </div>
       </div>
-      {" "}
+      {/* Interactive Mobile Navigation Drawer */}
+      {mobileNavOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            display: 'flex',
+          }}
+        >
+          {/* Dimmed backdrop */}
+          <div
+            onClick={() => setMobileNavOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(20, 61, 54, 0.65)',
+              backdropFilter: 'blur(3px)',
+            }}
+          />
+
+          {/* Sliding panel */}
+          <div
+            style={{
+              position: 'relative',
+              width: '85%',
+              maxWidth: 360,
+              background: '#ffffff',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '4px 0 24px rgba(0,0,0,0.2)',
+              overflowY: 'auto',
+              zIndex: 1,
+            }}
+          >
+            {/* Drawer Header */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 18px',
+                borderBottom: '1px solid #eef2f0',
+                background: '#fafcfb',
+              }}
+            >
+              <a href="/" onClick={() => setMobileNavOpen(false)}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/img/logo.png" alt="Medixa" style={{ maxHeight: 36, width: 'auto' }} />
+              </a>
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Close Menu"
+                style={{
+                  background: '#e8f4ef',
+                  color: '#173c35',
+                  border: 'none',
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  fontSize: 18,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Mobile Search */}
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid #eef2f0' }}>
+              <form
+                onSubmit={(e) => {
+                  setMobileNavOpen(false);
+                  handleSearchSubmit(e);
+                }}
+              >
+                <div style={{ display: 'flex', borderRadius: 8, border: '1px solid #dce5e0', overflow: 'hidden' }}>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search scrub suits..."
+                    style={{
+                      flex: 1,
+                      border: 'none',
+                      padding: '10px 12px',
+                      fontSize: 12,
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    aria-label="Search"
+                    style={{
+                      background: '#1f6b52',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '0 14px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <i className="fa fa-search"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Navigation Links */}
+            <div style={{ flex: 1, padding: '12px 18px', overflowY: 'auto' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <li>
+                  <a
+                    href="/"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                  >
+                    🏠 Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/shop?category=Men"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                  >
+                    🩺 Men&apos;s Scrubs (Regal &amp; Forte)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/shop?category=Women"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                  >
+                    👩‍⚕️ Women&apos;s Scrubs (Muse &amp; Rebel)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/shop"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                  >
+                    ✨ All Collections
+                  </a>
+                </li>
+                <li style={{ borderTop: '1px solid #f0f4f2', margin: '6px 0' }} />
+                <li>
+                  <a
+                    href="/track-order"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    📦 Track Your Order
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/size-guide"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    📏 Size Guide &amp; Chart
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/blog"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    📖 Clinical Journal
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/about"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    🏢 About Medixa
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/contact"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    📞 Contact Us
+                  </a>
+                </li>
+                <li style={{ borderTop: '1px solid #f0f4f2', margin: '6px 0' }} />
+                <li>
+                  <a
+                    href="/favourite"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#ff4c6b', textDecoration: 'none' }}
+                  >
+                    <span>❤️ My Favourites</span>
+                    {favCount > 0 && (
+                      <span style={{ background: '#ff4c6b', color: '#fff', borderRadius: 10, padding: '2px 8px', fontSize: 11 }}>
+                        {favCount}
+                      </span>
+                    )}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/cart"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#1f6b52', textDecoration: 'none' }}
+                  >
+                    <span>🛍️ My Cart</span>
+                    <span style={{ background: '#1f6b52', color: '#fff', borderRadius: 10, padding: '2px 8px', fontSize: 11 }}>
+                      {count} {count === 1 ? 'item' : 'items'}
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/auth/sign-in"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                  >
+                    👤 Account / Sign In
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Quick WhatsApp Support Bar */}
+            <div style={{ padding: '14px 18px', borderTop: '1px solid #eef2f0', background: '#fafcfb' }}>
+              <a
+                href="https://wa.me/923435114065"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  background: '#25D366',
+                  color: '#ffffff',
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                }}
+              >
+                <i className="fa fa-whatsapp" style={{ fontSize: 16 }}></i>
+                WhatsApp Sizing &amp; Support
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

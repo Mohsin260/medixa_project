@@ -1,23 +1,21 @@
-// Force remove preloader
+// Hide preloader safely without mutating React DOM tree
 (function() {
-  function removePreloader() {
+  function hidePreloader() {
     var preloader = document.getElementById('preloader');
     if (preloader) {
       preloader.style.display = 'none';
       preloader.style.opacity = '0';
       preloader.style.visibility = 'hidden';
-      if (preloader.parentNode) {
-        preloader.parentNode.removeChild(preloader);
-      }
+      preloader.style.pointerEvents = 'none';
     }
   }
   
   if (document.readyState === 'complete') {
-    removePreloader();
+    hidePreloader();
   } else {
-    window.addEventListener('load', removePreloader);
+    window.addEventListener('load', hidePreloader);
   }
   
-  setTimeout(removePreloader, 2000);
-  setInterval(removePreloader, 1000);
+  setTimeout(hidePreloader, 200);
+  setTimeout(hidePreloader, 1000);
 })();

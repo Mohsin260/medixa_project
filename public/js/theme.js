@@ -56,7 +56,7 @@ Version      : 1.0
     --------------------- */
 
     $(window).on('load', function() {
-        $('#preloader').fadeOut('slow', function() { $(this).remove(); });
+        $('#preloader').fadeOut('slow', function() { $(this).hide(); });
     });
 
 
@@ -483,7 +483,7 @@ Version      : 1.0
     /*-----------------------
     hide-login-register
     -----------------------*/
-    document.getElementById("login_register_content").style.display = "none";
+    var lrc = document.getElementById("login_register_content"); if (lrc) lrc.style.display = "none";
     $("#login_register").on('click', function() {
         $("#login_register_content").fadeToggle("slow");
     });
@@ -492,7 +492,7 @@ Version      : 1.0
     /*-----------------------
     hide-show-sign-in-form
     -----------------------*/
-    document.getElementById("my_cart").style.display = "none";
+    var mc = document.getElementById("my_cart"); if (mc) mc.style.display = "none";
     $("#top_cart").on('click', function() {
         $("#my_cart").fadeToggle("slow");
     });

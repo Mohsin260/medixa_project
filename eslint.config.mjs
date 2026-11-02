@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Separate dashboard source copy kept at the repo root.
     "medixa-dashboard-development/**",
+    // Legacy vendored theme assets and cached demo scrape (not app code).
+    "public/**",
+    "demo.dueza.com/**",
   ]),
 ]);
 

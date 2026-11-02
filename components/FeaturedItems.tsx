@@ -1,7 +1,11 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { formatPrice, getProductBySlug } from '@/lib/products';
+import ProductCardActions from '@/components/ProductCardActions';
 
-const priceFor = (slug) => formatPrice(getProductBySlug(slug).price);
+const priceFor = (slug: string) => {
+  const product = getProductBySlug(slug);
+  return formatPrice(product?.price ?? 0);
+};
 
 export default function FeaturedItems() {
   return (
@@ -12,8 +16,8 @@ export default function FeaturedItems() {
             <div className="col-md-5 col-sm-6 col-xs-12">
               <div className="featured-item-left">
                 <div className="section-title">
-                  <span>Uniform</span>
-                  <h2>Featured items</h2>
+                  <span>Medixa Apparel</span>
+                  <h2>Featured Scrubs & Uniforms</h2>
                 </div>
               </div>
             </div>
@@ -26,19 +30,19 @@ export default function FeaturedItems() {
                   </li>
                   {" "}
                   <li>
-                    <a data-toggle="tab" href="#women">WOMEN</a>
+                    <a data-toggle="tab" href="#women">WOMEN&apos;S</a>
                   </li>
                   {" "}
                   <li>
-                    <a data-toggle="tab" href="#men">MEN</a>
+                    <a data-toggle="tab" href="#men">MEN&apos;S</a>
                   </li>
                   {" "}
                   <li>
-                    <a data-toggle="tab" href="#shoes">shoes</a>
+                    <a data-toggle="tab" href="#shoes">LAB COATS</a>
                   </li>
                   {" "}
                   <li>
-                    <a data-toggle="tab" href="#accessories">aCCESSORIES</a>
+                    <a data-toggle="tab" href="#accessories">COLLECTIONS</a>
                   </li>
                 </ul>
               </div>
@@ -58,25 +62,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="regal-round-neck-male-medical-scrubs-pakistan" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -116,25 +102,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="muse-v-neck-female-medical-scrubs-pakistan" />
                         </div>
                         {" "}
                         <div className="sfi-img-banner">
@@ -178,25 +146,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="forte-v-neck-male-medical-scrubs-pakistan" />
                         </div>
                         {" "}
                         <div className="sfi-img-banner new">
@@ -243,25 +193,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rebel-collar-neck-female-medical-scrubs-pakistan" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -301,25 +233,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="reine-dress-cj-2145" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -359,25 +273,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rififi-dress-cy-78795" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -424,25 +320,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rolls-dress-ck-2845" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -482,25 +360,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rififi-dress-cy-78795" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -548,25 +408,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rolls-dress-ck-2845" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -606,25 +448,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="reine-dress-cj-2145" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -664,25 +488,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rififi-dress-cy-78795" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -730,25 +536,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rolls-dress-ck-2845" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -788,25 +576,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="reine-dress-cj-2145" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -854,25 +624,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rolls-dress-ck-2845" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -912,25 +664,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="reine-dress-cj-2145" />
                         </div>
                       </div>
                       <div className="sfi-content">
@@ -970,25 +704,7 @@ export default function FeaturedItems() {
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ul className="clearfix">
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-heart-o"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#">
-                                <i className="fa fa-shopping-bag"></i>
-                              </a>
-                            </li>
-                            {" "}
-                            <li>
-                              <a href="#" data-toggle="modal" data-target="#myModal">
-                                <i className="fa fa-eye"></i>
-                              </a>
-                            </li>
-                          </ul>
+                          <ProductCardActions slug="rolls-dress-ck-2845" />
                         </div>
                       </div>
                       <div className="sfi-content">

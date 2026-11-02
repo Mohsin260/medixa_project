@@ -1,0 +1,475 @@
+/* Medixa AI Shopping Concierge - Capsule & Morph Styles */
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(31, 107, 82, 0.25), 0 10px 25px -5px rgba(23, 60, 53, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(31, 107, 82, 0.5), 0 14px 30px -5px rgba(23, 60, 53, 0.45);
+  }
+}
+
+@keyframes beamRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.15) rotate(10deg);
+    opacity: 1;
+  }
+}
+
+@keyframes morphIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Outer Capsule Trigger */
+.capsuleWrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  font-family: inherit;
+  pointer-events: auto;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.capsuleWrapper:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.03);
+}
+
+.capsuleButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(31, 107, 82, 0.28);
+  border-radius: 9999px;
+  padding: 6px 18px 6px 6px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: pulseGlow 3.5s infinite ease-in-out;
+  transition: all 0.25s ease;
+  user-select: none;
+  max-width: calc(100vw - 32px);
+}
+
+.capsuleButton:hover {
+  border-color: rgba(31, 107, 82, 0.6);
+  background: #ffffff;
+}
+
+/* Ambient Orbit Beam */
+.orbitBeam {
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg, transparent 70%, rgba(31, 107, 82, 0.6) 90%, #4ade80 100%);
+  z-index: -1;
+  opacity: 0.45;
+  pointer-events: none;
+  animation: beamRotate 6s linear infinite;
+  mask: radial-gradient(circle, transparent 62%, black 63%);
+  -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
+}
+
+/* Avatar Box */
+.avatarBox {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f6b52 0%, #173c35 50%, #0d9488 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(23, 60, 53, 0.3);
+  position: relative;
+}
+
+.sparkleIcon {
+  width: 22px;
+  height: 22px;
+  animation: sparkle 2.5s infinite ease-in-out;
+}
+
+.onlineDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #ffffff;
+}
+
+/* Text Container */
+.textCol {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.mainTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #173c35;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.agentBadge {
+  font-size: 10px;
+  font-weight: 600;
+  background: #e8f4ef;
+  color: #1f6b52;
+  padding: 1px 6px;
+  border-radius: 12px;
+  letter-spacing: 0.02em;
+}
+
+.subTitle {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Chat Window - Morph Container */
+.chatWindow {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 580px;
+  max-height: calc(100vh - 80px);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(31, 107, 82, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 99999;
+  animation: morphIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Chat Header */
+.chatHeader {
+  background: linear-gradient(135deg, #1f6b52 0%, #173c35 100%);
+  color: #ffffff;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.headerInfo h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.headerStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.headerStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+.headerStatusText {
+  font-size: 11px;
+  color: #d1fae5;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.closeButton:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Messages Area */
+.messagesBody {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #f8faf9;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Message Bubbles */
+.messageRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.userRow {
+  align-items: flex-end;
+}
+
+.botRow {
+  align-items: flex-start;
+}
+
+.bubble {
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+.userBubble {
+  background: #1f6b52;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.botBubble {
+  background: #ffffff;
+  color: #1f2937;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 1px #eef3f0;
+}
+
+/* Product Card inside Bot response */
+.productRec {
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid #e2ece7;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 270px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.productRecImg {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  background: #f1f5f3;
+}
+
+.productRecBody {
+  padding: 10px 12px;
+}
+
+.productRecCategory {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #1f6b52;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.productRecTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  margin: 2px 0 4px;
+}
+
+.productRecPrice {
+  font-size: 12px;
+  color: #173c35;
+  font-weight: 700;
+}
+
+.productRecLink {
+  display: block;
+  text-align: center;
+  background: #1f6b52;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 8px;
+}
+
+/* Action Chips */
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.actionChip {
+  background: #ffffff;
+  color: #1f6b52;
+  border: 1px solid #1f6b52;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.actionChip:hover {
+  background: #1f6b52;
+  color: #ffffff;
+}
+
+.actionChipFilled {
+  background: #e8f4ef;
+  color: #173c35;
+  border: 1px solid #cce4d8;
+}
+
+.actionChipFilled:hover {
+  background: #173c35;
+  color: #ffffff;
+}
+
+/* Quick Bar */
+.quickBar {
+  padding: 8px 14px;
+  background: #eef8f3;
+  border-top: 1px solid #dceed6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.quickBar a {
+  color: #1f6b52;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Input Form */
+.inputForm {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-top: 1px solid #eef2f0;
+  display: flex;
+  gap: 8px;
+}
+
+.textInput {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.textInput:focus {
+  border-color: #1f6b52;
+}
+
+.sendButton {
+  background: #1f6b52;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.sendButton:hover {
+  background: #173c35;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .capsuleWrapper {
+    bottom: 16px;
+    width: 90%;
+    max-width: 340px;
+  }
+  .capsuleButton {
+    justify-content: center;
+    width: 100%;
+  }
+  .chatWindow {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: 100%;
+    height: 82vh;
+  }
+}
+

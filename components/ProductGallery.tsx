@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import styles from './ProductGallery.module.css';
 import { useProductSelection } from './ProductSelection';
 
@@ -8,42 +8,91 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 3;
 const STEP = 0.5;
 
-const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-export default function ProductGallery({ images, alt, badge }) {
+interface ProductGalleryProps {
+  images: string[];
+  alt: string;
+  badge?: string;
+}
+
+interface ZoomState {
+  scale: number;
+  x: number;
+  y: number;
+}
+
+interface DragState {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  originX: number;
+  originY: number;
+}
+
+interface ThumbScrollState {
+  left: boolean;
+  right: boolean;
+}
+
+export default function ProductGallery({ images, alt, badge }: ProductGalleryProps) {
   const selection = useProductSelection();
-  const galleryImages = images?.length ? images : [];
+  const galleryImages: string[] = useMemo(
+    () => (images?.length ? images : []),
+    [images],
+  );
   const colorStartIndex = selection?.colorImages?.[selection.color]?.[0]
     ? galleryImages.indexOf(selection.colorImages[selection.color][0])
     : -1;
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [zoom, setZoom] = useState({ scale: 1, x: 0, y: 0 });
+  const [zoom, setZoom] = useState<ZoomState>({ scale: 1, x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
-  const [thumbScroll, setThumbScroll] = useState({ left: false, right: false });
+  const [thumbScroll, setThumbScroll] = useState<ThumbScrollState>({ left: false, right: false });
 
-  const viewportRef = useRef(null);
-  const dragRef = useRef(null);
-  const thumbsRef = useRef(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<DragState | null>(null);
+  const thumbsRef = useRef<HTMLDivElement | null>(null);
 
-  const clampOffset = useCallback((nextOffset, nextScale) => {
-    const viewport = viewportRef.current;
-    if (!viewport || nextScale <= 1) {
-      return { x: 0, y: 0 };
-    }
-    const maxX = (viewport.clientWidth * (nextScale - 1)) / 2;
-    const maxY = (viewport.clientHeight * (nextScale - 1)) / 2;
-    return {
-      x: clamp(nextOffset.x, -maxX, maxX),
-      y: clamp(nextOffset.y, -maxY, maxY),
-    };
-  }, []);
+  const clampOffset = useCallback(
+    (nextOffset: { x: number; y: number }, nextScale: number): { x: number; y: number } => {
+      const viewport = viewportRef.current;
+      if (!viewport || nextScale <= 1) {
+        return { x: 0, y: 0 };
+      }
+      const maxX = (viewport.clientWidth * (nextScale - 1)) / 2;
+      const maxY = (viewport.clientHeight * (nextScale - 1)) / 2;
+      return {
+        x: clamp(nextOffset.x, -maxX, maxX),
+        y: clamp(nextOffset.y, -maxY, maxY),
+      };
+    },
+    [],
+  );
 
   const resetZoom = useCallback(() => {
     setZoom({ scale: 1, x: 0, y: 0 });
     dragRef.current = null;
     setDragging(false);
   }, []);
+
+  const [prevGallery, setPrevGallery] = useState<string[]>(galleryImages);
+  if (galleryImages !== prevGallery) {
+    setPrevGallery(galleryImages);
+    setActiveIndex(0);
+    setZoom({ scale: 1, x: 0, y: 0 });
+    setDragging(false);
+  }
+
+  const [prevColorStart, setPrevColorStart] = useState(colorStartIndex);
+  if (colorStartIndex !== prevColorStart) {
+    setPrevColorStart(colorStartIndex);
+    if (colorStartIndex >= 0) {
+      setActiveIndex(colorStartIndex);
+      setZoom({ scale: 1, x: 0, y: 0 });
+      setDragging(false);
+    }
+  }
 
   const updateThumbScroll = useCallback(() => {
     const track = thumbsRef.current;
@@ -56,9 +105,9 @@ export default function ProductGallery({ images, alt, badge }) {
     });
   }, []);
 
-  const scrollThumbIntoView = useCallback((index) => {
+  const scrollThumbIntoView = useCallback((index: number) => {
     const track = thumbsRef.current;
-    const target = track?.children?.[index];
+    const target = track?.children?.[index] as HTMLElement | undefined;
     if (!track || !target) {
       return;
     }
@@ -67,18 +116,12 @@ export default function ProductGallery({ images, alt, badge }) {
   }, []);
 
   useEffect(() => {
-    setActiveIndex(0);
-    resetZoom();
-  }, [galleryImages, resetZoom]);
-
-  useEffect(() => {
     if (colorStartIndex < 0) {
       return;
     }
-    setActiveIndex(colorStartIndex);
-    resetZoom();
+    dragRef.current = null;
     scrollThumbIntoView(colorStartIndex);
-  }, [colorStartIndex, resetZoom, scrollThumbIntoView]);
+  }, [colorStartIndex, scrollThumbIntoView]);
 
   useEffect(() => {
     const track = thumbsRef.current;
@@ -86,6 +129,7 @@ export default function ProductGallery({ images, alt, badge }) {
       return undefined;
     }
 
+    dragRef.current = null;
     updateThumbScroll();
     track.addEventListener('scroll', updateThumbScroll, { passive: true });
     window.addEventListener('resize', updateThumbScroll);
@@ -96,7 +140,7 @@ export default function ProductGallery({ images, alt, badge }) {
     };
   }, [galleryImages, updateThumbScroll]);
 
-  const scrollThumbs = (direction) => {
+  const scrollThumbs = (direction: number) => {
     const track = thumbsRef.current;
     if (!track) {
       return;
@@ -105,7 +149,7 @@ export default function ProductGallery({ images, alt, badge }) {
     track.scrollBy({ left: direction * step * 3, behavior: 'smooth' });
   };
 
-  const showImage = (direction) => {
+  const showImage = (direction: number) => {
     if (galleryImages.length < 2) {
       return;
     }
@@ -117,7 +161,7 @@ export default function ProductGallery({ images, alt, badge }) {
   };
 
   const zoomTo = useCallback(
-    (nextScale) => {
+    (nextScale: number) => {
       setZoom((current) => {
         const scale = clamp(Number(nextScale.toFixed(2)), MIN_SCALE, MAX_SCALE);
         const offset = scale === 1 ? { x: 0, y: 0 } : clampOffset(current, scale);
@@ -128,7 +172,7 @@ export default function ProductGallery({ images, alt, badge }) {
   );
 
   const changeScale = useCallback(
-    (delta) => {
+    (delta: number) => {
       setZoom((current) => {
         const scale = clamp(Number((current.scale + delta).toFixed(2)), MIN_SCALE, MAX_SCALE);
         const offset = scale === 1 ? { x: 0, y: 0 } : clampOffset(current, scale);
@@ -144,7 +188,7 @@ export default function ProductGallery({ images, alt, badge }) {
       return undefined;
     }
 
-    const handleWheel = (event) => {
+    const handleWheel = (event: WheelEvent) => {
       event.preventDefault();
       changeScale(event.deltaY < 0 ? STEP : -STEP);
     };
@@ -153,7 +197,7 @@ export default function ProductGallery({ images, alt, badge }) {
     return () => viewport.removeEventListener('wheel', handleWheel);
   }, [changeScale]);
 
-  const handlePointerDown = (event) => {
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (zoom.scale <= 1) {
       return;
     }
@@ -168,7 +212,7 @@ export default function ProductGallery({ images, alt, badge }) {
     setDragging(true);
   };
 
-  const handlePointerMove = (event) => {
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!dragRef.current) {
       return;
     }
@@ -180,7 +224,7 @@ export default function ProductGallery({ images, alt, badge }) {
     setZoom((current) => ({ ...current, x: offset.x, y: offset.y }));
   };
 
-  const endDrag = (event) => {
+  const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (dragRef.current?.pointerId === event.pointerId) {
       if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
         event.currentTarget.releasePointerCapture(event.pointerId);

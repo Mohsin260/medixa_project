@@ -6,15 +6,17 @@ export default function SpecialOffer() {
           <div className="col-md-7 col-xs-12">
             <div className="special-offer">
               <div className="so-title">
-                <span>hot offer</span>
-                <h2>only two days!</h2>
+                <span>Healthcare Privilege</span>
+                <h2>Zero Fading Guaranteed</h2>
               </div>
-              <p className="so-text">Praesent nec finibus massa. Phasellus id auctor lacus, at iaculis lorem. Donec quis arcu elit. In vehicula purus sem, eu mattis est lacinia.</p>
-              <h2 className="so-off-percent">-30% off</h2>
+              <p className="so-text">
+                Precision-engineered medical apparel with 4-way stretch fabric and international vat dyeing. Designed for demanding 12-to-24-hour shifts with nationwide cash on delivery across Pakistan.
+              </p>
+              <h2 className="so-off-percent">Free Shipping Over Rs 10,000</h2>
               <div className="timer-area">
-                <div data-countdown="2017/7/30"></div>
+                <div data-countdown="2027/12/31"></div>
               </div>
-              <a className="so-view hvr-bs" href="#">view all products</a>
+              <a className="so-view hvr-bs" href="/shop">View All Medical Scrubs</a>
             </div>
           </div>
         </div>
