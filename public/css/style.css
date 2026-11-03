@@ -1548,8 +1548,10 @@ ul.menu-list li .hot::after {
 /*----------------------------------------*/
 
 .special-offer-area {
-    background: #d5dfe1 url("../img/bg/offer1.jpg") no-repeat scroll 30% 0 / cover;
-    padding: 98px 0 30px;
+    background-color: #f1f0f6;
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .special-offer {
@@ -1580,10 +1582,10 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-title h2::after {
-    background: #ff4c6b none repeat scroll 0 0;
+    background: #1f6b52 none repeat scroll 0 0;
     bottom: -23px;
     content: "";
-    height: 1px;
+    height: 2px;
     left: 0;
     margin: auto;
     position: absolute;
@@ -1599,9 +1601,9 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-off-percent {
-    color: #ff4c6b;
-    font-size: 40px;
-    font-weight: 400;
+    color: #1f6b52;
+    font-size: 38px;
+    font-weight: 700;
     letter-spacing: 0;
     line-height: 44px;
     margin-bottom: 24px;
@@ -1614,39 +1616,53 @@ ul.menu-list li .hot::after {
 
 .special-offer .timer-area .cdown {
     background: #fff none repeat scroll 0 0;
-    border: 2px solid #ff4c6b;
-	border-radius: 20px !important;
-    box-shadow: 2.5px 4.33px 5px 0 rgba(120, 120, 120, 0.4);
+    border: 2px solid #1f6b52;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(31, 107, 82, 0.12);
     display: inline-block;
     height: 85px;
     width: 85px;
+    margin: 0 5px;
+    text-align: center !important;
 }
 
 .special-offer .timer-area .cdown span {
-    color: #343434;
+    color: #111827;
     display: block;
     font-size: 20px;
+    font-weight: 700;
     margin-top: 17px;
+    text-align: center !important;
 }
 
 .special-offer .timer-area .cdown p {
-    color: #888888;
+    color: #6b7280;
     font-size: 10px;
+    font-weight: 600;
     line-height: 12px;
     text-transform: uppercase;
+    text-align: center !important;
+    margin: 0 !important;
 }
 
 .special-offer .so-view {
-    background: #ff4c6b none repeat scroll 0 0;
-	border-radius: 10px !important;
+    background: #1f6b52 none repeat scroll 0 0;
+    border-radius: 10px !important;
     color: #ffffff;
     display: inline-block;
     font-size: 12px;
+    font-weight: 700;
     height: 50px;
-    letter-spacing: 0;
+    letter-spacing: 0.5px;
     line-height: 50px;
-    padding: 0 25px;
+    padding: 0 28px;
     text-transform: uppercase;
+    transition: background 0.2s ease;
+}
+
+.special-offer .so-view:hover {
+    background: #175440;
+    color: #ffffff;
 }
 
 

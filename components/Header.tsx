@@ -17,6 +17,23 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/user/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (mobileNavOpen) {
@@ -100,16 +117,17 @@ export default function Header() {
             </div>
             {' '}
             <div className="col-md-7 col-sm-8 col-xs-12">
-              <div className="header-top-right">
+              <div className="header-top-right" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 18 }}>
                 {/* Search Bar */}
-                <div className="htr-search">
-                  <form onSubmit={handleSearchSubmit}>
-                    <div className="htr-search-content">
+                <div className="htr-search" style={{ margin: 0, flex: '1 1 auto', maxWidth: 320 }}>
+                  <form onSubmit={handleSearchSubmit} style={{ width: '100%' }}>
+                    <div className="htr-search-content" style={{ width: '100%' }}>
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search scrub suits, sizes, colors…"
+                        style={{ width: '100%' }}
                       />
                       {' '}
                       <button type="submit" aria-label="Search">
@@ -119,104 +137,248 @@ export default function Header() {
                   </form>
                 </div>
                 {' '}
-                {/* Account / Login */}
-                <div className="login-or-register" id="account_container" style={{ position: 'relative' }}>
-                  <span
-                    id="login_register"
-                    onClick={() => {
-                      setAccountOpen((prev) => !prev);
-                      setCartOpen(false);
-                    }}
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
-                  >
-                    Account
-                  </span>
+                {/* Account / Persona */}
+                <div className="login-or-register" id="account_container" style={{ position: 'relative', margin: 0 }}>
+                  {currentUser ? (
+                    <div
+                      id="login_register"
+                      onClick={() => {
+                        setAccountOpen((prev) => !prev);
+                        setCartOpen(false);
+                      }}
+                      style={{
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        background: '#e8f4ef',
+                        padding: '3px 8px 3px 4px',
+                        borderRadius: 24,
+                        border: '1px solid #c8e3d6',
+                      }}
+                      title={currentUser.name}
+                    >
+                      <div
+                        style={{
+                          width: 26,
+                          height: 26,
+                          borderRadius: '50%',
+                          background: '#1f6b52',
+                          color: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 12,
+                          fontWeight: 800,
+                        }}
+                      >
+                        {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <i className={`fa fa-angle-${accountOpen ? 'up' : 'down'}`} style={{ fontSize: 11, color: '#1f6b52' }} />
+                    </div>
+                  ) : (
+                    <span
+                      id="login_register"
+                      onClick={() => {
+                        setAccountOpen((prev) => !prev);
+                        setCartOpen(false);
+                      }}
+                      style={{
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        color: '#4b5563',
+                        padding: '4px',
+                      }}
+                      title="Account & Orders"
+                      aria-label="Account"
+                    >
+                      <i className="fa fa-user-circle-o" style={{ fontSize: 20 }} />
+                    </span>
+                  )}
                   {' '}
                   {accountOpen && (
                     <div
                       className="login-register-content"
                       id="login_register_content"
-                      style={{ display: 'block', position: 'absolute', top: 40, left: -90, zIndex: 100 }}
+                      style={{ display: 'block', position: 'absolute', top: 40, right: 0, left: 'auto', zIndex: 100, minWidth: 260 }}
                     >
-                      <div className="lrc-login">
-                        <h4 className="lrc-title">Customer Portal</h4>
-                        <div style={{ padding: '10px 0' }}>
-                          <p style={{ fontSize: 12, color: '#688277', marginBottom: 14 }}>
-                            Sign in to manage your medical scrub orders and saved addresses.
-                          </p>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {currentUser ? (
+                        <div className="lrc-login" style={{ padding: '16px' }}>
+                          <div style={{ borderBottom: '1px solid #edf2ef', paddingBottom: 10, marginBottom: 12 }}>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: '#173c35' }}>
+                              {currentUser.name}
+                            </div>
+                            <div style={{ fontSize: 11, color: '#7b8f87', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {currentUser.email}
+                            </div>
+                            {currentUser.role === 'ADMIN' && (
+                              <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 4, marginTop: 4 }}>
+                                ADMINISTRATOR
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                             <a
-                              href="/auth/sign-in"
-                              className="hvr-bs"
+                              href="/account"
                               style={{
-                                display: 'block',
-                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                padding: '9px 12px',
+                                borderRadius: 6,
                                 background: '#1f6b52',
                                 color: '#ffffff',
-                                padding: '9px 16px',
-                                borderRadius: 8,
                                 fontSize: 12,
                                 fontWeight: 700,
                                 textDecoration: 'none',
                               }}
                             >
-                              Sign In
+                              <i className="fa fa-shopping-bag" />
+                              <span>My Orders &amp; Tracking</span>
                             </a>
-                            <a
-                              href="/auth/sign-up"
-                              style={{
-                                display: 'block',
-                                textAlign: 'center',
-                                background: '#f1f6f3',
-                                color: '#1f6b52',
-                                padding: '9px 16px',
-                                borderRadius: 8,
-                                fontSize: 12,
-                                fontWeight: 700,
-                                textDecoration: 'none',
-                              }}
-                            >
-                              Create Account
-                            </a>
+
                             <a
                               href="/track-order"
                               style={{
-                                display: 'block',
-                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                padding: '8px 12px',
+                                borderRadius: 6,
                                 background: '#fafcfb',
                                 color: '#446056',
                                 border: '1px solid #dbe5e0',
-                                padding: '8px 16px',
-                                borderRadius: 8,
                                 fontSize: 12,
                                 fontWeight: 600,
                                 textDecoration: 'none',
-                                marginTop: 2,
                               }}
                             >
-                              Track Your Order
+                              <i className="fa fa-search" />
+                              <span>Track Guest Order</span>
                             </a>
-                            <a
-                              href="/favourite"
+
+                            {currentUser.role === 'ADMIN' && (
+                              <a
+                                href="/admin"
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 12px',
+                                  borderRadius: 6,
+                                  color: '#92400e',
+                                  background: '#fef3c7',
+                                  border: '1px solid #fde68a',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                <i className="fa fa-tachometer" />
+                                <span>Admin Studio</span>
+                              </a>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                try {
+                                  const { authClient } = await import('@/lib/auth/client');
+                                  await authClient.signOut();
+                                  window.location.reload();
+                                } catch {
+                                  window.location.reload();
+                                }
+                              }}
                               style={{
-                                display: 'block',
-                                textAlign: 'center',
-                                background: '#fafcfb',
-                                color: '#446056',
-                                border: '1px solid #dbe5e0',
-                                padding: '8px 16px',
-                                borderRadius: 8,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                padding: '8px 12px',
+                                borderRadius: 6,
+                                color: '#dc2626',
+                                background: 'transparent',
+                                border: 'none',
                                 fontSize: 12,
                                 fontWeight: 600,
-                                textDecoration: 'none',
-                                marginTop: 2,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                width: '100%',
+                                marginTop: 4,
                               }}
                             >
-                              ❤️ My Favourites
-                            </a>
+                              <i className="fa fa-sign-out" />
+                              <span>Sign Out</span>
+                            </button>
                           </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="lrc-login">
+                          <h4 className="lrc-title">Customer Portal</h4>
+                          <div style={{ padding: '10px 0' }}>
+                            <p style={{ fontSize: 12, color: '#688277', marginBottom: 14 }}>
+                              Sign in to manage your medical scrub orders and saved addresses.
+                            </p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                              <a
+                                href="/auth/sign-in?redirectTo=/account"
+                                className="hvr-bs"
+                                style={{
+                                  display: 'block',
+                                  textAlign: 'center',
+                                  background: '#1f6b52',
+                                  color: '#ffffff',
+                                  padding: '9px 16px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                Sign In
+                              </a>
+                              <a
+                                href="/auth/sign-up"
+                                style={{
+                                  display: 'block',
+                                  textAlign: 'center',
+                                  background: '#f1f6f3',
+                                  color: '#1f6b52',
+                                  padding: '9px 16px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                Create Account
+                              </a>
+                              <a
+                                href="/track-order"
+                                style={{
+                                  display: 'block',
+                                  textAlign: 'center',
+                                  background: '#fafcfb',
+                                  color: '#446056',
+                                  border: '1px solid #dbe5e0',
+                                  padding: '8px 16px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  textDecoration: 'none',
+                                  marginTop: 2,
+                                }}
+                              >
+                                Track Your Order
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -226,68 +388,58 @@ export default function Header() {
                   className="header-favourite"
                   style={{
                     display: 'inline-block',
-                    marginRight: 28,
+                    margin: 0,
                     verticalAlign: 'middle',
                   }}
                 >
                   <a
                     href="/favourite"
-                    title="View Saved Favourites"
+                    title={`Favourites (${favCount})`}
                     aria-label="View Saved Favourites"
                     style={{
-                      display: 'flex',
+                      display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 6,
-                      color: '#a6a6a6',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      color: favCount > 0 ? '#ff4c6b' : '#4b5563',
                       textDecoration: 'none',
-                      fontSize: 12,
-                      fontWeight: 400,
                       cursor: 'pointer',
+                      padding: '4px',
                       transition: 'color 0.2s',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ff4c6b')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a6a6')}
                   >
-                    <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                      <i
-                        className={favCount > 0 ? 'fa fa-heart' : 'fa fa-heart-o'}
+                    <i
+                      className={favCount > 0 ? 'fa fa-heart' : 'fa fa-heart-o'}
+                      style={{ fontSize: 18 }}
+                    />
+                    {favCount > 0 && (
+                      <span
                         style={{
-                          fontSize: 14,
-                          color: favCount > 0 ? '#ff4c6b' : 'inherit',
+                          position: 'absolute',
+                          top: -6,
+                          right: -8,
+                          background: '#ff4c6b',
+                          color: '#ffffff',
+                          borderRadius: '50%',
+                          minWidth: 16,
+                          height: 16,
+                          fontSize: 9,
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: 1,
+                          padding: '0 3px',
                         }}
-                      />
-                      {favCount > 0 && (
-                        <span
-                          style={{
-                            position: 'absolute',
-                            top: -7,
-                            right: -9,
-                            background: '#ff4c6b',
-                            color: '#ffffff',
-                            borderRadius: '50%',
-                            minWidth: 15,
-                            height: 15,
-                            fontSize: 9,
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            lineHeight: 1,
-                            padding: '0 2px',
-                          }}
-                        >
-                          {favCount}
-                        </span>
-                      )}
-                    </span>
-                    <span className="hidden-xs" style={{ color: 'inherit' }}>
-                      Favourites
-                    </span>
+                      >
+                        {favCount}
+                      </span>
+                    )}
                   </a>
                 </div>
                 {' '}
                 {/* Cart Trigger */}
-                <div className="top-cart" id="top_cart_container" style={{ position: 'relative' }}>
+                <div className="top-cart" id="top_cart_container" style={{ position: 'relative', margin: 0 }}>
                   <div
                     className="top-cart-title"
                     id="my_cart_title"
@@ -295,18 +447,43 @@ export default function Header() {
                       setCartOpen((prev) => !prev);
                       setAccountOpen(false);
                     }}
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', userSelect: 'none' }}
+                    style={{
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      userSelect: 'none',
+                      color: '#1f6b52',
+                      padding: '4px',
+                    }}
+                    title={`Shopping Cart (${count} ${count === 1 ? 'item' : 'items'})`}
+                    aria-label="Shopping Cart"
                   >
-                    <span className="my-cart-icon" style={{ marginRight: 8, color: '#1f6b52', fontSize: 15 }}>
-                      <i className="fa fa-shopping-cart"></i>
-                    </span>
-                    {' '}
-                    <div className="my-cart-content" style={{ display: 'inline-block' }}>
-                      <span className="cart-title" style={{ fontSize: 12, color: '#7c7b7b', marginRight: 4 }}>My cart:</span>
-                      <span className="pro-count" style={{ fontSize: 12, fontWeight: 700, color: '#173c35' }}>
-                        {count} {count === 1 ? 'item' : 'items'}
+                    <i className="fa fa-shopping-cart" style={{ fontSize: 20 }}></i>
+                    {count > 0 && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: -6,
+                          right: -8,
+                          background: '#1f6b52',
+                          color: '#ffffff',
+                          borderRadius: '50%',
+                          minWidth: 16,
+                          height: 16,
+                          fontSize: 9,
+                          fontWeight: 800,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: 1,
+                          padding: '0 3px',
+                        }}
+                      >
+                        {count}
                       </span>
-                    </div>
+                    )}
                   </div>
                   {' '}
                   {cartOpen && (
@@ -817,11 +994,18 @@ export default function Header() {
                 </li>
                 <li>
                   <a
-                    href="/auth/sign-in"
+                    href={currentUser ? '/account' : '/auth/sign-in'}
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{
+                      display: 'block',
+                      padding: '10px 0',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: currentUser ? '#1f6b52' : '#446056',
+                      textDecoration: 'none',
+                    }}
                   >
-                    👤 Account / Sign In
+                    👤 {currentUser ? `Hi, ${currentUser.name.split(' ')[0]} (My Account & Tracking)` : 'Account / Sign In'}
                   </a>
                 </li>
               </ul>

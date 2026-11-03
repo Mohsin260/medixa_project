@@ -1011,3 +1011,42 @@ Version      : 1.0
         margin: 5px;
     }
 }
+
+
+/* Special Offer Responsive Controls */
+@media only screen and (max-width: 991px) {
+    .special-offer-area {
+        background-image: none !important;
+        background-color: #f1f0f6 !important;
+        padding: 55px 0 35px !important;
+    }
+    .special-offer .so-title h2 {
+        font-size: 28px !important;
+        line-height: 34px !important;
+    }
+    .special-offer .so-off-percent {
+        font-size: 26px !important;
+        line-height: 32px !important;
+    }
+    .special-offer .timer-area {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+        margin-bottom: 25px !important;
+    }
+    .special-offer .timer-area .cdown {
+        width: 68px !important;
+        height: 68px !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
+    }
+    .special-offer .timer-area .cdown span {
+        margin-top: 10px !important;
+        font-size: 16px !important;
+    }
+    .special-offer .timer-area .cdown p {
+        font-size: 9px !important;
+        line-height: 11px !important;
+    }
+}

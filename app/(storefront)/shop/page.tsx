@@ -410,22 +410,22 @@ function ShopContent() {
                         </div>
 
                         {/* Content */}
-                        <div style={{ padding: '16px 16px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <div style={{ padding: '14px 14px 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                           <div style={{ fontSize: 11, color: '#7a8e86', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {product.collection}
                           </div>
-                          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#173c35', margin: '6px 0 4px', lineHeight: 1.3 }}>
+                          <h3 style={{ fontSize: 14, fontWeight: 700, color: '#173c35', margin: '4px 0', lineHeight: 1.3 }}>
                             <Link href={`/products/${product.slug}`} style={{ color: '#173c35', textDecoration: 'none' }}>
                               {product.title}
                             </Link>
                           </h3>
-                          <p style={{ fontSize: 12, color: '#73867f', margin: '0 0 12px', lineHeight: 1.4, flex: 1 }}>
+                          <p style={{ fontSize: 12, color: '#73867f', margin: '0 0 8px', lineHeight: 1.4, flex: 1 }}>
                             {product.subtitle}
                           </p>
 
                           {/* Color Swatches preview */}
                           {product.colors && product.colors.length > 0 && (
-                            <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
+                            <div style={{ display: 'flex', gap: 5, marginBottom: 8 }}>
                               {product.colors.map((c) => (
                                 <span
                                   key={c.name}
@@ -444,19 +444,19 @@ function ShopContent() {
                           )}
 
                           {/* Price & Action */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid #edf2ef' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, marginTop: 'auto', borderTop: '1px solid #edf2ef' }}>
                             <div>
-                              <div style={{ fontSize: 16, fontWeight: 800, color: '#1f6b52' }}>
+                              <div style={{ fontSize: 15, fontWeight: 800, color: '#1f6b52', lineHeight: 1.2 }}>
                                 {formatPrice(product.price)}
                               </div>
                               {product.compareAt ? (
-                                <div style={{ fontSize: 11, color: '#9baaa3', textDecoration: 'line-through' }}>
+                                <div style={{ fontSize: 11, color: '#9baaa3', textDecoration: 'line-through', lineHeight: 1.2 }}>
                                   {formatPrice(product.compareAt)}
                                 </div>
                               ) : null}
                             </div>
 
-                            <div style={{ display: 'flex', gap: 6 }}>
+                            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                               <Link
                                 href={`/products/${product.slug}`}
                                 style={{
@@ -464,9 +464,16 @@ function ShopContent() {
                                   fontWeight: 600,
                                   color: '#1f6b52',
                                   background: '#eef6f2',
-                                  padding: '7px 12px',
-                                  borderRadius: 8,
+                                  height: 30,
+                                  padding: '0 12px',
+                                  borderRadius: 6,
                                   textDecoration: 'none',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  lineHeight: 1,
+                                  boxSizing: 'border-box',
+                                  transition: 'background 0.15s',
                                 }}
                               >
                                 View
@@ -480,9 +487,15 @@ function ShopContent() {
                                   color: '#ffffff',
                                   background: addedSlug === product.slug ? '#2c8f6f' : '#173c35',
                                   border: 'none',
-                                  borderRadius: 8,
-                                  padding: '7px 14px',
+                                  height: 30,
+                                  padding: '0 12px',
+                                  borderRadius: 6,
                                   cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  lineHeight: 1,
+                                  boxSizing: 'border-box',
                                   transition: 'background 0.2s',
                                 }}
                               >

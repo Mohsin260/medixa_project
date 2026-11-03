@@ -849,10 +849,6 @@ ul.menu-list li .hot::after {
     visibility: visible;
 }
 
-.menu-dropdown li .thirdlevel-menu li {}
-
-.menu-dropdown li .thirdlevel-menu li a {}
-
 
 /*mega-menu*/
 
@@ -887,7 +883,6 @@ ul.menu-list li .hot::after {
     visibility: visible;
 }
 
-.menu ul.menu-list li .mega-menu-area .mega-menu-part {}
 
 .menu ul.menu-list li .mega-menu-area .mega-menu-part .mega-menu-content {
     float: left;
@@ -938,7 +933,6 @@ ul.menu-list li .hot::after {
     margin: 0;
 }
 
-.menu ul.menu-list li .mega-menu-area .mega-menu-part .mega-menu-content ul li.special-collection {}
 
 .menu ul.menu-list li .mega-menu-area .mega-menu-part .mega-menu-content ul li a {
     color: #8e8e8e;
@@ -975,22 +969,10 @@ ul.menu-list li .hot::after {
 
 .menu ul.menu-list li .mega-menu-area .mega-menu-part .mega-menu-img img {}
 
-.my-account {}
-
-.my-account > a {}
-
-.currency {}
-
-.currency > a {}
-
 .currency .menu-right-dropdown {
     left: -60px;
     width: 120px;
 }
-
-.language {}
-
-.language > a {}
 
 .language .menu-right-dropdown {
     left: -30px;

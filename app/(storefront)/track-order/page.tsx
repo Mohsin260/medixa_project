@@ -312,6 +312,49 @@ export default function TrackOrderPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Print & PDF Actions */}
+                  <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16, flexWrap: 'wrap' }}>
+                    <a
+                      href={`/orders/${encodeURIComponent(order.orderNumber)}/invoice?print=1`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        background: '#ffffff',
+                        color: '#1f6b52',
+                        border: '1.5px solid #1f6b52',
+                        padding: '9px 16px',
+                        borderRadius: 8,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      🖨️ Print Order
+                    </a>
+                    <a
+                      href={`/api/orders/${encodeURIComponent(order.orderNumber)}/pdf`}
+                      download={`Medixa-Order-${order.orderNumber}.pdf`}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        background: '#1f6b52',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: '9px 16px',
+                        borderRadius: 8,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      📥 Download PDF
+                    </a>
+                  </div>
                 </div>
               )}
 
