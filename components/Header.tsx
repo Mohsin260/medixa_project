@@ -23,6 +23,7 @@ export default function Header() {
     email: string;
     role: string;
   } | null>(null);
+  const isStaff = currentUser?.role === 'ADMIN' || currentUser?.role === 'EDITOR';
 
   useEffect(() => {
     fetch('/api/user/me')
@@ -97,7 +98,7 @@ export default function Header() {
                   aria-label="Toggle navigation menu"
                   className="visible-xs visible-sm"
                   style={{
-                    background: '#1f6b52',
+                    background: '#052263',
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 6,
@@ -152,10 +153,10 @@ export default function Header() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 4,
-                        background: '#e8f4ef',
+                        background: '#e9edf5',
                         padding: '3px 8px 3px 4px',
                         borderRadius: 24,
-                        border: '1px solid #c8e3d6',
+                        border: '1px solid #cbd3e6',
                       }}
                       title={currentUser.name}
                     >
@@ -164,7 +165,7 @@ export default function Header() {
                           width: 26,
                           height: 26,
                           borderRadius: '50%',
-                          background: '#1f6b52',
+                          background: '#052263',
                           color: '#ffffff',
                           display: 'flex',
                           alignItems: 'center',
@@ -175,7 +176,7 @@ export default function Header() {
                       >
                         {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                       </div>
-                      <i className={`fa fa-angle-${accountOpen ? 'up' : 'down'}`} style={{ fontSize: 11, color: '#1f6b52' }} />
+                      <i className={`fa fa-angle-${accountOpen ? 'up' : 'down'}`} style={{ fontSize: 11, color: '#052263' }} />
                     </div>
                   ) : (
                     <span
@@ -207,16 +208,16 @@ export default function Header() {
                     >
                       {currentUser ? (
                         <div className="lrc-login" style={{ padding: '16px' }}>
-                          <div style={{ borderBottom: '1px solid #edf2ef', paddingBottom: 10, marginBottom: 12 }}>
-                            <div style={{ fontSize: 14, fontWeight: 800, color: '#173c35' }}>
+                          <div style={{ borderBottom: '1px solid #edf1f5', paddingBottom: 10, marginBottom: 12 }}>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: '#131b2e' }}>
                               {currentUser.name}
                             </div>
-                            <div style={{ fontSize: 11, color: '#7b8f87', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <div style={{ fontSize: 11, color: '#7b8998', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {currentUser.email}
                             </div>
-                            {currentUser.role === 'ADMIN' && (
+                            {isStaff && (
                               <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 4, marginTop: 4 }}>
-                                ADMINISTRATOR
+                                {currentUser.role === 'ADMIN' ? 'ADMINISTRATOR' : 'SHOP MANAGER'}
                               </span>
                             )}
                           </div>
@@ -230,7 +231,7 @@ export default function Header() {
                                 gap: 8,
                                 padding: '9px 12px',
                                 borderRadius: 6,
-                                background: '#1f6b52',
+                                background: '#052263',
                                 color: '#ffffff',
                                 fontSize: 12,
                                 fontWeight: 700,
@@ -249,9 +250,9 @@ export default function Header() {
                                 gap: 8,
                                 padding: '8px 12px',
                                 borderRadius: 6,
-                                background: '#fafcfb',
-                                color: '#446056',
-                                border: '1px solid #dbe5e0',
+                                background: '#fafcfd',
+                                color: '#43515f',
+                                border: '1px solid #dbe3ea',
                                 fontSize: 12,
                                 fontWeight: 600,
                                 textDecoration: 'none',
@@ -261,7 +262,7 @@ export default function Header() {
                               <span>Track Guest Order</span>
                             </a>
 
-                            {currentUser.role === 'ADMIN' && (
+                            {isStaff && (
                               <a
                                 href="/admin"
                                 style={{
@@ -320,7 +321,7 @@ export default function Header() {
                         <div className="lrc-login">
                           <h4 className="lrc-title">Customer Portal</h4>
                           <div style={{ padding: '10px 0' }}>
-                            <p style={{ fontSize: 12, color: '#688277', marginBottom: 14 }}>
+                            <p style={{ fontSize: 12, color: '#687786', marginBottom: 14 }}>
                               Sign in to manage your medical scrub orders and saved addresses.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -330,7 +331,7 @@ export default function Header() {
                                 style={{
                                   display: 'block',
                                   textAlign: 'center',
-                                  background: '#1f6b52',
+                                  background: '#052263',
                                   color: '#ffffff',
                                   padding: '9px 16px',
                                   borderRadius: 8,
@@ -346,8 +347,8 @@ export default function Header() {
                                 style={{
                                   display: 'block',
                                   textAlign: 'center',
-                                  background: '#f1f6f3',
-                                  color: '#1f6b52',
+                                  background: '#f1f5f8',
+                                  color: '#052263',
                                   padding: '9px 16px',
                                   borderRadius: 8,
                                   fontSize: 12,
@@ -362,9 +363,9 @@ export default function Header() {
                                 style={{
                                   display: 'block',
                                   textAlign: 'center',
-                                  background: '#fafcfb',
-                                  color: '#446056',
-                                  border: '1px solid #dbe5e0',
+                                  background: '#fafcfd',
+                                  color: '#43515f',
+                                  border: '1px solid #dbe3ea',
                                   padding: '8px 16px',
                                   borderRadius: 8,
                                   fontSize: 12,
@@ -454,7 +455,7 @@ export default function Header() {
                       justifyContent: 'center',
                       position: 'relative',
                       userSelect: 'none',
-                      color: '#1f6b52',
+                      color: '#052263',
                       padding: '4px',
                     }}
                     title={`Shopping Cart (${count} ${count === 1 ? 'item' : 'items'})`}
@@ -467,7 +468,7 @@ export default function Header() {
                           position: 'absolute',
                           top: -6,
                           right: -8,
-                          background: '#1f6b52',
+                          background: '#052263',
                           color: '#ffffff',
                           borderRadius: '50%',
                           minWidth: 16,
@@ -664,23 +665,18 @@ export default function Header() {
                         </div>
                       </div>
                     </li>
-                    {' '}
-                    <li>
+                    {/* <li>
                       <a href="/track-order">TRACK ORDER</a>
-                    </li>
-                    {' '}
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <a href="/size-guide">SIZE GUIDE</a>
-                    </li>
-                    {' '}
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <a href="/blog">JOURNAL</a>
-                    </li>
-                    {' '}
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <a href="/about">ABOUT</a>
-                    </li>
-                    {' '}
+                    </li> */}
                     <li>
                       <a href="/contact">CONTACT</a>
                     </li>
@@ -783,7 +779,7 @@ export default function Header() {
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(20, 61, 54, 0.65)',
+              background: 'rgba(19,27,46, 0.65)',
               backdropFilter: 'blur(3px)',
             }}
           />
@@ -810,8 +806,8 @@ export default function Header() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '16px 18px',
-                borderBottom: '1px solid #eef2f0',
-                background: '#fafcfb',
+                borderBottom: '1px solid #eef1f4',
+                background: '#fafcfd',
               }}
             >
               <a href="/" onClick={() => setMobileNavOpen(false)}>
@@ -823,8 +819,8 @@ export default function Header() {
                 onClick={() => setMobileNavOpen(false)}
                 aria-label="Close Menu"
                 style={{
-                  background: '#e8f4ef',
-                  color: '#173c35',
+                  background: '#e9edf5',
+                  color: '#131b2e',
                   border: 'none',
                   width: 34,
                   height: 34,
@@ -842,14 +838,14 @@ export default function Header() {
             </div>
 
             {/* Mobile Search */}
-            <div style={{ padding: '14px 18px', borderBottom: '1px solid #eef2f0' }}>
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid #eef1f4' }}>
               <form
                 onSubmit={(e) => {
                   setMobileNavOpen(false);
                   handleSearchSubmit(e);
                 }}
               >
-                <div style={{ display: 'flex', borderRadius: 8, border: '1px solid #dce5e0', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', borderRadius: 8, border: '1px solid #dbe4eb', overflow: 'hidden' }}>
                   <input
                     type="text"
                     value={searchQuery}
@@ -867,7 +863,7 @@ export default function Header() {
                     type="submit"
                     aria-label="Search"
                     style={{
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       border: 'none',
                       padding: '0 14px',
@@ -887,7 +883,7 @@ export default function Header() {
                   <a
                     href="/"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#131b2e', textDecoration: 'none' }}
                   >
                     🏠 Home
                   </a>
@@ -896,7 +892,7 @@ export default function Header() {
                   <a
                     href="/shop?category=Men"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#131b2e', textDecoration: 'none' }}
                   >
                     🩺 Men&apos;s Scrubs (Regal &amp; Forte)
                   </a>
@@ -905,7 +901,7 @@ export default function Header() {
                   <a
                     href="/shop?category=Women"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#131b2e', textDecoration: 'none' }}
                   >
                     👩‍⚕️ Women&apos;s Scrubs (Muse &amp; Rebel)
                   </a>
@@ -914,7 +910,7 @@ export default function Header() {
                   <a
                     href="/shop"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#173c35', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#131b2e', textDecoration: 'none' }}
                   >
                     ✨ All Collections
                   </a>
@@ -924,7 +920,7 @@ export default function Header() {
                   <a
                     href="/track-order"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#43515f', textDecoration: 'none' }}
                   >
                     📦 Track Your Order
                   </a>
@@ -933,7 +929,7 @@ export default function Header() {
                   <a
                     href="/size-guide"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#43515f', textDecoration: 'none' }}
                   >
                     📏 Size Guide &amp; Chart
                   </a>
@@ -942,7 +938,7 @@ export default function Header() {
                   <a
                     href="/blog"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#43515f', textDecoration: 'none' }}
                   >
                     📖 Clinical Journal
                   </a>
@@ -951,7 +947,7 @@ export default function Header() {
                   <a
                     href="/about"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#43515f', textDecoration: 'none' }}
                   >
                     🏢 About Medixa
                   </a>
@@ -960,7 +956,7 @@ export default function Header() {
                   <a
                     href="/contact"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#446056', textDecoration: 'none' }}
+                    style={{ display: 'block', padding: '8px 0', fontSize: 13, fontWeight: 600, color: '#43515f', textDecoration: 'none' }}
                   >
                     📞 Contact Us
                   </a>
@@ -984,10 +980,10 @@ export default function Header() {
                   <a
                     href="/cart"
                     onClick={() => setMobileNavOpen(false)}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#1f6b52', textDecoration: 'none' }}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', fontSize: 13, fontWeight: 700, color: '#052263', textDecoration: 'none' }}
                   >
                     <span>🛍️ My Cart</span>
-                    <span style={{ background: '#1f6b52', color: '#fff', borderRadius: 10, padding: '2px 8px', fontSize: 11 }}>
+                    <span style={{ background: '#052263', color: '#fff', borderRadius: 10, padding: '2px 8px', fontSize: 11 }}>
                       {count} {count === 1 ? 'item' : 'items'}
                     </span>
                   </a>
@@ -1001,7 +997,7 @@ export default function Header() {
                       padding: '10px 0',
                       fontSize: 13,
                       fontWeight: 700,
-                      color: currentUser ? '#1f6b52' : '#446056',
+                      color: currentUser ? '#052263' : '#43515f',
                       textDecoration: 'none',
                     }}
                   >
@@ -1012,7 +1008,7 @@ export default function Header() {
             </div>
 
             {/* Quick WhatsApp Support Bar */}
-            <div style={{ padding: '14px 18px', borderTop: '1px solid #eef2f0', background: '#fafcfb' }}>
+            <div style={{ padding: '14px 18px', borderTop: '1px solid #eef1f4', background: '#fafcfd' }}>
               <a
                 href="https://wa.me/923435114065"
                 target="_blank"

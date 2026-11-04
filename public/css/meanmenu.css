@@ -123,7 +123,7 @@ a.meanmenu-reveal {
 
 .mean-container .mean-nav ul li a:hover {
     background: #f8f8f8 none repeat scroll 0 0;
-    color: #00b0ff;
+    color: #052263;
 }
 
 .mean-container .mean-nav ul li a.mean-expand {
@@ -193,7 +193,7 @@ a.meanmenu-reveal {
 }
 
 .mean-nav li:hover::before {
-    border-left: 2px solid #00b0ff;
+    border-left: 2px solid #052263;
     content: "";
     height: 100%;
     left: 0;

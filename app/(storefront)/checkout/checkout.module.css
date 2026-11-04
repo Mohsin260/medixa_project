@@ -54,9 +54,9 @@
 }
 
 .cartLink:hover {
-  color: #1f6b52;
-  border-color: #1f6b52;
-  background: #f0f7f4;
+  color: #052263;
+  border-color: #052263;
+  background: #eef1f8;
 }
 
 /* Mobile Order Summary Toggle Bar */
@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1f6b52;
+  color: #052263;
   font-weight: 600;
 }
 
@@ -154,7 +154,7 @@
 
 .signinLink {
   font-size: 13px;
-  color: #1f6b52;
+  color: #052263;
   text-decoration: none;
   font-weight: 600;
 }
@@ -205,8 +205,8 @@
 .inputField:focus,
 .selectField:focus,
 .textareaField:focus {
-  border-color: #1f6b52;
-  box-shadow: 0 0 0 3px rgba(31, 107, 82, 0.15);
+  border-color: #052263;
+  box-shadow: 0 0 0 3px rgba(5, 34, 99, 0.15);
 }
 
 .inputField::placeholder,
@@ -234,7 +234,7 @@
   margin-top: 2px;
   width: 16px;
   height: 16px;
-  accent-color: #1f6b52;
+  accent-color: #052263;
   cursor: pointer;
 }
 
@@ -258,8 +258,8 @@
   align-items: center;
   padding: 14px 16px;
   cursor: pointer;
-  background: #f0f7f4;
-  border-left: 3px solid #1f6b52;
+  background: #eef1f8;
+  border-left: 3px solid #052263;
 }
 
 .shippingRadioGroup {
@@ -283,7 +283,7 @@
 .shippingPrice {
   font-size: 14px;
   font-weight: 700;
-  color: #1f6b52;
+  color: #052263;
 }
 
 /* Payment Methods Accordion */
@@ -314,7 +314,7 @@
 }
 
 .paymentHeaderSelected {
-  background-color: #f0f7f4;
+  background-color: #eef1f8;
 }
 
 .paymentLabelWrap {
@@ -326,7 +326,7 @@
 .paymentRadio {
   width: 17px;
   height: 17px;
-  accent-color: #1f6b52;
+  accent-color: #052263;
   cursor: pointer;
 }
 
@@ -343,7 +343,7 @@
 }
 
 .paymentCollapse {
-  background: #fafcfb;
+  background: #fafcfd;
   border-top: 1px solid #e5e7eb;
   padding: 18px 20px;
   font-size: 13px;
@@ -354,8 +354,8 @@
 /* Bank Details Card (Exact Medixa info) */
 .bankNoticeCard {
   background: #ffffff;
-  border: 1px solid #d1e5dd;
-  border-left: 4px solid #1f6b52;
+  border: 1px solid #d2e5ef;
+  border-left: 4px solid #052263;
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 12px;
@@ -396,8 +396,8 @@
 
 .btnSecondarySmall {
   background: #ffffff;
-  border: 1px solid #1f6b52;
-  color: #1f6b52;
+  border: 1px solid #052263;
+  color: #052263;
   padding: 6px 12px;
   border-radius: 5px;
   font-size: 12px;
@@ -410,7 +410,7 @@
 }
 
 .btnSecondarySmall:hover {
-  background: #f0f7f4;
+  background: #eef1f8;
 }
 
 /* Billing Address Group */
@@ -436,7 +436,7 @@
 }
 
 .billingOptionActive {
-  background: #f0f7f4;
+  background: #eef1f8;
 }
 
 .billingCollapse {
@@ -452,7 +452,7 @@
 
 .completeOrderBtn {
   width: 100%;
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
   border: none;
   padding: 16px 24px;
@@ -466,11 +466,11 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 14px rgba(31, 107, 82, 0.2);
+  box-shadow: 0 4px 14px rgba(5, 34, 99, 0.2);
 }
 
 .completeOrderBtn:hover:not(:disabled) {
-  background: #175340;
+  background: #031849;
 }
 
 .completeOrderBtn:disabled {
@@ -518,7 +518,7 @@
 }
 
 .footerPolicies a:hover {
-  color: #1f6b52;
+  color: #052263;
   text-decoration: underline;
 }
 
@@ -674,8 +674,8 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #e6f4ef;
-  color: #1f6b52;
+  background: #e9ecf4;
+  color: #052263;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -693,7 +693,7 @@
 .successReference {
   font-size: 15px;
   font-weight: 700;
-  color: #1f6b52;
+  color: #052263;
   margin: 0 0 16px;
 }
 
@@ -719,7 +719,7 @@
 .accountCreationBox {
   background: #ffffff;
   border: 1px solid #bbf7d0;
-  box-shadow: 0 4px 12px rgba(31, 107, 82, 0.08);
+  box-shadow: 0 4px 12px rgba(5, 34, 99, 0.08);
   border-radius: 12px;
   padding: 22px 24px;
   margin: 0 auto 28px;
@@ -739,7 +739,7 @@
   height: 38px;
   border-radius: 50%;
   background: #ecfdf5;
-  color: #1f6b52;
+  color: #052263;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -792,12 +792,12 @@
 }
 
 .accountPasswordInput:focus {
-  border-color: #1f6b52;
-  box-shadow: 0 0 0 3px rgba(31, 107, 82, 0.12);
+  border-color: #052263;
+  box-shadow: 0 0 0 3px rgba(5, 34, 99, 0.12);
 }
 
 .accountSubmitBtn {
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -810,7 +810,7 @@
 }
 
 .accountSubmitBtn:hover:not(:disabled) {
-  background: #175440;
+  background: #031849;
 }
 
 .accountSubmitBtn:disabled {

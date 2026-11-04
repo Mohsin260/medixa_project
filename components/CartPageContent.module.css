@@ -1,7 +1,7 @@
 .page {
   min-height: 60vh;
   padding: 30px 0 80px;
-  background: #f6f7f6;
+  background: #f6f7f9;
   color: #232530;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: normal;
@@ -13,7 +13,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 26px;
-  color: #8a9b94;
+  color: #8995a1;
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
@@ -21,12 +21,12 @@
 }
 
 .breadcrumb a {
-  color: #48665d;
+  color: #48616f;
   text-decoration: none;
 }
 
 .breadcrumb a:hover {
-  color: #1f6b52;
+  color: #052263;
   text-decoration: none;
 }
 
@@ -41,11 +41,11 @@
   max-width: 620px;
   margin: 48px auto 20px;
   padding: 64px 30px;
-  border: 1px solid #e6ebe8;
+  border: 1px solid #e7ecf0;
   border-radius: 24px;
   background: #ffffff;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(20, 61, 54, 0.06);
+  box-shadow: 0 20px 50px rgba(19,27,46, 0.06);
 }
 
 .emptyIcon {
@@ -56,14 +56,14 @@
   height: 74px;
   margin-bottom: 20px;
   border-radius: 50%;
-  background: #eaf5ef;
-  color: #1f6b52;
+  background: #e9ecf4;
+  color: #052263;
   font-size: 28px;
 }
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #2d7d60;
+  color: #041d52;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -73,7 +73,7 @@
 
 .emptyTitle {
   margin: 0;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(26px, 4vw, 34px);
   font-weight: 600;
@@ -84,7 +84,7 @@
 .emptyText {
   max-width: 420px;
   margin: 12px 0 24px;
-  color: #6f817a;
+  color: #6e7d8c;
   font-family: 'Raleway', sans-serif;
   font-size: 13.5px;
   line-height: 1.75;
@@ -110,8 +110,8 @@
 
 .primaryButton,
 .checkoutButton {
-  border: 1.5px solid #143d36;
-  background: #143d36;
+  border: 1.5px solid #131b2e;
+  background: #131b2e;
   color: #ffffff;
 }
 
@@ -119,8 +119,8 @@
 .primaryButton:focus-visible,
 .checkoutButton:hover,
 .checkoutButton:focus-visible {
-  border-color: #1f6b52;
-  background: #1f6b52;
+  border-color: #052263;
+  background: #052263;
   color: #ffffff;
   text-decoration: none;
   outline: none;
@@ -128,16 +128,16 @@
 
 .secondaryButton {
   margin-top: 10px;
-  border: 1.5px solid #cfdcd6;
+  border: 1.5px solid #d0dde5;
   background: #ffffff;
-  color: #274940;
+  color: #263145;
 }
 
 .secondaryButton:hover,
 .secondaryButton:focus-visible {
-  border-color: #93bfa9;
-  background: #f4faf7;
-  color: #1f6b52;
+  border-color: #94a6c9;
+  background: #f4f9fc;
+  color: #052263;
   text-decoration: none;
   outline: none;
 }
@@ -153,7 +153,7 @@
 
 .title {
   margin: 0;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(28px, 3.4vw, 38px);
   font-weight: 600;
@@ -163,7 +163,7 @@
 
 .subtitle {
   margin: 8px 0 0;
-  color: #7b8c85;
+  color: #7b8997;
   font-family: 'Raleway', sans-serif;
   font-size: 13px;
   letter-spacing: 0;
@@ -173,7 +173,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #8a9b94;
+  color: #8995a1;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -208,7 +208,7 @@
   gap: 18px;
   align-items: center;
   padding: 16px;
-  border: 1px solid #e6ebe8;
+  border: 1px solid #e7ecf0;
   border-radius: 18px;
   background: #ffffff;
 }
@@ -218,7 +218,7 @@
   overflow: hidden;
   aspect-ratio: 3 / 4;
   border-radius: 12px;
-  background: #eef1ee;
+  background: #eef1f4;
 }
 
 .itemImage img {
@@ -240,7 +240,7 @@
 
 .itemMeta {
   display: block;
-  color: #8a9b94;
+  color: #8995a1;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -250,7 +250,7 @@
 .itemName {
   display: inline-block;
   margin: 5px 0 2px;
-  color: #274940;
+  color: #263145;
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   font-weight: 600;
@@ -259,13 +259,13 @@
 }
 
 .itemName:hover {
-  color: #1f6b52;
+  color: #052263;
   text-decoration: none;
 }
 
 .itemPrice {
   display: block;
-  color: #7b8c85;
+  color: #7b8997;
   font-size: 12px;
   font-weight: 500;
 }
@@ -282,7 +282,7 @@
   display: inline-flex;
   align-items: center;
   overflow: hidden;
-  border: 1.5px solid #dfe7e3;
+  border: 1.5px solid #dde5ec;
   border-radius: 9px;
   background: #ffffff;
 }
@@ -293,26 +293,26 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #274940;
+  color: #263145;
   font-size: 10px;
   cursor: pointer;
 }
 
 .quantity button:hover:not(:disabled),
 .quantity button:focus-visible {
-  background: #eef6f1;
+  background: #eef1f8;
   outline: none;
 }
 
 .quantity button:disabled {
-  color: #bcc7c2;
+  color: #bbc4ce;
   cursor: not-allowed;
 }
 
 .quantity span {
   min-width: 38px;
   text-align: center;
-  color: #173c35;
+  color: #131b2e;
   font-size: 12px;
   font-weight: 600;
 }
@@ -343,7 +343,7 @@
 .lineTotal {
   align-self: start;
   padding-top: 4px;
-  color: #173c35;
+  color: #131b2e;
   font-size: 15px;
   font-weight: 700;
   white-space: nowrap;
@@ -355,7 +355,7 @@
   gap: 8px;
   align-self: flex-start;
   margin-top: 6px;
-  color: #1f6b52;
+  color: #052263;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -364,7 +364,7 @@
 }
 
 .continueLink:hover {
-  color: #143d36;
+  color: #131b2e;
   text-decoration: none;
 }
 
@@ -372,15 +372,15 @@
   position: sticky;
   top: 20px;
   padding: 24px;
-  border: 1px solid #e6ebe8;
+  border: 1px solid #e7ecf0;
   border-radius: 18px;
   background: #ffffff;
-  box-shadow: 0 18px 40px rgba(20, 61, 54, 0.06);
+  box-shadow: 0 18px 40px rgba(19,27,46, 0.06);
 }
 
 .summaryTitle {
   margin: 0 0 18px;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: 17px;
   font-weight: 600;
@@ -392,7 +392,7 @@
   flex-direction: column;
   gap: 12px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #e9eeeb;
+  border-bottom: 1px solid #e9edf1;
 }
 
 .summaryRow,
@@ -401,7 +401,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  color: #6f817a;
+  color: #6e7d8c;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -412,8 +412,8 @@
 
 .totalRow {
   padding-top: 14px;
-  border-top: 1px solid #e9eeeb;
-  color: #173c35;
+  border-top: 1px solid #e9edf1;
+  color: #131b2e;
   font-size: 16px;
   font-weight: 700;
 }

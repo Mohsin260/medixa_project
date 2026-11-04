@@ -40,14 +40,14 @@ export default function FavouritePage() {
       <Header />
 
       {/* Breadcrumb Header */}
-      <div style={{ background: '#f5faf7', padding: '36px 0', borderBottom: '1px solid #e2ece7' }}>
+      <div style={{ background: '#f5f6fa', padding: '36px 0', borderBottom: '1px solid #e4e7ef' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Medixa Wardrobe
               </span>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#173c35', margin: '4px 0 0' }}>
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#131b2e', margin: '4px 0 0' }}>
                 My Favourites ({favouriteProducts.length})
               </h1>
               <p style={{ margin: '6px 0 0', fontSize: 13, color: '#64748b' }}>
@@ -65,9 +65,9 @@ export default function FavouritePage() {
               style={{
                 textAlign: 'center',
                 padding: '60px 20px',
-                background: '#f8faf9',
+                background: '#f8fafc',
                 borderRadius: 16,
-                border: '1px dashed #cce4d8',
+                border: '1px dashed #cce3f0',
                 maxWidth: 600,
                 margin: '0 auto',
               }}
@@ -77,8 +77,8 @@ export default function FavouritePage() {
                   width: 64,
                   height: 64,
                   borderRadius: '50%',
-                  background: '#e8f4ef',
-                  color: '#1f6b52',
+                  background: '#e9edf5',
+                  color: '#052263',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -88,7 +88,7 @@ export default function FavouritePage() {
               >
                 ❤️
               </div>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#173c35', margin: '0 0 8px' }}>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#131b2e', margin: '0 0 8px' }}>
                 Your Favourites List is Empty
               </h2>
               <p style={{ fontSize: 13, color: '#64748b', maxWidth: 420, margin: '0 auto 24px', lineHeight: 1.6 }}>
@@ -98,14 +98,14 @@ export default function FavouritePage() {
                 href="/shop"
                 style={{
                   display: 'inline-block',
-                  background: '#1f6b52',
+                  background: '#052263',
                   color: '#ffffff',
                   padding: '12px 28px',
                   borderRadius: 8,
                   fontSize: 13,
                   fontWeight: 700,
                   textDecoration: 'none',
-                  boxShadow: '0 4px 12px rgba(31,107,82,0.25)',
+                  boxShadow: '0 4px 12px rgba(5, 34, 99,0.25)',
                 }}
               >
                 Explore Medixa Scrub Suits →
@@ -120,7 +120,7 @@ export default function FavouritePage() {
                   alignItems: 'center',
                   marginBottom: 24,
                   paddingBottom: 16,
-                  borderBottom: '1px solid #eef2f0',
+                  borderBottom: '1px solid #eef1f4',
                 }}
               >
                 <span style={{ fontSize: 13, color: '#64748b' }}>
@@ -150,7 +150,7 @@ export default function FavouritePage() {
                       <div
                         style={{
                           background: '#ffffff',
-                          border: '1px solid #e2ece7',
+                          border: '1px solid #e4e7ef',
                           borderRadius: 12,
                           overflow: 'hidden',
                           display: 'flex',
@@ -161,7 +161,7 @@ export default function FavouritePage() {
                         }}
                       >
                         {/* Image Container */}
-                        <div style={{ position: 'relative', background: '#f8faf9', height: 260, overflow: 'hidden' }}>
+                        <div style={{ position: 'relative', background: '#f8fafc', height: 260, overflow: 'hidden' }}>
                           <Link href={`/products/${product.slug}`} style={{ display: 'block', height: '100%' }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -207,7 +207,7 @@ export default function FavouritePage() {
                                 position: 'absolute',
                                 top: 10,
                                 left: 10,
-                                background: '#1f6b52',
+                                background: '#052263',
                                 color: '#ffffff',
                                 padding: '3px 8px',
                                 borderRadius: 4,
@@ -222,17 +222,17 @@ export default function FavouritePage() {
 
                         {/* Content */}
                         <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             {product.collection}
                           </span>
-                          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#173c35', margin: '4px 0 8px' }}>
+                          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#131b2e', margin: '4px 0 8px' }}>
                             <Link href={`/products/${product.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                               {product.title}
                             </Link>
                           </h3>
 
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
-                            <span style={{ fontSize: 16, fontWeight: 700, color: '#173c35' }}>
+                            <span style={{ fontSize: 16, fontWeight: 700, color: '#131b2e' }}>
                               {formatPrice(product.price)}
                             </span>
                             {product.compareAt > product.price && (
@@ -253,7 +253,7 @@ export default function FavouritePage() {
                               onClick={() => handleAddToCart(product)}
                               style={{
                                 flex: 1,
-                                background: isAdded ? '#15803d' : '#1f6b52',
+                                background: isAdded ? '#15803d' : '#052263',
                                 color: '#ffffff',
                                 border: 'none',
                                 borderRadius: 6,
@@ -269,8 +269,8 @@ export default function FavouritePage() {
                             <Link
                               href={`/products/${product.slug}`}
                               style={{
-                                background: '#f8faf9',
-                                color: '#173c35',
+                                background: '#f8fafc',
+                                color: '#131b2e',
                                 border: '1px solid #dceed6',
                                 borderRadius: 6,
                                 padding: '10px 12px',

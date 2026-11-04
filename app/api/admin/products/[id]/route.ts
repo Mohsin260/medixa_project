@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/auth/require-admin';
+import { requireAdmin, requireStaff } from '@/lib/auth/require-admin';
 import { db } from '@/lib/db';
 import { ProductStatus } from '@/generated/prisma/client';
 
@@ -7,7 +7,7 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }
@@ -40,7 +40,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }

@@ -377,7 +377,7 @@ export default function CheckoutPage() {
 
           <div className={styles.successCard}>
             <span style={{ fontSize: 14, color: '#4b5563' }}>Payment Total</span>
-            <strong style={{ fontSize: 18, color: '#1f6b52' }}>
+            <strong style={{ fontSize: 18, color: '#052263' }}>
               Rs {placedTotal.toLocaleString('en-PK')}
             </strong>
           </div>
@@ -752,7 +752,7 @@ export default function CheckoutPage() {
                   {paymentMethod === 'BANK_DEPOSIT' && (
                     <div className={styles.paymentCollapse}>
                       <div className={styles.bankNoticeCard}>
-                        <div style={{ fontWeight: 700, color: '#1f6b52', marginBottom: 10 }}>
+                        <div style={{ fontWeight: 700, color: '#052263', marginBottom: 10 }}>
                           Payment Information:
                         </div>
                         <div className={styles.bankRow}>
@@ -771,7 +771,7 @@ export default function CheckoutPage() {
                         <p className={styles.bankNoticeText}>
                           After making the payment, kindly send the payment slip on WhatsApp:
                           <br />
-                          <strong style={{ color: '#1f6b52' }}>+92 343 5114065</strong>
+                          <strong style={{ color: '#052263' }}>+92 343 5114065</strong>
                         </p>
 
                         <div className={styles.bankActionButtons}>
@@ -870,7 +870,7 @@ export default function CheckoutPage() {
                     <div className={styles.paymentCollapse}>
                       <p style={{ margin: '0 0 8px' }}>
                         Please transfer to JazzCash Account:{' '}
-                        <strong style={{ color: '#1f6b52' }}>0343 5114065</strong> (Title:{' '}
+                        <strong style={{ color: '#052263' }}>0343 5114065</strong> (Title:{' '}
                         <strong>Medixa Essentials</strong>).
                       </p>
                       <p style={{ margin: 0, fontSize: 12, color: '#6b7280' }}>
@@ -1126,7 +1126,7 @@ export default function CheckoutPage() {
 
             <div className={styles.calcRow}>
               <span>Shipping</span>
-              <span style={{ fontWeight: 600, color: deliveryFee === 0 ? '#1f6b52' : '#111827' }}>
+              <span style={{ fontWeight: 600, color: deliveryFee === 0 ? '#052263' : '#111827' }}>
                 {deliveryFee === 0 ? 'Free' : `Rs ${deliveryFee.toLocaleString('en-PK')}`}
               </span>
             </div>

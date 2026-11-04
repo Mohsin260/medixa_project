@@ -78,13 +78,13 @@ export default async function OrderInvoicePage({ params }: Props) {
           }}
         >
           {/* Header Banner */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #1f6b52', paddingBottom: 20, marginBottom: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #052263', paddingBottom: 20, marginBottom: 24 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 26, fontWeight: 900, color: '#1f6b52', letterSpacing: '0.5px' }}>
+                <span style={{ fontSize: 26, fontWeight: 900, color: '#052263', letterSpacing: '0.5px' }}>
                   MEDIXA
                 </span>
-                <span style={{ background: '#eaf4f0', color: '#1f6b52', padding: '3px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700 }}>
+                <span style={{ background: '#e9ecf4', color: '#052263', padding: '3px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700 }}>
                   SCRUBS PAKISTAN
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default async function OrderInvoicePage({ params }: Props) {
               <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#1a202c', letterSpacing: '-0.3px' }}>
                 OFFICIAL INVOICE
               </h1>
-              <p style={{ margin: '4px 0 0 0', fontSize: 14, fontWeight: 700, color: '#1f6b52' }}>
+              <p style={{ margin: '4px 0 0 0', fontSize: 14, fontWeight: 700, color: '#052263' }}>
                 {order.orderNumber}
               </p>
               <p style={{ margin: '2px 0 0 0', fontSize: 12, color: '#718096' }}>
@@ -144,7 +144,7 @@ export default async function OrderInvoicePage({ params }: Props) {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: '#718096' }}>Fulfillment:</span>
-                  <strong style={{ color: '#1f6b52' }}>{order.status}</strong>
+                  <strong style={{ color: '#052263' }}>{order.status}</strong>
                 </div>
                 {order.notes ? (
                   <div style={{ marginTop: 4, borderTop: '1px dashed #e2e8f0', paddingTop: 4 }}>
@@ -158,7 +158,7 @@ export default async function OrderInvoicePage({ params }: Props) {
           {/* Items Table */}
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 24, fontSize: 13 }}>
             <thead>
-              <tr style={{ background: '#1f6b52', color: '#ffffff', textAlign: 'left' }}>
+              <tr style={{ background: '#052263', color: '#ffffff', textAlign: 'left' }}>
                 <th style={{ padding: '10px 14px', borderRadius: '6px 0 0 6px', fontWeight: 700 }}>Item</th>
                 <th style={{ padding: '10px 14px', fontWeight: 700 }}>Variant</th>
                 <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700 }}>Qty</th>
@@ -208,12 +208,12 @@ export default async function OrderInvoicePage({ params }: Props) {
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  borderTop: '2px solid #1f6b52',
+                  borderTop: '2px solid #052263',
                   paddingTop: 8,
                   marginTop: 4,
                   fontSize: 16,
                   fontWeight: 800,
-                  color: '#1f6b52',
+                  color: '#052263',
                 }}
               >
                 <span>Grand Total:</span>

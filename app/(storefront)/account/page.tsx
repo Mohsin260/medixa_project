@@ -107,8 +107,8 @@ export default function CustomerAccountPage() {
       bg = '#e0f2fe';
       text = '#0369a1';
     } else if (s === 'CONFIRMED' || s === 'PROCESSING') {
-      bg = '#e6f4ef';
-      text = '#1f6b52';
+      bg = '#e9ecf4';
+      text = '#052263';
     } else if (s === 'CANCELLED') {
       bg = '#fee2e2';
       text = '#b91c1c';
@@ -137,11 +137,11 @@ export default function CustomerAccountPage() {
     <>
       <Header />
 
-      <main style={{ background: '#f8faf9', minHeight: '80vh', padding: '40px 16px 80px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <main style={{ background: '#f8fafc', minHeight: '80vh', padding: '40px 16px 80px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '80px 20px', color: '#6b7280' }}>
-              <i className="fa fa-spinner fa-spin fa-2x" style={{ color: '#1f6b52', marginBottom: 12 }} />
+              <i className="fa fa-spinner fa-spin fa-2x" style={{ color: '#052263', marginBottom: 12 }} />
               <p>Loading your Medixa account…</p>
             </div>
           ) : !user ? (
@@ -163,8 +163,8 @@ export default function CustomerAccountPage() {
                   width: 60,
                   height: 60,
                   borderRadius: '50%',
-                  background: '#e6f4ef',
-                  color: '#1f6b52',
+                  background: '#e9ecf4',
+                  color: '#052263',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -185,7 +185,7 @@ export default function CustomerAccountPage() {
                 <Link
                   href="/auth/sign-in?redirectTo=/account"
                   style={{
-                    background: '#1f6b52',
+                    background: '#052263',
                     color: '#ffffff',
                     padding: '13px 20px',
                     borderRadius: 8,
@@ -215,7 +215,7 @@ export default function CustomerAccountPage() {
 
               <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid #f3f4f6', fontSize: 13, color: '#6b7280' }}>
                 Have an order reference but no account?{' '}
-                <Link href="/track-order" style={{ color: '#1f6b52', fontWeight: 600 }}>
+                <Link href="/track-order" style={{ color: '#052263', fontWeight: 600 }}>
                   Track Guest Order →
                 </Link>
               </div>
@@ -246,14 +246,14 @@ export default function CustomerAccountPage() {
                       width: 56,
                       height: 56,
                       borderRadius: '50%',
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: 22,
                       fontWeight: 800,
-                      boxShadow: '0 2px 8px rgba(31, 107, 82, 0.3)',
+                      boxShadow: '0 2px 8px rgba(5, 34, 99, 0.3)',
                     }}
                   >
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
@@ -268,7 +268,7 @@ export default function CustomerAccountPage() {
                           ADMIN
                         </span>
                       ) : (
-                        <span style={{ background: '#e6f4ef', color: '#1f6b52', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
+                        <span style={{ background: '#e9ecf4', color: '#052263', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
                           VERIFIED CUSTOMER
                         </span>
                       )}
@@ -328,10 +328,10 @@ export default function CustomerAccountPage() {
                   type="button"
                   onClick={() => setActiveTab('orders')}
                   style={{
-                    background: activeTab === 'orders' ? '#1f6b52' : '#ffffff',
+                    background: activeTab === 'orders' ? '#052263' : '#ffffff',
                     color: activeTab === 'orders' ? '#ffffff' : '#374151',
                     border: '1px solid',
-                    borderColor: activeTab === 'orders' ? '#1f6b52' : '#e5e7eb',
+                    borderColor: activeTab === 'orders' ? '#052263' : '#e5e7eb',
                     padding: '10px 20px',
                     borderRadius: 8,
                     fontSize: 14,
@@ -389,7 +389,7 @@ export default function CustomerAccountPage() {
                       <Link
                         href="/"
                         style={{
-                          background: '#1f6b52',
+                          background: '#052263',
                           color: '#ffffff',
                           padding: '11px 22px',
                           borderRadius: 8,
@@ -450,7 +450,7 @@ export default function CustomerAccountPage() {
                               <span style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase' }}>
                                 Total Amount
                               </span>
-                              <div style={{ fontSize: 18, fontWeight: 800, color: '#1f6b52' }}>
+                              <div style={{ fontSize: 18, fontWeight: 800, color: '#052263' }}>
                                 Rs {order.total.toLocaleString('en-PK')}
                               </div>
                               <span style={{ fontSize: 11, color: '#6b7280' }}>
@@ -532,7 +532,7 @@ export default function CustomerAccountPage() {
                               <Link
                                 href={`/track-order?q=${encodeURIComponent(order.orderNumber)}`}
                                 style={{
-                                  background: '#1f6b52',
+                                  background: '#052263',
                                   color: '#ffffff',
                                   padding: '7px 14px',
                                   borderRadius: 6,

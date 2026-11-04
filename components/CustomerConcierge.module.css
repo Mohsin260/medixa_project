@@ -2,10 +2,10 @@
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(31, 107, 82, 0.25), 0 10px 25px -5px rgba(23, 60, 53, 0.3);
+    box-shadow: 0 0 15px rgba(5, 34, 99, 0.25), 0 10px 25px -5px rgba(19,27,46, 0.3);
   }
   50% {
-    box-shadow: 0 0 25px rgba(31, 107, 82, 0.5), 0 14px 30px -5px rgba(23, 60, 53, 0.45);
+    box-shadow: 0 0 25px rgba(5, 34, 99, 0.5), 0 14px 30px -5px rgba(19,27,46, 0.45);
   }
 }
 
@@ -62,7 +62,7 @@
   align-items: center;
   gap: 12px;
   background: rgba(255, 255, 255, 0.96);
-  border: 1.5px solid rgba(31, 107, 82, 0.28);
+  border: 1.5px solid rgba(5, 34, 99, 0.28);
   border-radius: 9999px;
   padding: 6px 18px 6px 6px;
   cursor: pointer;
@@ -75,7 +75,7 @@
 }
 
 .capsuleButton:hover {
-  border-color: rgba(31, 107, 82, 0.6);
+  border-color: rgba(5, 34, 99, 0.6);
   background: #ffffff;
 }
 
@@ -84,7 +84,7 @@
   position: absolute;
   inset: -2px;
   border-radius: 9999px;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(31, 107, 82, 0.6) 90%, #4ade80 100%);
+  background: conic-gradient(from 0deg, transparent 70%, rgba(5, 34, 99, 0.6) 90%, #6f8fc9 100%);
   z-index: -1;
   opacity: 0.45;
   pointer-events: none;
@@ -98,13 +98,13 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1f6b52 0%, #173c35 50%, #0d9488 100%);
+  background: linear-gradient(135deg, #052263 0%, #131b2e 50%, #052263 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(23, 60, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(19,27,46, 0.3);
   position: relative;
 }
 
@@ -135,7 +135,7 @@
 .mainTitle {
   font-size: 13px;
   font-weight: 700;
-  color: #173c35;
+  color: #131b2e;
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
@@ -146,8 +146,8 @@
 .agentBadge {
   font-size: 10px;
   font-weight: 600;
-  background: #e8f4ef;
-  color: #1f6b52;
+  background: #e9edf5;
+  color: #052263;
   padding: 1px 6px;
   border-radius: 12px;
   letter-spacing: 0.02em;
@@ -171,7 +171,7 @@
   max-height: calc(100vh - 80px);
   background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(31, 107, 82, 0.15);
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(5, 34, 99, 0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -181,7 +181,7 @@
 
 /* Chat Header */
 .chatHeader {
-  background: linear-gradient(135deg, #1f6b52 0%, #173c35 100%);
+  background: linear-gradient(135deg, #052263 0%, #131b2e 100%);
   color: #ffffff;
   padding: 16px 18px;
   display: flex;
@@ -224,7 +224,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4ade80;
+  background: #6f8fc9;
 }
 
 .headerStatusText {
@@ -254,7 +254,7 @@
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: #f8faf9;
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -284,7 +284,7 @@
 }
 
 .userBubble {
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
   border-bottom-right-radius: 4px;
 }
@@ -293,14 +293,14 @@
   background: #ffffff;
   color: #1f2937;
   border-bottom-left-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 1px #eef3f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 1px #eef3f7;
 }
 
 /* Product Card inside Bot response */
 .productRec {
   margin-top: 8px;
   background: #ffffff;
-  border: 1px solid #e2ece7;
+  border: 1px solid #e4e7ef;
   border-radius: 12px;
   overflow: hidden;
   width: 100%;
@@ -312,7 +312,7 @@
   width: 100%;
   height: 120px;
   object-fit: cover;
-  background: #f1f5f3;
+  background: #f1f4f7;
 }
 
 .productRecBody {
@@ -322,7 +322,7 @@
 .productRecCategory {
   font-size: 10px;
   text-transform: uppercase;
-  color: #1f6b52;
+  color: #052263;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -336,14 +336,14 @@
 
 .productRecPrice {
   font-size: 12px;
-  color: #173c35;
+  color: #131b2e;
   font-weight: 700;
 }
 
 .productRecLink {
   display: block;
   text-align: center;
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
@@ -363,8 +363,8 @@
 
 .actionChip {
   background: #ffffff;
-  color: #1f6b52;
-  border: 1px solid #1f6b52;
+  color: #052263;
+  border: 1px solid #052263;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 11px;
@@ -378,25 +378,25 @@
 }
 
 .actionChip:hover {
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
 }
 
 .actionChipFilled {
-  background: #e8f4ef;
-  color: #173c35;
-  border: 1px solid #cce4d8;
+  background: #e9edf5;
+  color: #131b2e;
+  border: 1px solid #cce3f0;
 }
 
 .actionChipFilled:hover {
-  background: #173c35;
+  background: #131b2e;
   color: #ffffff;
 }
 
 /* Quick Bar */
 .quickBar {
   padding: 8px 14px;
-  background: #eef8f3;
+  background: #eef1f8;
   border-top: 1px solid #dceed6;
   display: flex;
   align-items: center;
@@ -405,7 +405,7 @@
 }
 
 .quickBar a {
-  color: #1f6b52;
+  color: #052263;
   font-weight: 700;
   text-decoration: none;
 }
@@ -414,7 +414,7 @@
 .inputForm {
   padding: 10px 14px;
   background: #ffffff;
-  border-top: 1px solid #eef2f0;
+  border-top: 1px solid #eef1f4;
   display: flex;
   gap: 8px;
 }
@@ -430,11 +430,11 @@
 }
 
 .textInput:focus {
-  border-color: #1f6b52;
+  border-color: #052263;
 }
 
 .sendButton {
-  background: #1f6b52;
+  background: #052263;
   color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -449,7 +449,7 @@
 }
 
 .sendButton:hover {
-  background: #173c35;
+  background: #131b2e;
 }
 
 /* Mobile responsive */

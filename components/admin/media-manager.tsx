@@ -6,8 +6,6 @@ import {
   CircleAlert,
   Copy,
   ExternalLink,
-  Eye,
-  FileText,
   Grid,
   Image as ImageIcon,
   List,
@@ -17,10 +15,10 @@ import {
   Search,
   Trash2,
   UploadCloud,
-  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AdminFullPage } from '@/components/admin/admin-full-page';
 
 export interface AdminMedia {
   id: string;
@@ -32,7 +30,15 @@ export interface AdminMedia {
   createdAt: string;
 }
 
-export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void }) {
+export function MediaManager({
+  onNotify,
+  canDelete = true,
+  onToggleSidebar,
+}: {
+  onNotify?: (msg: string) => void;
+  canDelete?: boolean;
+  onToggleSidebar?: () => void;
+}) {
   const [mediaList, setMediaList] = useState<AdminMedia[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +131,10 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
   }
 
   async function handleDelete(item: AdminMedia) {
+    if (!canDelete) {
+      onNotify?.('Only administrators can delete media assets.');
+      return;
+    }
     if (!window.confirm(`Delete "${item.filename}"?`)) return;
 
     try {
@@ -145,24 +155,71 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
     setTimeout(() => setCopiedId(null), 2000);
   }
 
+  if (previewMedia) {
+    return (
+      <AdminFullPage
+        title={previewMedia.filename}
+        subtitle="Media asset preview"
+        icon={<ImageIcon size={20} />}
+        onClose={() => setPreviewMedia(null)}
+        onToggleSidebar={onToggleSidebar}
+        backLabel="Back to media"
+      >
+        <div className="overflow-hidden rounded-2xl border border-[#dde5ec] bg-white shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+          <div className="flex items-center justify-center bg-[#0f1728] p-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewMedia.url}
+              alt={previewMedia.filename}
+              className="max-h-[60vh] object-contain"
+            />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#edf1f5] p-4 text-xs">
+            <div className="min-w-0 max-w-full truncate font-mono text-[11px] text-[#7c8996]">
+              {previewMedia.key}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => window.open(previewMedia.url, '_blank', 'noopener,noreferrer')}
+                className="border-[#dde5ec] text-[#556572]"
+              >
+                <ExternalLink size={14} />
+                <span>Open original</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleCopy(previewMedia.url, previewMedia.id)}
+                className="bg-[#052263] text-white hover:bg-[#031849]"
+              >
+                <Copy size={14} />
+                <span>Copy URL</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </AdminFullPage>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Upload Dropzone Card */}
-      <div
-        className="rounded-2xl border-2 border-dashed border-[#cbe0d5] bg-white p-8 text-center transition hover:border-[#1f6b52] hover:bg-[#fafcfb]"
+      {/* Upload Dropzone Card */}      <div
+        className="rounded-2xl border-2 border-dashed border-[#cfd6e7] bg-white p-8 text-center transition hover:border-[#052263] hover:bg-[#fafcfd]"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
           handleFileUpload(e.dataTransfer.files);
         }}
       >
-        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#eaf4ef] text-[#1f6b52]">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#e9ecf4] text-[#052263]">
           {uploading ? <Loader2 size={26} className="animate-spin" /> : <UploadCloud size={26} />}
         </div>
-        <h3 className="mt-4 text-base font-semibold text-[#173c35]">
+        <h3 className="mt-4 text-base font-semibold text-[#131b2e]">
           {uploading ? 'Uploading assets to S3 object storage…' : 'Drag & drop image files to upload'}
         </h3>
-        <p className="mt-1 text-xs text-[#81918a]">
+        <p className="mt-1 text-xs text-[#7e8a96]">
           Supports WebP, PNG, JPG, AVIF up to 10MB each. Direct link auto-generated.
         </p>
 
@@ -178,7 +235,7 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
           <Button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="bg-[#1f6b52] text-white hover:bg-[#185540] shadow-sm"
+            className="bg-[#052263] text-white hover:bg-[#031849] shadow-sm"
           >
             <Plus size={16} />
             <span>Select files from computer</span>
@@ -187,15 +244,15 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
       </div>
 
       {/* Media Library View */}
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
         {/* Header */}
-        <div className="flex flex-col gap-4 border-b border-[#edf1ee] p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-[#edf1f5] p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#94a29c]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#939fa9]">
               Storage / Assets
             </p>
-            <h2 className="mt-1 text-xl font-semibold text-[#173c35]">Media Asset Library</h2>
-            <p className="mt-1 text-xs text-[#81918a]">
+            <h2 className="mt-1 text-xl font-semibold text-[#131b2e]">Media Asset Library</h2>
+            <p className="mt-1 text-xs text-[#7e8a96]">
               Direct S3-compatible cloud storage linked to product models and articles.
             </p>
           </div>
@@ -205,17 +262,17 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
               size="sm"
               onClick={fetchMedia}
               disabled={loading}
-              className="border-[#dfe8e3] text-[#557067]"
+              className="border-[#dee7ee] text-[#556572]"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
-            <div className="flex rounded-lg border border-[#dfe8e3] p-0.5">
+            <div className="flex rounded-lg border border-[#dee7ee] p-0.5">
               <button
                 onClick={() => setViewMode('grid')}
                 className={cn(
                   'rounded p-1 text-xs',
-                  viewMode === 'grid' ? 'bg-[#e8f3ee] text-[#1f6b52]' : 'text-[#889b94]',
+                  viewMode === 'grid' ? 'bg-[#e9ecf4] text-[#052263]' : 'text-[#8794a1]',
                 )}
                 aria-label="Grid view"
               >
@@ -225,7 +282,7 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
                 onClick={() => setViewMode('list')}
                 className={cn(
                   'rounded p-1 text-xs',
-                  viewMode === 'list' ? 'bg-[#e8f3ee] text-[#1f6b52]' : 'text-[#889b94]',
+                  viewMode === 'list' ? 'bg-[#e9ecf4] text-[#052263]' : 'text-[#8794a1]',
                 )}
                 aria-label="List view"
               >
@@ -236,14 +293,14 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
         </div>
 
         {/* Filter bar */}
-        <div className="border-b border-[#edf1ee] p-4">
+        <div className="border-b border-[#edf1f5] p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-[#9aa7a1]" size={16} />
+            <Search className="absolute left-3 top-2.5 text-[#99a5af]" size={16} />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search assets by filename or key…"
-              className="h-9 w-full rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] pl-9 pr-3 text-xs outline-none ring-[#b9d9ca] placeholder:text-[#aab5b0] focus:ring-2"
+              className="h-9 w-full rounded-lg border border-[#dee7ee] bg-[#fbfcfd] pl-9 pr-3 text-xs outline-none ring-[#bcc7de] placeholder:text-[#a9b4be] focus:ring-2"
             />
           </div>
         </div>
@@ -258,11 +315,11 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
         {/* Content Body */}
         {loading ? (
           <div className="py-16 text-center">
-            <Loader2 size={24} className="mx-auto animate-spin text-[#1f6b52]" />
-            <span className="mt-2 block text-xs text-[#7d9089]">Loading media files…</span>
+            <Loader2 size={24} className="mx-auto animate-spin text-[#052263]" />
+            <span className="mt-2 block text-xs text-[#7c8996]">Loading media files…</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-16 text-center text-xs text-[#8c9e97]">
+          <div className="py-16 text-center text-xs text-[#8b98a4]">
             No media assets found in cloud storage. Upload one above!
           </div>
         ) : viewMode === 'grid' ? (
@@ -270,7 +327,7 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
             {filtered.map((item) => (
               <div
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden rounded-xl border border-[#e2eae5] bg-[#fafcfb] transition hover:border-[#1f6b52] hover:shadow-md"
+                className="group relative flex flex-col overflow-hidden rounded-xl border border-[#e2e9ef] bg-[#fafcfd] transition hover:border-[#052263] hover:shadow-md"
               >
                 {/* Thumbnail */}
                 <div
@@ -287,27 +344,29 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
 
                 {/* Info & quick actions */}
                 <div className="p-2.5 text-xs">
-                  <p className="font-semibold text-[#1f473c] truncate" title={item.filename}>
+                  <p className="font-semibold text-[#1e283a] truncate" title={item.filename}>
                     {item.filename}
                   </p>
-                  <p className="text-[10px] text-[#869791] font-mono truncate">{item.mimeType}</p>
+                  <p className="text-[10px] text-[#85929f] font-mono truncate">{item.mimeType}</p>
 
-                  <div className="mt-2 flex items-center justify-between border-t border-[#edf2ef] pt-1.5">
+                  <div className="mt-2 flex items-center justify-between border-t border-[#edf1f5] pt-1.5">
                     <button
                       onClick={() => handleCopy(item.url, item.id)}
-                      className="flex items-center gap-1 text-[11px] font-semibold text-[#1f6b52] hover:underline"
+                      className="flex items-center gap-1 text-[11px] font-semibold text-[#052263] hover:underline"
                     >
                       {copiedId === item.id ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copiedId === item.id ? 'Copied' : 'Copy'}</span>
                     </button>
 
-                    <button
-                      onClick={() => handleDelete(item)}
-                      className="text-[#9aa7a1] hover:text-rose-600"
-                      title="Delete asset"
-                    >
-                      <Trash2 size={13} />
-                    </button>
+                    {canDelete ? (
+                      <button
+                        onClick={() => handleDelete(item)}
+                        className="text-[#99a5af] hover:text-rose-600"
+                        title="Delete asset"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -317,7 +376,7 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
           <div className="overflow-x-auto">
             <table className="w-full min-w-[650px] text-left">
               <thead>
-                <tr className="border-b border-[#edf1ee] text-[10px] uppercase tracking-[0.12em] text-[#9aa7a1]">
+                <tr className="border-b border-[#edf1f5] text-[10px] uppercase tracking-[0.12em] text-[#99a5af]">
                   <th className="px-5 py-3 font-semibold">Asset</th>
                   <th className="py-3 font-semibold">Key / Path</th>
                   <th className="py-3 font-semibold">Type</th>
@@ -327,37 +386,39 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
               </thead>
               <tbody>
                 {filtered.map((item) => (
-                  <tr key={item.id} className="border-b border-[#f1f4f2] last:border-0 hover:bg-[#fafbfb]">
+                  <tr key={item.id} className="border-b border-[#f1f4f7] last:border-0 hover:bg-[#fafbfb]">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="size-10 overflow-hidden rounded-lg border border-[#e1e9e4]">
+                        <div className="size-10 overflow-hidden rounded-lg border border-[#e1e8ee]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={item.url} alt="" className="size-full object-cover" />
                         </div>
-                        <span className="text-xs font-semibold text-[#21433a]">{item.filename}</span>
+                        <span className="text-xs font-semibold text-[#202a3c]">{item.filename}</span>
                       </div>
                     </td>
-                    <td className="py-3 font-mono text-[11px] text-[#7d9089] truncate max-w-xs">{item.key}</td>
-                    <td className="py-3 text-xs text-[#526f65]">{item.mimeType}</td>
-                    <td className="py-3 text-[11px] text-[#80918a]">
+                    <td className="py-3 font-mono text-[11px] text-[#7c8996] truncate max-w-xs">{item.key}</td>
+                    <td className="py-3 text-xs text-[#52626f]">{item.mimeType}</td>
+                    <td className="py-3 text-[11px] text-[#7f8b97]">
                       {new Date(item.createdAt).toLocaleDateString('en-US')}
                     </td>
                     <td className="pr-5 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleCopy(item.url, item.id)}
-                          className="rounded-lg p-1 text-[#556e66] hover:bg-[#edf4f0]"
+                          className="rounded-lg p-1 text-[#556371] hover:bg-[#eef1f7]"
                           title="Copy Link"
                         >
                           {copiedId === item.id ? <Check size={15} /> : <Copy size={15} />}
                         </button>
-                        <button
-                          onClick={() => handleDelete(item)}
-                          className="rounded-lg p-1 text-rose-600 hover:bg-rose-50"
-                          title="Delete"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        {canDelete ? (
+                          <button
+                            onClick={() => handleDelete(item)}
+                            className="rounded-lg p-1 text-rose-600 hover:bg-rose-50"
+                            title="Delete"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        ) : null}
                       </div>
                     </td>
                   </tr>
@@ -367,46 +428,13 @@ export function MediaManager({ onNotify }: { onNotify?: (msg: string) => void })
           </div>
         )}
 
-        <div className="flex items-center justify-between border-t border-[#edf1ee] p-4 text-xs text-[#81918a]">
+        <div className="flex items-center justify-between border-t border-[#edf1f5] p-4 text-xs text-[#7e8a96]">
           <span>
             Showing {filtered.length} of {mediaList.length} media assets
           </span>
-          <span className="text-[11px] text-[#9aa8a1]">S3 Lakebase Storage</span>
+          <span className="text-[11px] text-[#99a5af]">S3 Lakebase Storage</span>
         </div>
       </div>
-
-      {/* Preview Modal */}
-      {previewMedia && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-[#143d36]/50 backdrop-blur-sm" onClick={() => setPreviewMedia(null)} />
-          <div className="relative max-h-[90vh] w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#edf2ef] p-4">
-              <span className="font-semibold text-xs text-[#1e423a] truncate">{previewMedia.filename}</span>
-              <button
-                onClick={() => setPreviewMedia(null)}
-                className="rounded-lg p-1 text-[#889a93] hover:bg-[#f2f6f4]"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="max-h-[60vh] overflow-auto bg-[#0f1d19] p-2 flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={previewMedia.url} alt={previewMedia.filename} className="max-h-[55vh] object-contain" />
-            </div>
-            <div className="flex items-center justify-between p-4 text-xs">
-              <div className="font-mono text-[11px] text-[#7d9089] truncate max-w-sm">{previewMedia.key}</div>
-              <Button
-                size="sm"
-                onClick={() => handleCopy(previewMedia.url, previewMedia.id)}
-                className="bg-[#1f6b52] text-white hover:bg-[#185540]"
-              >
-                <Copy size={14} />
-                <span>Copy URL</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

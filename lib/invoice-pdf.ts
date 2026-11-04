@@ -51,8 +51,8 @@ function formatDate(val: Date | string): string {
 export function generateInvoicePdfBuffer(order: InvoiceOrderData): Buffer {
   const streamCommands: string[] = [];
 
-  // Top header banner: Medixa dark teal (#1f6b52 -> 0.12, 0.42, 0.32)
-  streamCommands.push('0.12 0.42 0.32 rg 40 760 515 45 re f');
+  // Top header banner: Medixa blue (#052263 -> 0.0196, 0.1333, 0.3882)
+  streamCommands.push('0.0196 0.1333 0.3882 rg 40 760 515 45 re f');
 
   // Header branding text
   streamCommands.push(
@@ -168,7 +168,7 @@ export function generateInvoicePdfBuffer(order: InvoiceOrderData): Buffer {
 
   // Grand total highlight bar
   y -= 22;
-  streamCommands.push(`0.12 0.42 0.32 rg 350 ${y - 6} 205 26 re f`);
+  streamCommands.push(`0.0196 0.1333 0.3882 rg 350 ${y - 6} 205 26 re f`);
   streamCommands.push(
     `BT /F2 11 Tf 1 1 1 rg 365 ${y + 3} Td (${escapePdf('Grand Total:')}) Tj ET`,
   );
@@ -222,4 +222,3 @@ export function generateInvoicePdfBuffer(order: InvoiceOrderData): Buffer {
 
   return Buffer.from(fullDoc, 'utf-8');
 }
-

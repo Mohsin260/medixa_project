@@ -2,14 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  AlertCircle,
   Banknote,
-  CheckCircle2,
-  ChevronDown,
   CircleAlert,
   Clock,
   Eye,
-  Filter,
   Loader2,
   Package,
   Plus,
@@ -17,10 +13,10 @@ import {
   Search,
   ShoppingBag,
   Truck,
-  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AdminFullPage } from '@/components/admin/admin-full-page';
 
 export interface AdminOrderItem {
   id: string;
@@ -54,7 +50,13 @@ export interface AdminOrder {
   createdAt: string;
 }
 
-export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }) {
+export function OrdersManager({
+  onNotify,
+  onToggleSidebar,
+}: {
+  onNotify?: (msg: string) => void;
+  onToggleSidebar?: () => void;
+}) {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +65,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
   const [statusFilter, setStatusFilter] = useState('ALL');
 
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -146,24 +148,48 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
     }
   }
 
+  if (selectedOrder) {
+    return (
+      <OrderDetailPage
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        onStatusChange={(status) => handleUpdateStatus(selectedOrder.id, status)}
+        onToggleSidebar={onToggleSidebar}
+      />
+    );
+  }
+
+  if (showCreateForm) {
+    return (
+      <ManualOrderPage
+        onClose={() => setShowCreateForm(false)}
+        onToggleSidebar={onToggleSidebar}
+        onSuccess={() => {
+          fetchOrders();
+          onNotify?.('Manual order created successfully.');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Metrics Cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-[#e6ebe8] bg-white p-5 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+        <div className="rounded-2xl border border-[#e7ecf0] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
           <div className="flex items-start justify-between">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf4ef] text-[#1f6b52]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e9ecf4] text-[#052263]">
               <ShoppingBag size={19} />
             </div>
-            <span className="rounded-full bg-[#f4f7f5] px-2.5 py-0.5 text-[11px] font-semibold text-[#547368]">
+            <span className="rounded-full bg-[#f4f6f9] px-2.5 py-0.5 text-[11px] font-semibold text-[#546473]">
               Total
             </span>
           </div>
-          <p className="mt-4 text-xs font-medium text-[#788782]">Total Orders</p>
-          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#173c35]">{metrics.totalCount}</p>
+          <p className="mt-4 text-xs font-medium text-[#77828f]">Total Orders</p>
+          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#131b2e]">{metrics.totalCount}</p>
         </div>
 
-        <div className="rounded-2xl border border-[#e6ebe8] bg-white p-5 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+        <div className="rounded-2xl border border-[#e7ecf0] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
           <div className="flex items-start justify-between">
             <div className="flex size-10 items-center justify-center rounded-xl bg-[#fff7ea] text-[#b87823]">
               <Clock size={19} />
@@ -172,11 +198,11 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
               Active
             </span>
           </div>
-          <p className="mt-4 text-xs font-medium text-[#788782]">Awaiting Fulfillment</p>
-          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#173c35]">{metrics.pendingCount}</p>
+          <p className="mt-4 text-xs font-medium text-[#77828f]">Awaiting Fulfillment</p>
+          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#131b2e]">{metrics.pendingCount}</p>
         </div>
 
-        <div className="rounded-2xl border border-[#e6ebe8] bg-white p-5 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+        <div className="rounded-2xl border border-[#e7ecf0] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
           <div className="flex items-start justify-between">
             <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf7f0] text-[#1b7a54]">
               <Truck size={19} />
@@ -185,11 +211,11 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
               Fulfilled
             </span>
           </div>
-          <p className="mt-4 text-xs font-medium text-[#788782]">Delivered Orders</p>
-          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#173c35]">{metrics.deliveredCount}</p>
+          <p className="mt-4 text-xs font-medium text-[#77828f]">Delivered Orders</p>
+          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#131b2e]">{metrics.deliveredCount}</p>
         </div>
 
-        <div className="rounded-2xl border border-[#e6ebe8] bg-white p-5 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+        <div className="rounded-2xl border border-[#e7ecf0] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
           <div className="flex items-start justify-between">
             <div className="flex size-10 items-center justify-center rounded-xl bg-[#e9e8ff] text-[#625fd0]">
               <Banknote size={19} />
@@ -198,23 +224,23 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
               Revenue
             </span>
           </div>
-          <p className="mt-4 text-xs font-medium text-[#788782]">Gross Sales</p>
-          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#173c35]">
+          <p className="mt-4 text-xs font-medium text-[#77828f]">Gross Sales</p>
+          <p className="mt-1 text-[26px] font-semibold tracking-tight text-[#131b2e]">
             PKR {metrics.totalRevenue.toLocaleString()}
           </p>
         </div>
       </div>
 
       {/* Main Table Card */}
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
         {/* Header */}
-        <div className="flex flex-col gap-4 border-b border-[#edf1ee] p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-[#edf1f5] p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#94a29c]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#939fa9]">
               Storefront / Sales
             </p>
-            <h2 className="mt-1 text-xl font-semibold text-[#173c35]">Customer Orders</h2>
-            <p className="mt-1 text-xs text-[#81918a]">
+            <h2 className="mt-1 text-xl font-semibold text-[#131b2e]">Customer Orders</h2>
+            <p className="mt-1 text-xs text-[#7e8a96]">
               Manage order confirmations, shipping dispatch, tracking numbers and cash collection.
             </p>
           </div>
@@ -224,14 +250,14 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
               size="sm"
               onClick={fetchOrders}
               disabled={loading}
-              className="border-[#dfe8e3] text-[#557067]"
+              className="border-[#dee7ee] text-[#556572]"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
             <Button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-[#1f6b52] text-white hover:bg-[#185540] shadow-sm"
+              onClick={() => setShowCreateForm(true)}
+              className="bg-[#052263] text-white hover:bg-[#031849] shadow-sm"
             >
               <Plus size={16} />
               <span>Create manual order</span>
@@ -240,14 +266,14 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-3 border-b border-[#edf1ee] p-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 border-b border-[#edf1f5] p-4 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 text-[#9aa7a1]" size={16} />
+            <Search className="absolute left-3 top-2.5 text-[#99a5af]" size={16} />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by order number, customer name, email, or phone…"
-              className="h-9 w-full rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] pl-9 pr-3 text-xs outline-none ring-[#b9d9ca] placeholder:text-[#aab5b0] focus:ring-2"
+              className="h-9 w-full rounded-lg border border-[#dee7ee] bg-[#fbfcfd] pl-9 pr-3 text-xs outline-none ring-[#bcc7de] placeholder:text-[#a9b4be] focus:ring-2"
             />
           </div>
 
@@ -258,7 +284,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
                 onClick={() => setStatusFilter(st)}
                 className={cn(
                   'rounded-lg px-2.5 py-1.5 text-xs font-semibold transition',
-                  statusFilter === st ? 'bg-[#e8f3ee] text-[#22674e]' : 'text-[#73857e] hover:bg-[#f3f6f4]',
+                  statusFilter === st ? 'bg-[#e9ecf4] text-[#041d52]' : 'text-[#72808d] hover:bg-[#f3f5f8]',
                 )}
               >
                 {st === 'ALL' ? 'All' : st.charAt(0) + st.slice(1).toLowerCase()}
@@ -278,7 +304,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px] text-left">
             <thead>
-              <tr className="border-b border-[#edf1ee] text-[10px] uppercase tracking-[0.12em] text-[#9aa7a1]">
+              <tr className="border-b border-[#edf1f5] text-[10px] uppercase tracking-[0.12em] text-[#99a5af]">
                 <th className="px-5 py-3 font-semibold">Order</th>
                 <th className="py-3 font-semibold">Customer</th>
                 <th className="py-3 font-semibold">Payment</th>
@@ -292,41 +318,41 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
               {loading ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-2 text-xs text-[#7d9089]">
-                      <Loader2 size={24} className="animate-spin text-[#1f6b52]" />
+                    <div className="flex flex-col items-center justify-center gap-2 text-xs text-[#7c8996]">
+                      <Loader2 size={24} className="animate-spin text-[#052263]" />
                       <span>Loading orders…</span>
                     </div>
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-xs text-[#8c9e97]">
+                  <td colSpan={7} className="py-12 text-center text-xs text-[#8b98a4]">
                     No orders match your filter criteria.
                   </td>
                 </tr>
               ) : (
                 filtered.map((o) => (
-                  <tr key={o.id} className="border-b border-[#f1f4f2] last:border-0 hover:bg-[#fafbfb]">
+                  <tr key={o.id} className="border-b border-[#f1f4f7] last:border-0 hover:bg-[#fafbfb]">
                     {/* Order # */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-[#1f6b52]">{o.orderNumber}</span>
-                        <span className="text-[10px] text-[#81918a]">({o.itemCount} items)</span>
+                        <span className="font-mono text-xs font-bold text-[#052263]">{o.orderNumber}</span>
+                        <span className="text-[10px] text-[#7e8a96]">({o.itemCount} items)</span>
                       </div>
                     </td>
 
                     {/* Customer */}
                     <td className="py-3.5">
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-[#21433a]">{o.customerName}</span>
-                        <span className="text-[11px] text-[#7d9089]">{o.customerEmail}</span>
+                        <span className="text-xs font-semibold text-[#202a3c]">{o.customerName}</span>
+                        <span className="text-[11px] text-[#7c8996]">{o.customerEmail}</span>
                       </div>
                     </td>
 
                     {/* Payment */}
                     <td className="py-3.5 text-xs">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-[#274a40]">{o.paymentMethod}</span>
+                        <span className="font-semibold text-[#263145]">{o.paymentMethod}</span>
                         <span
                           className={cn(
                             'rounded-full px-2 py-0.2 text-[9px] font-bold',
@@ -341,7 +367,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
                     </td>
 
                     {/* Total */}
-                    <td className="py-3.5 text-xs font-bold text-[#1b4339]">
+                    <td className="py-3.5 text-xs font-bold text-[#1a2434]">
                       PKR {o.total.toLocaleString()}
                     </td>
 
@@ -371,7 +397,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
                     </td>
 
                     {/* Date */}
-                    <td className="py-3.5 text-[11px] text-[#80918a]">
+                    <td className="py-3.5 text-[11px] text-[#7f8b97]">
                       {new Date(o.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -382,7 +408,7 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
                     <td className="pr-5 py-3.5 text-right">
                       <button
                         onClick={() => setSelectedOrder(o)}
-                        className="rounded-lg p-1.5 text-[#556e66] hover:bg-[#edf4f0] hover:text-[#173c35]"
+                        className="rounded-lg p-1.5 text-[#556371] hover:bg-[#eef1f7] hover:text-[#131b2e]"
                         aria-label="View order details"
                       >
                         <Eye size={16} />
@@ -395,148 +421,129 @@ export function OrdersManager({ onNotify }: { onNotify?: (msg: string) => void }
           </table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-[#edf1ee] p-4 text-xs text-[#81918a]">
+        <div className="flex items-center justify-between border-t border-[#edf1f5] p-4 text-xs text-[#7e8a96]">
           <span>
             Showing {filtered.length} of {orders.length} orders
           </span>
-          <span className="text-[11px] text-[#9aa8a1]">Realtime order stream ready</span>
+          <span className="text-[11px] text-[#99a5af]">Realtime order stream ready</span>
         </div>
       </div>
-
-      {/* Order Detail Modal */}
-      {selectedOrder && (
-        <OrderDetailModal
-          order={selectedOrder}
-          onClose={() => setSelectedOrder(null)}
-          onStatusChange={(status) => handleUpdateStatus(selectedOrder.id, status)}
-        />
-      )}
-
-      {/* Manual Order Creation Modal */}
-      {showCreateModal && (
-        <ManualOrderModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            fetchOrders();
-            onNotify?.('Manual order created successfully.');
-          }}
-        />
-      )}
     </div>
   );
 }
 
-function OrderDetailModal({
+function OrderDetailPage({
   order,
   onClose,
+  onToggleSidebar,
   onStatusChange,
 }: {
   order: AdminOrder;
   onClose: () => void;
+  onToggleSidebar?: () => void;
   onStatusChange: (status: string) => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-[#143d36]/35 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#dfe7e2] bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify-between pb-4 border-b border-[#edf2ef]">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-base font-bold text-[#1f6b52]">{order.orderNumber}</span>
-              <span className="rounded-full bg-[#eaf7f0] px-2 py-0.5 text-[10px] font-bold text-[#1b7a54]">
-                {order.status}
-              </span>
-            </div>
-            <p className="text-xs text-[#80918a]">
-              Placed on {new Date(order.createdAt).toLocaleString('en-US')}
-            </p>
-          </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-[#889a93] hover:bg-[#f2f6f4]">
-            <X size={18} />
-          </button>
+    <AdminFullPage
+      title={order.orderNumber}
+      subtitle={`Placed on ${new Date(order.createdAt).toLocaleString('en-US')}`}
+      icon={<ShoppingBag size={20} />}
+      onClose={onClose}
+      onToggleSidebar={onToggleSidebar}
+      backLabel="Back to orders"
+    >
+      <div className="mx-auto max-w-3xl space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-[#eaf7f0] px-2.5 py-0.5 text-[10px] font-bold text-[#1b7a54]">
+            {order.status}
+          </span>
+          <span className="rounded-full bg-[#f4f6f9] px-2.5 py-0.5 text-[10px] font-semibold text-[#546473]">
+            {order.paymentMethod} · {order.paymentStatus}
+          </span>
         </div>
 
         {/* Customer & Shipping info */}
-        <div className="mt-4 rounded-xl border border-[#e8eeeb] bg-[#fbfdfc] p-4 text-xs space-y-2">
-          <p className="font-semibold text-[#1e423a]">Customer Details</p>
-          <div className="grid grid-cols-2 gap-2 text-[#566e66]">
+        <div className="rounded-2xl border border-[#dde5ec] bg-white p-5 text-xs shadow-[0_4px_18px_rgba(19,27,46,0.04)] space-y-2">
+          <p className="font-semibold text-[#1d2739]">Customer Details</p>
+          <div className="grid gap-2 text-[#566472] sm:grid-cols-2">
             <div>
-              <span className="text-[#8e9f99]">Name:</span> {order.customerName}
+              <span className="text-[#8d99a5]">Name:</span> {order.customerName}
             </div>
             <div>
-              <span className="text-[#8e9f99]">Phone:</span> {order.customerPhone || '—'}
+              <span className="text-[#8d99a5]">Phone:</span> {order.customerPhone || '—'}
             </div>
-            <div className="col-span-2">
-              <span className="text-[#8e9f99]">Email:</span> {order.customerEmail}
+            <div className="sm:col-span-2">
+              <span className="text-[#8d99a5]">Email:</span> {order.customerEmail}
             </div>
           </div>
         </div>
 
         {/* Items */}
-        <div className="mt-4 space-y-2">
-          <p className="text-xs font-semibold text-[#1e423a]">Purchased Items ({order.items.length})</p>
-          <div className="divide-y divide-[#edf2ef] border-y border-[#edf2ef]">
+        <div className="rounded-2xl border border-[#dde5ec] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+          <p className="text-xs font-semibold text-[#1d2739]">Purchased Items ({order.items.length})</p>
+          <div className="mt-2 divide-y divide-[#edf1f5] border-y border-[#edf1f5]">
             {order.items.map((it) => (
               <div key={it.id} className="flex items-center justify-between py-2.5 text-xs">
                 <div>
-                  <p className="font-semibold text-[#274840]">{it.title}</p>
-                  <p className="text-[10px] text-[#869791]">
+                  <p className="font-semibold text-[#263145]">{it.title}</p>
+                  <p className="text-[10px] text-[#85929f]">
                     Size: {it.size} · Color: {it.color} · Qty: {it.quantity}
                   </p>
                 </div>
-                <span className="font-mono font-semibold text-[#1f473c]">PKR {it.total.toLocaleString()}</span>
+                <span className="font-mono font-semibold text-[#1e283a]">PKR {it.total.toLocaleString()}</span>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Pricing Summary */}
-        <div className="mt-4 space-y-1.5 text-xs text-[#556e66]">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>PKR {order.subtotal.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Delivery Fee</span>
-            <span>PKR {order.shippingFee.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between border-t border-[#edf2ef] pt-2 text-sm font-bold text-[#173c35]">
-            <span>Total Amount</span>
-            <span>PKR {order.total.toLocaleString()}</span>
+          {/* Pricing Summary */}
+          <div className="mt-4 space-y-1.5 text-xs text-[#556371]">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>PKR {order.subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Delivery Fee</span>
+              <span>PKR {order.shippingFee.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between border-t border-[#edf1f5] pt-2 text-sm font-bold text-[#131b2e]">
+              <span>Total Amount</span>
+              <span>PKR {order.total.toLocaleString()}</span>
+            </div>
           </div>
         </div>
 
         {/* Status Transition Buttons */}
-        <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-[#edf2ef] pt-4">
-          <span className="text-xs font-semibold text-[#546e66]">Update Status:</span>
-          {['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
-            <button
-              key={st}
-              onClick={() => onStatusChange(st)}
-              className={cn(
-                'rounded-lg px-2.5 py-1 text-xs font-medium transition',
-                order.status === st
-                  ? 'bg-[#1f6b52] text-white'
-                  : 'bg-[#f0f4f2] text-[#425d55] hover:bg-[#e4ece8]',
-              )}
-            >
-              {st.charAt(0) + st.slice(1).toLowerCase()}
-            </button>
-          ))}
+        <div className="rounded-2xl border border-[#dde5ec] bg-white p-5 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-[#546e66]">Update Status:</span>
+            {['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
+              <button
+                key={st}
+                onClick={() => onStatusChange(st)}
+                className={cn(
+                  'rounded-lg px-2.5 py-1 text-xs font-medium transition',
+                  order.status === st
+                    ? 'bg-[#052263] text-white'
+                    : 'bg-[#f0f4f2] text-[#41505f] hover:bg-[#e4ebf1]',
+                )}
+              >
+                {st.charAt(0) + st.slice(1).toLowerCase()}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </AdminFullPage>
   );
 }
 
-function ManualOrderModal({
-  isOpen,
+function ManualOrderPage({
   onClose,
+  onToggleSidebar,
   onSuccess,
 }: {
-  isOpen: boolean;
   onClose: () => void;
+  onToggleSidebar?: () => void;
   onSuccess: () => void;
 }) {
   const [customerName, setCustomerName] = useState('');
@@ -545,13 +552,11 @@ function ManualOrderModal({
   const [productTitle, setProductTitle] = useState('Regal Scrub Suit');
   const [size, setSize] = useState('M');
   const [price, setPrice] = useState('5490');
-  const [quantity, setQuantity] = useState('1');
+  const [quantity] = useState('1');
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'JAZZCASH' | 'EASYPAISA'>('COD');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen) return null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -594,20 +599,18 @@ function ManualOrderModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-[#143d36]/35 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-[#dfe7e2] bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify-between pb-4 border-b border-[#edf2ef]">
-          <div>
-            <h3 className="text-base font-semibold text-[#173c35]">Create Manual Order</h3>
-            <p className="text-xs text-[#80918a]">Direct phone or WhatsApp customer booking</p>
-          </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-[#889a93] hover:bg-[#f2f6f4]">
-            <X size={18} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3 text-xs">
+    <AdminFullPage
+      title="Create Manual Order"
+      subtitle="Direct phone or WhatsApp customer booking"
+      icon={<Package size={20} />}
+      onClose={onClose}
+      onToggleSidebar={onToggleSidebar}
+      backLabel="Back to orders"
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto max-w-2xl space-y-3 rounded-2xl border border-[#dde5ec] bg-white p-5 text-xs shadow-[0_4px_18px_rgba(19,27,46,0.04)] sm:p-6"
+      >
           {error && (
             <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-2.5 text-rose-800">
               <CircleAlert size={15} />
@@ -616,59 +619,59 @@ function ManualOrderModal({
           )}
 
           <div>
-            <label className="block font-semibold text-[#274840] mb-1">Customer Full Name</label>
+            <label className="block font-semibold text-[#263145] mb-1">Customer Full Name</label>
             <input
               type="text"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               placeholder="Dr. Tariq Mahmood"
               required
-              className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 outline-none focus:ring-2 focus:ring-[#1f6b52]/20"
+              className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 outline-none focus:ring-2 focus:ring-[#052263]/20"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block font-semibold text-[#274840] mb-1">Email</label>
+              <label className="block font-semibold text-[#263145] mb-1">Email</label>
               <input
                 type="email"
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 placeholder="customer@email.com"
                 required
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 outline-none focus:ring-2 focus:ring-[#1f6b52]/20"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 outline-none focus:ring-2 focus:ring-[#052263]/20"
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#274840] mb-1">Phone</label>
+              <label className="block font-semibold text-[#263145] mb-1">Phone</label>
               <input
                 type="tel"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="03001234567"
                 required
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 outline-none focus:ring-2 focus:ring-[#1f6b52]/20"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 outline-none focus:ring-2 focus:ring-[#052263]/20"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-2">
-              <label className="block font-semibold text-[#274840] mb-1">Product</label>
+              <label className="block font-semibold text-[#263145] mb-1">Product</label>
               <input
                 type="text"
                 value={productTitle}
                 onChange={(e) => setProductTitle(e.target.value)}
                 required
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 outline-none focus:ring-2 focus:ring-[#1f6b52]/20"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 outline-none focus:ring-2 focus:ring-[#052263]/20"
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#274840] mb-1">Size</label>
+              <label className="block font-semibold text-[#263145] mb-1">Size</label>
               <select
                 value={size}
                 onChange={(e) => setSize(e.target.value)}
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-2 outline-none"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-2 outline-none"
               >
                 <option value="S">Small</option>
                 <option value="M">Medium</option>
@@ -680,21 +683,21 @@ function ManualOrderModal({
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block font-semibold text-[#274840] mb-1">Price (PKR)</label>
+              <label className="block font-semibold text-[#263145] mb-1">Price (PKR)</label>
               <input
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 outline-none"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 outline-none"
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#274840] mb-1">Payment</label>
+              <label className="block font-semibold text-[#263145] mb-1">Payment</label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as 'COD' | 'JAZZCASH' | 'EASYPAISA')}
-                className="h-9 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-2 outline-none"
+                className="h-9 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-2 outline-none"
               >
                 <option value="COD">Cash on Delivery</option>
                 <option value="JAZZCASH">JazzCash</option>
@@ -704,27 +707,26 @@ function ManualOrderModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-[#274840] mb-1">Notes / Address</label>
+            <label className="block font-semibold text-[#263145] mb-1">Notes / Address</label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Special instructions or delivery address..."
-              className="w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] p-2.5 outline-none"
+              className="w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] p-2.5 outline-none"
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#edf2ef]">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1f5]">
             <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={loading} className="bg-[#1f6b52] text-white hover:bg-[#185540]">
+            <Button type="submit" size="sm" disabled={loading} className="bg-[#052263] text-white hover:bg-[#031849]">
               {loading ? 'Creating…' : 'Create Order'}
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminFullPage>
   );
 }
 

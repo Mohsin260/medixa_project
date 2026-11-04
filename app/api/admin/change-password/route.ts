@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/auth/require-admin';
+import { requireStaff } from '@/lib/auth/require-admin';
 
 export async function POST(request: NextRequest) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }

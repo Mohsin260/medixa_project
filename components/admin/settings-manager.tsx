@@ -109,9 +109,9 @@ export function SettingsManager({ onNotify }: { onNotify?: (msg: string) => void
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white p-12 text-center shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
-        <Loader2 size={24} className="mx-auto animate-spin text-[#1f6b52]" />
-        <span className="mt-2 block text-xs text-[#7d9089]">Loading store configuration…</span>
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white p-12 text-center shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+        <Loader2 size={24} className="mx-auto animate-spin text-[#052263]" />
+        <span className="mt-2 block text-xs text-[#7c8996]">Loading store configuration…</span>
       </div>
     );
   }
@@ -119,197 +119,197 @@ export function SettingsManager({ onNotify }: { onNotify?: (msg: string) => void
   return (
     <form onSubmit={handleSave} className="space-y-6">
       {/* General Store Details */}
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white p-6 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
-        <div className="flex items-center gap-3 pb-4 border-b border-[#edf2ef]">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf4ef] text-[#1f6b52]">
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white p-6 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+        <div className="flex items-center gap-3 pb-4 border-b border-[#edf1f5]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[#e9ecf4] text-[#052263]">
             <Building size={20} />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-[#173c35]">General Storefront Information</h3>
-            <p className="text-xs text-[#80918a]">Branding, support channels and business metadata</p>
+            <h3 className="text-base font-semibold text-[#131b2e]">General Storefront Information</h3>
+            <p className="text-xs text-[#7f8b97]">Branding, support channels and business metadata</p>
           </div>
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2 text-xs">
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Store Display Name</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Store Display Name</label>
             <input
               type="text"
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Support Email</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Support Email</label>
             <input
               type="email"
               value={supportEmail}
               onChange={(e) => setSupportEmail(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Contact Phone</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Contact Phone</label>
             <input
               type="tel"
               value={supportPhone}
               onChange={(e) => setSupportPhone(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">WhatsApp Orders Number</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">WhatsApp Orders Number</label>
             <input
               type="tel"
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Store Hub / Address</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Store Hub / Address</label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="e.g. Karachi & Lahore, Pakistan"
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Instagram Profile URL</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Instagram Profile URL</label>
             <input
               type="url"
               value={instagramUrl}
               onChange={(e) => setInstagramUrl(e.target.value)}
               placeholder="https://instagram.com/medixa.pk"
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Facebook Page URL</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Facebook Page URL</label>
             <input
               type="url"
               value={facebookUrl}
               onChange={(e) => setFacebookUrl(e.target.value)}
               placeholder="https://facebook.com/medixa.pk"
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block font-semibold text-[#294a41] mb-1.5">Store Tagline</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Store Tagline</label>
             <input
               type="text"
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
         </div>
       </div>
 
       {/* Shipping & Delivery */}
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white p-6 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
-        <div className="flex items-center gap-3 pb-4 border-b border-[#edf2ef]">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf4ef] text-[#1f6b52]">
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white p-6 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+        <div className="flex items-center gap-3 pb-4 border-b border-[#edf1f5]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[#e9ecf4] text-[#052263]">
             <Truck size={20} />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-[#173c35]">Shipping & Nationwide Logistics</h3>
-            <p className="text-xs text-[#80918a]">Delivery rates, transit expectations, and thresholds</p>
+            <h3 className="text-base font-semibold text-[#131b2e]">Shipping & Nationwide Logistics</h3>
+            <p className="text-xs text-[#7f8b97]">Delivery rates, transit expectations, and thresholds</p>
           </div>
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-3 text-xs">
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Standard Delivery Fee (PKR)</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Standard Delivery Fee (PKR)</label>
             <input
               type="number"
               value={deliveryFee}
               onChange={(e) => setDeliveryFee(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Free Shipping Over (PKR)</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Free Shipping Over (PKR)</label>
             <input
               type="number"
               value={freeShippingThreshold}
               onChange={(e) => setFreeShippingThreshold(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#294a41] mb-1.5">Estimated Delivery Window</label>
+            <label className="block font-semibold text-[#293447] mb-1.5">Estimated Delivery Window</label>
             <input
               type="text"
               value={deliveryDays}
               onChange={(e) => setDeliveryDays(e.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce5e0] bg-[#fafcfb] px-3 text-[#1e423a] outline-none focus:ring-2 focus:ring-[#1f6b52]/15"
+              className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-[#1d2739] outline-none focus:ring-2 focus:ring-[#052263]/15"
             />
           </div>
         </div>
       </div>
 
       {/* Payment Gateways */}
-      <div className="rounded-2xl border border-[#e6ebe8] bg-white p-6 shadow-[0_4px_18px_rgba(20,61,54,0.04)]">
-        <div className="flex items-center gap-3 pb-4 border-b border-[#edf2ef]">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf4ef] text-[#1f6b52]">
+      <div className="rounded-2xl border border-[#e7ecf0] bg-white p-6 shadow-[0_4px_18px_rgba(19,27,46,0.04)]">
+        <div className="flex items-center gap-3 pb-4 border-b border-[#edf1f5]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[#e9ecf4] text-[#052263]">
             <Banknote size={20} />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-[#173c35]">Payment Gateways & Options</h3>
-            <p className="text-xs text-[#80918a]">Enable payment methods visible on customer checkout</p>
+            <h3 className="text-base font-semibold text-[#131b2e]">Payment Gateways & Options</h3>
+            <p className="text-xs text-[#7f8b97]">Enable payment methods visible on customer checkout</p>
           </div>
         </div>
 
         <div className="mt-5 space-y-3 text-xs">
-          <label className="flex items-center justify-between rounded-xl border border-[#e5ece8] p-3.5 cursor-pointer hover:bg-[#fafcfb]">
+          <label className="flex items-center justify-between rounded-xl border border-[#e5ebf1] p-3.5 cursor-pointer hover:bg-[#fafcfd]">
             <div>
-              <p className="font-semibold text-[#21433a]">Cash on Delivery (COD)</p>
-              <p className="text-[11px] text-[#788e86]">Pay with cash upon nationwide delivery across Pakistan.</p>
+              <p className="font-semibold text-[#202a3c]">Cash on Delivery (COD)</p>
+              <p className="text-[11px] text-[#788694]">Pay with cash upon nationwide delivery across Pakistan.</p>
             </div>
             <input
               type="checkbox"
               checked={codEnabled}
               onChange={(e) => setCodEnabled(e.target.checked)}
-              className="size-4 accent-[#1f6b52]"
+              className="size-4 accent-[#052263]"
             />
           </label>
 
-          <label className="flex items-center justify-between rounded-xl border border-[#e5ece8] p-3.5 cursor-pointer hover:bg-[#fafcfb]">
+          <label className="flex items-center justify-between rounded-xl border border-[#e5ebf1] p-3.5 cursor-pointer hover:bg-[#fafcfd]">
             <div>
-              <p className="font-semibold text-[#21433a]">JazzCash Gateway</p>
-              <p className="text-[11px] text-[#788e86]">Accept JazzCash mobile wallets and debit/credit cards.</p>
+              <p className="font-semibold text-[#202a3c]">JazzCash Gateway</p>
+              <p className="text-[11px] text-[#788694]">Accept JazzCash mobile wallets and debit/credit cards.</p>
             </div>
             <input
               type="checkbox"
               checked={jazzcashEnabled}
               onChange={(e) => setJazzcashEnabled(e.target.checked)}
-              className="size-4 accent-[#1f6b52]"
+              className="size-4 accent-[#052263]"
             />
           </label>
 
-          <label className="flex items-center justify-between rounded-xl border border-[#e5ece8] p-3.5 cursor-pointer hover:bg-[#fafcfb]">
+          <label className="flex items-center justify-between rounded-xl border border-[#e5ebf1] p-3.5 cursor-pointer hover:bg-[#fafcfd]">
             <div>
-              <p className="font-semibold text-[#21433a]">EasyPaisa Payment Gateway</p>
-              <p className="text-[11px] text-[#788e86]">Allow direct checkout with EasyPaisa accounts.</p>
+              <p className="font-semibold text-[#202a3c]">EasyPaisa Payment Gateway</p>
+              <p className="text-[11px] text-[#788694]">Allow direct checkout with EasyPaisa accounts.</p>
             </div>
             <input
               type="checkbox"
               checked={easypaisaEnabled}
               onChange={(e) => setEasypaisaEnabled(e.target.checked)}
-              className="size-4 accent-[#1f6b52]"
+              className="size-4 accent-[#052263]"
             />
           </label>
         </div>
@@ -327,7 +327,7 @@ export function SettingsManager({ onNotify }: { onNotify?: (msg: string) => void
         <Button
           type="submit"
           disabled={saving}
-          className="bg-[#1f6b52] text-white hover:bg-[#185540] shadow-sm px-6 h-11"
+          className="bg-[#052263] text-white hover:bg-[#031849] shadow-sm px-6 h-11"
         >
           {saving ? (
             <>

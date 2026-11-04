@@ -35,17 +35,17 @@ export default async function SingleBlogPage({ params }: Props) {
       <Header />
 
       {/* Breadcrumbs Header */}
-      <div style={{ background: '#f5faf7', padding: '40px 0', borderBottom: '1px solid #e5ede8' }}>
+      <div style={{ background: '#f5f6fa', padding: '40px 0', borderBottom: '1px solid #e5ebf1' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-8 col-md-offset-2 col-xs-12 text-center">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Medixa Editorial
               </span>
-              <h1 style={{ fontSize: 32, fontWeight: 800, color: '#173c35', margin: '8px 0 12px', lineHeight: 1.25 }}>
+              <h1 style={{ fontSize: 32, fontWeight: 800, color: '#131b2e', margin: '8px 0 12px', lineHeight: 1.25 }}>
                 {title}
               </h1>
-              <div style={{ fontSize: 13, color: '#748b81' }}>
+              <div style={{ fontSize: 13, color: '#738290' }}>
                 Published on {dateStr} · By Medixa Apparel Team
               </div>
             </div>
@@ -54,7 +54,7 @@ export default async function SingleBlogPage({ params }: Props) {
       </div>
 
       {/* Article Body */}
-      <div style={{ padding: '60px 0 90px', background: '#fafcfb' }}>
+      <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-8 col-md-offset-2 col-xs-12">
@@ -62,9 +62,9 @@ export default async function SingleBlogPage({ params }: Props) {
                 style={{
                   background: '#ffffff',
                   borderRadius: 20,
-                  border: '1px solid #e6ebe8',
+                  border: '1px solid #e7ecf0',
                   padding: '40px 36px',
-                  boxShadow: '0 8px 30px rgba(20, 61, 54, 0.04)',
+                  boxShadow: '0 8px 30px rgba(19,27,46, 0.04)',
                 }}
               >
                 {/* Featured Photo */}
@@ -77,11 +77,11 @@ export default async function SingleBlogPage({ params }: Props) {
                   />
                 </div>
 
-                <div style={{ fontSize: 16, color: '#314e44', lineHeight: 1.8, marginBottom: 24, fontWeight: 500 }}>
+                <div style={{ fontSize: 16, color: '#303c4d', lineHeight: 1.8, marginBottom: 24, fontWeight: 500 }}>
                   {excerpt}
                 </div>
 
-                <div style={{ fontSize: 15, color: '#4d695e', lineHeight: 1.9, whiteSpace: 'pre-line' }}>
+                <div style={{ fontSize: 15, color: '#4d6270', lineHeight: 1.9, whiteSpace: 'pre-line' }}>
                   {body}
                 </div>
 
@@ -90,9 +90,9 @@ export default async function SingleBlogPage({ params }: Props) {
                   style={{
                     marginTop: 40,
                     padding: '24px 24px',
-                    background: '#f2f8f5',
+                    background: '#f2f4fa',
                     borderRadius: 14,
-                    border: '1px solid #dbeef5',
+                    border: '1px solid #dfe4f0',
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
@@ -101,10 +101,10 @@ export default async function SingleBlogPage({ params }: Props) {
                   }}
                 >
                   <div>
-                    <h4 style={{ fontSize: 16, fontWeight: 800, color: '#173c35', margin: '0 0 4px' }}>
+                    <h4 style={{ fontSize: 16, fontWeight: 800, color: '#131b2e', margin: '0 0 4px' }}>
                       Experience the Medixa Standard
                     </h4>
-                    <p style={{ fontSize: 13, color: '#5e7a6f', margin: 0 }}>
+                    <p style={{ fontSize: 13, color: '#5e6e7c', margin: 0 }}>
                       Shop Regal, Muse, Forte & Rebel medical scrubs with nationwide cash on delivery.
                     </p>
                   </div>
@@ -112,7 +112,7 @@ export default async function SingleBlogPage({ params }: Props) {
                   <Link
                     href="/shop"
                     style={{
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       fontWeight: 700,
                       fontSize: 13,
@@ -128,7 +128,7 @@ export default async function SingleBlogPage({ params }: Props) {
 
               {/* Back to Blog */}
               <div style={{ textAlign: 'center', marginTop: 30 }}>
-                <Link href="/blog" style={{ color: '#1f6b52', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+                <Link href="/blog" style={{ color: '#052263', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
                   ← Back to All Articles
                 </Link>
               </div>

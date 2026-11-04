@@ -24,18 +24,18 @@ export default function NotFound() {
       <Header />
 
       {/* Breadcrumb Area */}
-      <div style={{ background: '#f5faf7', padding: '32px 0', borderBottom: '1px solid #e2ece7' }}>
+      <div style={{ background: '#f5f6fa', padding: '32px 0', borderBottom: '1px solid #e4e7ef' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Error 404
               </span>
-              <h1 style={{ fontSize: 26, fontWeight: 700, color: '#173c35', margin: '4px 0 0' }}>
+              <h1 style={{ fontSize: 26, fontWeight: 700, color: '#131b2e', margin: '4px 0 0' }}>
                 Page Not Found
               </h1>
-              <div style={{ marginTop: 6, fontSize: 12, color: '#668076' }}>
-                <Link href="/" style={{ color: '#1f6b52', textDecoration: 'none' }}>Home</Link>
+              <div style={{ marginTop: 6, fontSize: 12, color: '#667583' }}>
+                <Link href="/" style={{ color: '#052263', textDecoration: 'none' }}>Home</Link>
                 <span style={{ margin: '0 8px' }}>/</span>
                 <span>404 Not Found</span>
               </div>
@@ -45,18 +45,18 @@ export default function NotFound() {
       </div>
 
       {/* Main 404 Area */}
-      <div className="error-area" style={{ padding: '60px 0 90px', background: '#fafcfb' }}>
+      <div className="error-area" style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-10 col-md-offset-1 col-xs-12">
               <div
                 style={{
                   background: '#ffffff',
-                  border: '1px solid #e5ede8',
+                  border: '1px solid #e5ebf1',
                   borderRadius: 16,
                   padding: '50px 30px',
                   textAlign: 'center',
-                  boxShadow: '0 8px 30px rgba(20,61,54,0.06)',
+                  boxShadow: '0 8px 30px rgba(19,27,46,0.06)',
                   position: 'relative',
                   overflow: 'hidden',
                 }}
@@ -69,15 +69,15 @@ export default function NotFound() {
                     left: 0,
                     right: 0,
                     height: 4,
-                    background: 'linear-gradient(90deg, #1f6b52, #ff4c6b)',
+                    background: 'linear-gradient(90deg, #052263, #ff4c6b)',
                   }}
                 />
 
                 <span
                   style={{
                     display: 'inline-block',
-                    background: '#e8f4ef',
-                    color: '#1f6b52',
+                    background: '#e9edf5',
+                    color: '#052263',
                     fontSize: 12,
                     fontWeight: 700,
                     padding: '6px 16px',
@@ -95,7 +95,7 @@ export default function NotFound() {
                     fontSize: 'clamp(72px, 14vw, 140px)',
                     lineHeight: 1,
                     fontWeight: 900,
-                    color: '#173c35',
+                    color: '#131b2e',
                     margin: '0 0 16px',
                     fontFamily: 'Montserrat, sans-serif',
                     letterSpacing: '-0.03em',
@@ -108,7 +108,7 @@ export default function NotFound() {
                   style={{
                     fontSize: 22,
                     fontWeight: 700,
-                    color: '#173c35',
+                    color: '#131b2e',
                     marginBottom: 12,
                   }}
                 >
@@ -118,7 +118,7 @@ export default function NotFound() {
                 <p
                   style={{
                     fontSize: 14,
-                    color: '#557067',
+                    color: '#556572',
                     maxWidth: 520,
                     margin: '0 auto 28px',
                     lineHeight: 1.6,
@@ -134,7 +134,7 @@ export default function NotFound() {
                     maxWidth: 480,
                     margin: '0 auto 36px',
                     display: 'flex',
-                    border: '1.5px solid #d0ded6',
+                    border: '1.5px solid #d1e0e8',
                     borderRadius: 10,
                     overflow: 'hidden',
                     background: '#ffffff',
@@ -152,13 +152,13 @@ export default function NotFound() {
                       padding: '12px 16px',
                       fontSize: 13,
                       outline: 'none',
-                      color: '#173c35',
+                      color: '#131b2e',
                     }}
                   />
                   <button
                     type="submit"
                     style={{
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       border: 'none',
                       padding: '0 22px',
@@ -184,14 +184,14 @@ export default function NotFound() {
                   <Link
                     href="/"
                     style={{
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       padding: '12px 28px',
                       borderRadius: 8,
                       fontSize: 13,
                       fontWeight: 700,
                       textDecoration: 'none',
-                      boxShadow: '0 4px 14px rgba(31,107,82,0.25)',
+                      boxShadow: '0 4px 14px rgba(5, 34, 99,0.25)',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 8,
@@ -203,8 +203,8 @@ export default function NotFound() {
                     href="/shop"
                     style={{
                       background: '#ffffff',
-                      color: '#173c35',
-                      border: '1.5px solid #c8d9d0',
+                      color: '#131b2e',
+                      border: '1.5px solid #c9d9e2',
                       padding: '12px 28px',
                       borderRadius: 8,
                       fontSize: 13,
@@ -220,8 +220,8 @@ export default function NotFound() {
                   <Link
                     href="/track-order"
                     style={{
-                      background: '#f1f6f3',
-                      color: '#1f6b52',
+                      background: '#f1f5f8',
+                      color: '#052263',
                       padding: '12px 22px',
                       borderRadius: 8,
                       fontSize: 13,
@@ -239,7 +239,7 @@ export default function NotFound() {
                 {/* Quick Directory Cards */}
                 <div
                   style={{
-                    borderTop: '1px solid #edf3f0',
+                    borderTop: '1px solid #eef1f7',
                     paddingTop: 30,
                     textAlign: 'left',
                   }}
@@ -248,7 +248,7 @@ export default function NotFound() {
                     style={{
                       fontSize: 12,
                       fontWeight: 700,
-                      color: '#708a80',
+                      color: '#707f8e',
                       textTransform: 'uppercase',
                       letterSpacing: '0.06em',
                       marginBottom: 16,
@@ -264,16 +264,16 @@ export default function NotFound() {
                         style={{
                           display: 'block',
                           padding: '14px',
-                          background: '#f8faf9',
+                          background: '#f8fafc',
                           borderRadius: 10,
-                          border: '1px solid #e5ede8',
+                          border: '1px solid #e5ebf1',
                           textDecoration: 'none',
-                          color: '#173c35',
+                          color: '#131b2e',
                         }}
                       >
-                        <span style={{ fontSize: 11, color: '#1f6b52', fontWeight: 700, display: 'block' }}>Men&apos;s</span>
+                        <span style={{ fontSize: 11, color: '#052263', fontWeight: 700, display: 'block' }}>Men&apos;s</span>
                         <strong style={{ fontSize: 13, display: 'block', marginTop: 2 }}>Regal Scrub Suits</strong>
-                        <span style={{ fontSize: 11, color: '#7a9187' }}>Round-neck Tailored</span>
+                        <span style={{ fontSize: 11, color: '#7a8997' }}>Round-neck Tailored</span>
                       </Link>
                     </div>
 
@@ -283,16 +283,16 @@ export default function NotFound() {
                         style={{
                           display: 'block',
                           padding: '14px',
-                          background: '#f8faf9',
+                          background: '#f8fafc',
                           borderRadius: 10,
-                          border: '1px solid #e5ede8',
+                          border: '1px solid #e5ebf1',
                           textDecoration: 'none',
-                          color: '#173c35',
+                          color: '#131b2e',
                         }}
                       >
                         <span style={{ fontSize: 11, color: '#ff4c6b', fontWeight: 700, display: 'block' }}>Women&apos;s</span>
                         <strong style={{ fontSize: 13, display: 'block', marginTop: 2 }}>Muse Scrub Suits</strong>
-                        <span style={{ fontSize: 11, color: '#7a9187' }}>Feminine V-Neck</span>
+                        <span style={{ fontSize: 11, color: '#7a8997' }}>Feminine V-Neck</span>
                       </Link>
                     </div>
 
@@ -302,16 +302,16 @@ export default function NotFound() {
                         style={{
                           display: 'block',
                           padding: '14px',
-                          background: '#f8faf9',
+                          background: '#f8fafc',
                           borderRadius: 10,
-                          border: '1px solid #e5ede8',
+                          border: '1px solid #e5ebf1',
                           textDecoration: 'none',
-                          color: '#173c35',
+                          color: '#131b2e',
                         }}
                       >
-                        <span style={{ fontSize: 11, color: '#1f6b52', fontWeight: 700, display: 'block' }}>Men&apos;s</span>
+                        <span style={{ fontSize: 11, color: '#052263', fontWeight: 700, display: 'block' }}>Men&apos;s</span>
                         <strong style={{ fontSize: 13, display: 'block', marginTop: 2 }}>Forte Scrub Suits</strong>
-                        <span style={{ fontSize: 11, color: '#7a9187' }}>V-Neck Performance</span>
+                        <span style={{ fontSize: 11, color: '#7a8997' }}>V-Neck Performance</span>
                       </Link>
                     </div>
 
@@ -321,16 +321,16 @@ export default function NotFound() {
                         style={{
                           display: 'block',
                           padding: '14px',
-                          background: '#f8faf9',
+                          background: '#f8fafc',
                           borderRadius: 10,
-                          border: '1px solid #e5ede8',
+                          border: '1px solid #e5ebf1',
                           textDecoration: 'none',
-                          color: '#173c35',
+                          color: '#131b2e',
                         }}
                       >
                         <span style={{ fontSize: 11, color: '#ff4c6b', fontWeight: 700, display: 'block' }}>Women&apos;s</span>
                         <strong style={{ fontSize: 13, display: 'block', marginTop: 2 }}>Rebel Scrub Suits</strong>
-                        <span style={{ fontSize: 11, color: '#7a9187' }}>Collar Neck Modern</span>
+                        <span style={{ fontSize: 11, color: '#7a8997' }}>Collar Neck Modern</span>
                       </Link>
                     </div>
                   </div>

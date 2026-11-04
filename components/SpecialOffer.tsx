@@ -87,7 +87,7 @@ export default function SpecialOffer() {
           text-align: center !important;
         }
         .special-offer .so-title h2::after {
-          background: #1f6b52 none repeat scroll 0 0;
+          background: #052263 none repeat scroll 0 0;
           bottom: -23px;
           content: "";
           height: 2px;
@@ -108,9 +108,9 @@ export default function SpecialOffer() {
           height: 80px !important;
           margin: 0 4px !important;
           background: #ffffff !important;
-          border: 2px solid #1f6b52 !important;
+          border: 2px solid #052263 !important;
           border-radius: 16px !important;
-          box-shadow: 0 4px 12px rgba(31, 107, 82, 0.12) !important;
+          box-shadow: 0 4px 12px rgba(5, 34, 99, 0.12) !important;
           vertical-align: middle !important;
         }
         .special-offer .timer-area .cdown span {
@@ -132,13 +132,13 @@ export default function SpecialOffer() {
           margin: 0 auto !important;
         }
         .special-offer .so-view {
-          background: #1f6b52 !important;
+          background: #052263 !important;
           border-radius: 10px !important;
           color: #ffffff !important;
           font-weight: 700 !important;
         }
         .special-offer .so-view:hover {
-          background: #175440 !important;
+          background: #031849 !important;
           color: #ffffff !important;
         }
         @media only screen and (max-width: 991px) {

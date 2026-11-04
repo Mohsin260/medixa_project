@@ -10,8 +10,8 @@
   overflow: hidden;
   aspect-ratio: 2 / 3;
   border-radius: 20px;
-  border: 1px solid #e6ebe8;
-  background: #eef1ee;
+  border: 1px solid #e7ecf0;
+  background: #eef1f4;
   cursor: zoom-in;
   touch-action: none;
   user-select: none;
@@ -45,7 +45,7 @@
   z-index: 2;
   padding: 6px 12px;
   border-radius: 999px;
-  background: #143d36;
+  background: #131b2e;
   color: #ffffff;
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
@@ -64,14 +64,14 @@
   width: 40px;
   height: 40px;
   padding: 0;
-  border: 1px solid rgba(20, 61, 54, 0.12);
+  border: 1px solid rgba(19,27,46, 0.12);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
-  color: #274940;
+  color: #263145;
   font-size: 14px;
   cursor: pointer;
   transform: translateY(-50%);
-  box-shadow: 0 8px 22px rgba(20, 61, 54, 0.16);
+  box-shadow: 0 8px 22px rgba(19,27,46, 0.16);
   backdrop-filter: blur(6px);
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -87,7 +87,7 @@
 .imageNav:hover,
 .imageNav:focus-visible {
   background: #ffffff;
-  color: #1f6b52;
+  color: #052263;
   outline: none;
 }
 
@@ -102,7 +102,7 @@
   padding: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 8px 22px rgba(20, 61, 54, 0.16);
+  box-shadow: 0 8px 22px rgba(19,27,46, 0.16);
   backdrop-filter: blur(6px);
 }
 
@@ -116,7 +116,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: #274940;
+  color: #263145;
   font-size: 12px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -124,19 +124,19 @@
 
 .zoomButton:hover:not(:disabled),
 .zoomButton:focus-visible {
-  background: #e8f3ee;
-  color: #1f6b52;
+  background: #e9ecf4;
+  color: #052263;
 }
 
 .zoomButton:disabled {
-  color: #b6c1bc;
+  color: #b5bfc9;
   cursor: not-allowed;
 }
 
 .zoomLevel {
   min-width: 42px;
   text-align: center;
-  color: #48665d;
+  color: #48616f;
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
   font-weight: 600;
@@ -151,7 +151,7 @@
   padding: 5px 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.88);
-  color: #61756d;
+  color: #61717e;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   letter-spacing: 0.02em;
@@ -187,10 +187,10 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  border: 1px solid #d7e2dc;
+  border: 1px solid #d7e0e8;
   border-radius: 50%;
   background: #ffffff;
-  color: #274940;
+  color: #263145;
   font-size: 12px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -198,9 +198,9 @@
 
 .thumbNav:hover:not(:disabled),
 .thumbNav:focus-visible {
-  border-color: #b9d9ca;
-  background: #e8f3ee;
-  color: #1f6b52;
+  border-color: #bcc7de;
+  background: #e9ecf4;
+  color: #052263;
   outline: none;
 }
 
@@ -218,19 +218,19 @@
   overflow: hidden;
   border: 2px solid transparent;
   border-radius: 10px;
-  background: #eef1ee;
+  background: #eef1f4;
   cursor: pointer;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .thumb:hover,
 .thumb:focus-visible {
-  border-color: #b9d9ca;
+  border-color: #bcc7de;
   outline: none;
 }
 
 .thumbActive {
-  border-color: #1f6b52;
+  border-color: #052263;
 }
 
 .thumb img {

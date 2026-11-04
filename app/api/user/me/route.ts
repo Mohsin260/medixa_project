@@ -11,6 +11,13 @@ export async function GET() {
 
     const sessionUserId = session.user.id ? String(session.user.id) : null;
     const sessionEmail = session.user.email ? String(session.user.email).toLowerCase().trim() : null;
+    const sessionRole = String((session.user as { role?: string }).role || '').trim().toLowerCase();
+    const staffRole =
+      sessionRole === 'admin'
+        ? 'ADMIN'
+        : ['editor', 'shop_manager', 'shop-manager', 'manager'].includes(sessionRole)
+          ? 'EDITOR'
+          : null;
 
     let dbUser = null;
     if (sessionUserId) {
@@ -35,7 +42,7 @@ export async function GET() {
           name: session.user.name || 'Valued Customer',
           email: session.user.email || '',
           phone: '',
-          role: 'CUSTOMER',
+          role: staffRole || 'CUSTOMER',
           image: null,
         },
       });
@@ -48,7 +55,7 @@ export async function GET() {
         name: dbUser.name || session.user.name || 'Valued Customer',
         email: dbUser.email,
         phone: dbUser.phone || '',
-        role: dbUser.role,
+        role: staffRole || dbUser.role,
         image: dbUser.image,
       },
     });

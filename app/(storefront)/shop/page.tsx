@@ -112,24 +112,24 @@ function ShopContent() {
       <Header />
 
       {/* Breadcrumb Area */}
-      <div className="breadcrumbs-area" style={{ background: '#f6f9f7', padding: '30px 0', borderBottom: '1px solid #e6ebe8' }}>
+      <div className="breadcrumbs-area" style={{ background: '#f6f9fb', padding: '30px 0', borderBottom: '1px solid #e7ecf0' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
               <div className="breadcrumbs">
-                <h1 style={{ fontSize: 24, fontWeight: 700, color: '#173c35', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <h1 style={{ fontSize: 24, fontWeight: 700, color: '#131b2e', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   Medical Scrubs Catalog
                 </h1>
-                <ul className="breadcrumbs-list" style={{ marginTop: 8, display: 'flex', gap: 8, fontSize: 13, color: '#7b8c85', listStyle: 'none', padding: 0 }}>
+                <ul className="breadcrumbs-list" style={{ marginTop: 8, display: 'flex', gap: 8, fontSize: 13, color: '#7b8997', listStyle: 'none', padding: 0 }}>
                   <li>
-                    <Link href="/" style={{ color: '#1f6b52', textDecoration: 'none' }}>Home</Link>
+                    <Link href="/" style={{ color: '#052263', textDecoration: 'none' }}>Home</Link>
                   </li>
                   <li>/</li>
                   <li>Shop</li>
                   {category !== 'ALL' && (
                     <>
                       <li>/</li>
-                      <li style={{ color: '#173c35', fontWeight: 600 }}>{category}&apos;s Scrubs</li>
+                      <li style={{ color: '#131b2e', fontWeight: 600 }}>{category}&apos;s Scrubs</li>
                     </>
                   )}
                 </ul>
@@ -145,10 +145,10 @@ function ShopContent() {
           <div className="row">
             {/* Sidebar Filters */}
             <div className="col-md-3 col-sm-4 col-xs-12">
-              <div className="shop-sidebar" style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e6ebe8', padding: '24px 20px', marginBottom: 30 }}>
+              <div className="shop-sidebar" style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e7ecf0', padding: '24px 20px', marginBottom: 30 }}>
                 {/* Search */}
                 <div style={{ marginBottom: 28 }}>
-                  <h4 style={{ fontSize: 14, fontWeight: 700, color: '#173c35', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+                  <h4 style={{ fontSize: 14, fontWeight: 700, color: '#131b2e', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
                     Search Scrubs
                   </h4>
                   <div style={{ position: 'relative' }}>
@@ -161,17 +161,17 @@ function ShopContent() {
                         width: '100%',
                         height: 40,
                         borderRadius: 10,
-                        border: '1px solid #dbe3df',
+                        border: '1px solid #dbe2e9',
                         padding: '0 12px',
                         fontSize: 13,
                         outline: 'none',
-                        background: '#fafcfb',
+                        background: '#fafcfd',
                       }}
                     />
                     {search && (
                       <button
                         onClick={() => setSearch('')}
-                        style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: '#9aa8a1', cursor: 'pointer' }}
+                        style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', color: '#99a5af', cursor: 'pointer' }}
                       >
                         ×
                       </button>
@@ -181,7 +181,7 @@ function ShopContent() {
 
                 {/* Categories */}
                 <div style={{ marginBottom: 28 }}>
-                  <h4 style={{ fontSize: 14, fontWeight: 700, color: '#173c35', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+                  <h4 style={{ fontSize: 14, fontWeight: 700, color: '#131b2e', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
                     Categories
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -197,8 +197,8 @@ function ShopContent() {
                         onClick={() => setCategory(cat.value)}
                         style={{
                           textAlign: 'left',
-                          background: category === cat.value ? '#e8f3ee' : 'transparent',
-                          color: category === cat.value ? '#1f6b52' : '#52665e',
+                          background: category === cat.value ? '#e9ecf4' : 'transparent',
+                          color: category === cat.value ? '#052263' : '#52626f',
                           fontWeight: category === cat.value ? 700 : 500,
                           padding: '8px 12px',
                           borderRadius: 8,
@@ -217,7 +217,7 @@ function ShopContent() {
                 {/* Color Swatch Filters */}
                 {allColors.length > 0 && (
                   <div style={{ marginBottom: 20 }}>
-                    <h4 style={{ fontSize: 14, fontWeight: 700, color: '#173c35', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+                    <h4 style={{ fontSize: 14, fontWeight: 700, color: '#131b2e', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
                       Filter by Color
                     </h4>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -228,8 +228,8 @@ function ShopContent() {
                           fontSize: 11,
                           padding: '4px 10px',
                           borderRadius: 20,
-                          border: selectedColor === 'ALL' ? '1px solid #1f6b52' : '1px solid #dfe6e2',
-                          background: selectedColor === 'ALL' ? '#1f6b52' : '#ffffff',
+                          border: selectedColor === 'ALL' ? '1px solid #052263' : '1px solid #dee6ed',
+                          background: selectedColor === 'ALL' ? '#052263' : '#ffffff',
                           color: selectedColor === 'ALL' ? '#ffffff' : '#496058',
                           cursor: 'pointer',
                         }}
@@ -245,8 +245,8 @@ function ShopContent() {
                             fontSize: 11,
                             padding: '4px 10px',
                             borderRadius: 20,
-                            border: selectedColor === clr ? '1px solid #1f6b52' : '1px solid #dfe6e2',
-                            background: selectedColor === clr ? '#1f6b52' : '#ffffff',
+                            border: selectedColor === clr ? '1px solid #052263' : '1px solid #dee6ed',
+                            background: selectedColor === clr ? '#052263' : '#ffffff',
                             color: selectedColor === clr ? '#ffffff' : '#496058',
                             cursor: 'pointer',
                           }}
@@ -259,9 +259,9 @@ function ShopContent() {
                 )}
 
                 {/* Assurance Card */}
-                <div style={{ background: '#f5faf7', borderRadius: 12, padding: 16, marginTop: 24, border: '1px solid #e1eee7' }}>
-                  <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#173c35' }}>★ Zero Fading Guarantee</p>
-                  <p style={{ margin: '4px 0 0', fontSize: 11, color: '#688277', lineHeight: 1.5 }}>
+                <div style={{ background: '#f5f6fa', borderRadius: 12, padding: 16, marginTop: 24, border: '1px solid #e5e8f1' }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#131b2e' }}>★ Zero Fading Guarantee</p>
+                  <p style={{ margin: '4px 0 0', fontSize: 11, color: '#687786', lineHeight: 1.5 }}>
                     International vat dyeing ensures scrubs never fade over 100+ hospital washes.
                   </p>
                 </div>
@@ -277,14 +277,14 @@ function ShopContent() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   background: '#ffffff',
-                  border: '1px solid #e6ebe8',
+                  border: '1px solid #e7ecf0',
                   borderRadius: 14,
                   padding: '14px 20px',
                   marginBottom: 24,
                 }}
               >
-                <div style={{ fontSize: 13, color: '#61786f' }}>
-                  Showing <strong style={{ color: '#173c35' }}>{filtered.length}</strong> medical apparel items
+                <div style={{ fontSize: 13, color: '#61717f' }}>
+                  Showing <strong style={{ color: '#131b2e' }}>{filtered.length}</strong> medical apparel items
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -298,11 +298,11 @@ function ShopContent() {
                     style={{
                       height: 36,
                       borderRadius: 8,
-                      border: '1px solid #dbe3df',
+                      border: '1px solid #dbe2e9',
                       padding: '0 10px',
                       fontSize: 12,
-                      background: '#fafcfb',
-                      color: '#173c35',
+                      background: '#fafcfd',
+                      color: '#131b2e',
                       outline: 'none',
                     }}
                   >
@@ -316,13 +316,13 @@ function ShopContent() {
 
               {/* Products List */}
               {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px 0', color: '#7a8e86' }}>
+                <div style={{ textAlign: 'center', padding: '60px 0', color: '#7a8896' }}>
                   <p>Loading Medixa catalog…</p>
                 </div>
               ) : filtered.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '80px 20px', background: '#ffffff', borderRadius: 16, border: '1px solid #e6ebe8' }}>
-                  <h3 style={{ fontSize: 18, color: '#173c35', fontWeight: 700, margin: '0 0 8px' }}>No scrubs match your filter</h3>
-                  <p style={{ color: '#7a8e86', fontSize: 13, margin: '0 0 20px' }}>Try resetting your category or search keywords.</p>
+                <div style={{ textAlign: 'center', padding: '80px 20px', background: '#ffffff', borderRadius: 16, border: '1px solid #e7ecf0' }}>
+                  <h3 style={{ fontSize: 18, color: '#131b2e', fontWeight: 700, margin: '0 0 8px' }}>No scrubs match your filter</h3>
+                  <p style={{ color: '#7a8896', fontSize: 13, margin: '0 0 20px' }}>Try resetting your category or search keywords.</p>
                   <button
                     onClick={() => {
                       setCategory('ALL');
@@ -330,7 +330,7 @@ function ShopContent() {
                       setSelectedColor('ALL');
                     }}
                     style={{
-                      background: '#1f6b52',
+                      background: '#052263',
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: 10,
@@ -351,7 +351,7 @@ function ShopContent() {
                         style={{
                           background: '#ffffff',
                           borderRadius: 16,
-                          border: '1px solid #e6ebe8',
+                          border: '1px solid #e7ecf0',
                           overflow: 'hidden',
                           display: 'flex',
                           flexDirection: 'column',
@@ -360,7 +360,7 @@ function ShopContent() {
                         }}
                       >
                         {/* Image Container */}
-                        <div style={{ position: 'relative', aspectRatio: '3/4', background: '#f2f6f4', overflow: 'hidden' }}>
+                        <div style={{ position: 'relative', aspectRatio: '3/4', background: '#f2f5f8', overflow: 'hidden' }}>
                           <Link href={`/products/${product.slug}`} style={{ display: 'block', height: '100%' }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -376,7 +376,7 @@ function ShopContent() {
                               position: 'absolute',
                               top: 12,
                               left: 12,
-                              background: 'rgba(23, 60, 53, 0.85)',
+                              background: 'rgba(19,27,46, 0.85)',
                               color: '#ffffff',
                               fontSize: 10,
                               fontWeight: 700,
@@ -411,11 +411,11 @@ function ShopContent() {
 
                         {/* Content */}
                         <div style={{ padding: '14px 14px 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                          <div style={{ fontSize: 11, color: '#7a8e86', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <div style={{ fontSize: 11, color: '#7a8896', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {product.collection}
                           </div>
-                          <h3 style={{ fontSize: 14, fontWeight: 700, color: '#173c35', margin: '4px 0', lineHeight: 1.3 }}>
-                            <Link href={`/products/${product.slug}`} style={{ color: '#173c35', textDecoration: 'none' }}>
+                          <h3 style={{ fontSize: 14, fontWeight: 700, color: '#131b2e', margin: '4px 0', lineHeight: 1.3 }}>
+                            <Link href={`/products/${product.slug}`} style={{ color: '#131b2e', textDecoration: 'none' }}>
                               {product.title}
                             </Link>
                           </h3>
@@ -444,13 +444,13 @@ function ShopContent() {
                           )}
 
                           {/* Price & Action */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, marginTop: 'auto', borderTop: '1px solid #edf2ef' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, marginTop: 'auto', borderTop: '1px solid #edf1f5' }}>
                             <div>
-                              <div style={{ fontSize: 15, fontWeight: 800, color: '#1f6b52', lineHeight: 1.2 }}>
+                              <div style={{ fontSize: 15, fontWeight: 800, color: '#052263', lineHeight: 1.2 }}>
                                 {formatPrice(product.price)}
                               </div>
                               {product.compareAt ? (
-                                <div style={{ fontSize: 11, color: '#9baaa3', textDecoration: 'line-through', lineHeight: 1.2 }}>
+                                <div style={{ fontSize: 11, color: '#9aa6b0', textDecoration: 'line-through', lineHeight: 1.2 }}>
                                   {formatPrice(product.compareAt)}
                                 </div>
                               ) : null}
@@ -462,8 +462,8 @@ function ShopContent() {
                                 style={{
                                   fontSize: 12,
                                   fontWeight: 600,
-                                  color: '#1f6b52',
-                                  background: '#eef6f2',
+                                  color: '#052263',
+                                  background: '#eff2f9',
                                   height: 30,
                                   padding: '0 12px',
                                   borderRadius: 6,
@@ -485,7 +485,7 @@ function ShopContent() {
                                   fontSize: 12,
                                   fontWeight: 600,
                                   color: '#ffffff',
-                                  background: addedSlug === product.slug ? '#2c8f6f' : '#173c35',
+                                  background: addedSlug === product.slug ? '#052263' : '#131b2e',
                                   border: 'none',
                                   height: 30,
                                   padding: '0 12px',

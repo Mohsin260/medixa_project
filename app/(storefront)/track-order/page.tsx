@@ -68,17 +68,17 @@ export default function TrackOrderPage() {
       <Header />
 
       {/* Breadcrumb Header */}
-      <div style={{ background: '#f5faf7', padding: '36px 0', borderBottom: '1px solid #e5ede8' }}>
+      <div style={{ background: '#f5f6fa', padding: '36px 0', borderBottom: '1px solid #e5ebf1' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12 text-center">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Medixa Dispatch Logistics
               </span>
-              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#173c35', margin: '6px 0 0' }}>
+              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#131b2e', margin: '6px 0 0' }}>
                 Track Your Medical Scrubs Order
               </h1>
-              <p style={{ fontSize: 13, color: '#748b81', margin: '8px auto 0', maxWidth: 500 }}>
+              <p style={{ fontSize: 13, color: '#738290', margin: '8px auto 0', maxWidth: 500 }}>
                 Enter your Medixa order reference (e.g. <strong>MX-123456</strong>) sent via email or SMS to view real-time fulfillment.
               </p>
             </div>
@@ -87,7 +87,7 @@ export default function TrackOrderPage() {
       </div>
 
       {/* Main Track Section */}
-      <div style={{ padding: '60px 0 90px', background: '#fafcfb' }}>
+      <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
@@ -96,14 +96,14 @@ export default function TrackOrderPage() {
                 style={{
                   background: '#ffffff',
                   borderRadius: 20,
-                  border: '1px solid #e6ebe8',
+                  border: '1px solid #e7ecf0',
                   padding: '32px 28px',
-                  boxShadow: '0 8px 30px rgba(20, 61, 54, 0.05)',
+                  boxShadow: '0 8px 30px rgba(19,27,46, 0.05)',
                   marginBottom: 36,
                 }}
               >
                 <form onSubmit={handleTrack}>
-                  <label htmlFor="order-id" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#173c35', marginBottom: 8 }}>
+                  <label htmlFor="order-id" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#131b2e', marginBottom: 8 }}>
                     Order Number / Reference ID
                   </label>
                   <div style={{ display: 'flex', gap: 10 }}>
@@ -121,9 +121,9 @@ export default function TrackOrderPage() {
                         border: '1.5px solid #d4dfd9',
                         padding: '0 16px',
                         fontSize: 14,
-                        color: '#173c35',
+                        color: '#131b2e',
                         outline: 'none',
-                        background: '#fafcfb',
+                        background: '#fafcfd',
                       }}
                     />
                     <button
@@ -132,7 +132,7 @@ export default function TrackOrderPage() {
                       style={{
                         height: 48,
                         padding: '0 26px',
-                        background: '#1f6b52',
+                        background: '#052263',
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: 12,
@@ -170,9 +170,9 @@ export default function TrackOrderPage() {
                   style={{
                     background: '#ffffff',
                     borderRadius: 20,
-                    border: '1px solid #e6ebe8',
+                    border: '1px solid #e7ecf0',
                     padding: '36px 30px',
-                    boxShadow: '0 8px 30px rgba(20, 61, 54, 0.05)',
+                    boxShadow: '0 8px 30px rgba(19,27,46, 0.05)',
                   }}
                 >
                   {/* Status Banner */}
@@ -182,18 +182,18 @@ export default function TrackOrderPage() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       paddingBottom: 20,
-                      borderBottom: '1px solid #edf2ef',
+                      borderBottom: '1px solid #edf1f5',
                       marginBottom: 28,
                     }}
                   >
                     <div>
-                      <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#1f6b52' }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#052263' }}>
                         Reference: {order.orderNumber}
                       </span>
-                      <h3 style={{ fontSize: 18, fontWeight: 800, color: '#173c35', margin: '4px 0 0' }}>
+                      <h3 style={{ fontSize: 18, fontWeight: 800, color: '#131b2e', margin: '4px 0 0' }}>
                         Customer: {order.customerName}
                       </h3>
-                      <p style={{ fontSize: 12, color: '#7a8e86', margin: '2px 0 0' }}>
+                      <p style={{ fontSize: 12, color: '#7a8896', margin: '2px 0 0' }}>
                         Destination: {order.shipCity}, {order.shipProvince}
                       </p>
                     </div>
@@ -206,13 +206,13 @@ export default function TrackOrderPage() {
                           borderRadius: 20,
                           fontSize: 12,
                           fontWeight: 700,
-                          background: order.status === 'DELIVERED' ? '#e7f7ed' : '#eaf4ef',
-                          color: order.status === 'DELIVERED' ? '#1c7d42' : '#1f6b52',
+                          background: order.status === 'DELIVERED' ? '#eceef6' : '#e9ecf4',
+                          color: order.status === 'DELIVERED' ? '#1c7d42' : '#052263',
                         }}
                       >
                         ● {order.status}
                       </span>
-                      <div style={{ fontSize: 11, color: '#899c94', marginTop: 4 }}>
+                      <div style={{ fontSize: 11, color: '#8894a2', marginTop: 4 }}>
                         Placed on {new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </div>
@@ -220,7 +220,7 @@ export default function TrackOrderPage() {
 
                   {/* Stepper Timeline */}
                   <div style={{ marginBottom: 36 }}>
-                    <h4 style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: '#173c35', marginBottom: 18, letterSpacing: '0.06em' }}>
+                    <h4 style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: '#131b2e', marginBottom: 18, letterSpacing: '0.06em' }}>
                       Fulfillment Progress
                     </h4>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, textAlign: 'center' }}>
@@ -238,7 +238,7 @@ export default function TrackOrderPage() {
                               style={{
                                 height: 6,
                                 borderRadius: 3,
-                                background: active ? '#1f6b52' : '#e6ebe8',
+                                background: active ? '#052263' : '#e7ecf0',
                                 marginBottom: 8,
                                 transition: 'background 0.3s',
                               }}
@@ -247,7 +247,7 @@ export default function TrackOrderPage() {
                               style={{
                                 fontSize: 11,
                                 fontWeight: active ? 700 : 500,
-                                color: active ? '#173c35' : '#9bb0a7',
+                                color: active ? '#131b2e' : '#9aa7b2',
                               }}
                             >
                               {step.label}
@@ -260,10 +260,10 @@ export default function TrackOrderPage() {
 
                   {/* Ordered Items Table */}
                   <div style={{ marginBottom: 28 }}>
-                    <h4 style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: '#173c35', marginBottom: 14, letterSpacing: '0.06em' }}>
+                    <h4 style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', color: '#131b2e', marginBottom: 14, letterSpacing: '0.06em' }}>
                       Order Items
                     </h4>
-                    <div style={{ border: '1px solid #eef2f0', borderRadius: 12, overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid #eef1f4', borderRadius: 12, overflow: 'hidden' }}>
                       {order.items.map((it, idx) => (
                         <div
                           key={idx}
@@ -272,17 +272,17 @@ export default function TrackOrderPage() {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '12px 16px',
-                            background: idx % 2 === 0 ? '#ffffff' : '#fafcfb',
-                            borderBottom: idx === order.items.length - 1 ? 'none' : '1px solid #edf2ef',
+                            background: idx % 2 === 0 ? '#ffffff' : '#fafcfd',
+                            borderBottom: idx === order.items.length - 1 ? 'none' : '1px solid #edf1f5',
                           }}
                         >
                           <div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: '#173c35' }}>{it.title}</div>
-                            <div style={{ fontSize: 11, color: '#7b8f87' }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#131b2e' }}>{it.title}</div>
+                            <div style={{ fontSize: 11, color: '#7b8998' }}>
                               Color: {it.color} · Size: {it.size} · Qty: {it.quantity}
                             </div>
                           </div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1f6b52' }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#052263' }}>
                             {formatPrice(it.price * it.quantity)}
                           </div>
                         </div>
@@ -293,7 +293,7 @@ export default function TrackOrderPage() {
                   {/* Cost Summary */}
                   <div
                     style={{
-                      background: '#f8faf9',
+                      background: '#f8fafc',
                       borderRadius: 14,
                       padding: '16px 20px',
                       display: 'flex',
@@ -302,12 +302,12 @@ export default function TrackOrderPage() {
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: 12, color: '#687f76' }}>Payment Method: <strong>{order.paymentMethod}</strong></div>
-                      <div style={{ fontSize: 12, color: '#687f76' }}>Delivery Service: <strong>Nationwide Courier (TCS / PostEx)</strong></div>
+                      <div style={{ fontSize: 12, color: '#687887' }}>Payment Method: <strong>{order.paymentMethod}</strong></div>
+                      <div style={{ fontSize: 12, color: '#687887' }}>Delivery Service: <strong>Nationwide Courier (TCS / PostEx)</strong></div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 11, color: '#7d948a' }}>Total Amount</div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#173c35' }}>
+                      <div style={{ fontSize: 11, color: '#7c8b99' }}>Total Amount</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: '#131b2e' }}>
                         {formatPrice(order.total)}
                       </div>
                     </div>
@@ -324,8 +324,8 @@ export default function TrackOrderPage() {
                         alignItems: 'center',
                         gap: 6,
                         background: '#ffffff',
-                        color: '#1f6b52',
-                        border: '1.5px solid #1f6b52',
+                        color: '#052263',
+                        border: '1.5px solid #052263',
                         padding: '9px 16px',
                         borderRadius: 8,
                         fontSize: 12,
@@ -342,7 +342,7 @@ export default function TrackOrderPage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 6,
-                        background: '#1f6b52',
+                        background: '#052263',
                         color: '#ffffff',
                         border: 'none',
                         padding: '9px 16px',
@@ -359,18 +359,18 @@ export default function TrackOrderPage() {
               )}
 
               {/* Help & Support Callout */}
-              <div style={{ textAlign: 'center', marginTop: 36, fontSize: 13, color: '#7a8e86' }}>
+              <div style={{ textAlign: 'center', marginTop: 36, fontSize: 13, color: '#7a8896' }}>
                 Need help with your shipment? Reach Medixa Dispatch on WhatsApp at{' '}
                 <a
                   href="https://wa.me/923435114065"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#1f6b52', fontWeight: 700, textDecoration: 'none' }}
+                  style={{ color: '#052263', fontWeight: 700, textDecoration: 'none' }}
                 >
                   +92 343 511 4065
                 </a>{' '}
                 or email{' '}
-                <a href="mailto:support@medixa.pk" style={{ color: '#1f6b52', fontWeight: 700, textDecoration: 'none' }}>
+                <a href="mailto:support@medixa.pk" style={{ color: '#052263', fontWeight: 700, textDecoration: 'none' }}>
                   support@medixa.pk
                 </a>
               </div>

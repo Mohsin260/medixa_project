@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/auth/require-admin';
+import { requireStaff } from '@/lib/auth/require-admin';
 import { STORAGE_BUCKET, uploadObject, getObjectUrl } from '@/lib/storage';
 import { db } from '@/lib/db';
 import fs from 'fs';
 import path from 'path';
 
 export async function POST(request: Request) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }

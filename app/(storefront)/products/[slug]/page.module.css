@@ -1,7 +1,7 @@
 .page {
   min-height: 60vh;
   padding: 30px 0 80px;
-  background: #f6f7f6;
+  background: #f6f7f9;
   color: #232530;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: normal;
@@ -14,7 +14,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 26px;
-  color: #8a9b94;
+  color: #8995a1;
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
@@ -22,12 +22,12 @@
 }
 
 .breadcrumb a {
-  color: #48665d;
+  color: #48616f;
   text-decoration: none;
 }
 
 .breadcrumb a:hover {
-  color: #1f6b52;
+  color: #052263;
   text-decoration: none;
 }
 
@@ -55,7 +55,7 @@
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #2d7d60;
+  color: #041d52;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -64,7 +64,7 @@
 
 .title {
   margin: 0;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(28px, 3.4vw, 40px);
   font-weight: 600;
@@ -74,7 +74,7 @@
 
 .subtitle {
   margin: 8px 0 0;
-  color: #7b8c85;
+  color: #7b8997;
   font-size: 13px;
   font-weight: 500;
 }
@@ -95,7 +95,7 @@
 }
 
 .ratingText {
-  color: #7b8c85;
+  color: #7b8997;
   font-size: 12px;
   font-weight: 500;
 }
@@ -109,14 +109,14 @@
 }
 
 .price {
-  color: #143d36;
+  color: #131b2e;
   font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .compare {
-  color: #a7b3ad;
+  color: #a6b0ba;
   font-size: 15px;
   text-decoration: line-through;
 }
@@ -124,8 +124,8 @@
 .discount {
   padding: 4px 9px;
   border-radius: 999px;
-  background: #eaf5ef;
-  color: #1f6b52;
+  background: #e9ecf4;
+  color: #052263;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -167,8 +167,8 @@
   height: 16px;
   margin-top: 2px;
   border-radius: 50%;
-  background: #e3f2e9;
-  color: #1f6b52;
+  background: #e6e9f2;
+  color: #052263;
   font-size: 9px;
   font-weight: 700;
 }
@@ -179,29 +179,29 @@
   gap: 10px 20px;
   margin-top: 20px;
   padding-top: 18px;
-  border-top: 1px solid #e9eeeb;
+  border-top: 1px solid #e9edf1;
 }
 
 .trustRow span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: #6f817a;
+  color: #6e7d8c;
   font-size: 11px;
   font-weight: 500;
 }
 
 .trustRow i {
-  color: #2d7d60;
+  color: #041d52;
 }
 
 .details {
   margin-top: 22px;
-  border-top: 1px solid #e9eeeb;
+  border-top: 1px solid #e9edf1;
 }
 
 .detail {
-  border-bottom: 1px solid #e9eeeb;
+  border-bottom: 1px solid #e9edf1;
 }
 
 .detail summary {
@@ -210,7 +210,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px 0;
-  color: #274940;
+  color: #263145;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -224,7 +224,7 @@
 
 .detail summary::after {
   content: '+';
-  color: #7b8c85;
+  color: #7b8997;
   font-size: 18px;
   font-weight: 400;
   line-height: 1;
@@ -240,7 +240,7 @@
 
 .detailBody p {
   margin: 0;
-  color: #6f817a;
+  color: #6e7d8c;
   font-size: 12.5px;
   line-height: 1.75;
 }
@@ -254,7 +254,7 @@
 }
 
 .detailBody li {
-  color: #6f817a;
+  color: #6e7d8c;
   font-size: 12.5px;
   line-height: 1.6;
 }
@@ -264,9 +264,9 @@
   gap: 14px;
   margin-top: 22px;
   padding: 16px 18px;
-  border: 1px solid #d6e9df;
+  border: 1px solid #d8deeb;
   border-radius: 14px;
-  background: #edf7f1;
+  background: #eef1f8;
 }
 
 .deliveryIcon {
@@ -277,14 +277,14 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #d8ecdf;
-  color: #1f6b52;
+  background: #d8deeb;
+  color: #052263;
   font-size: 16px;
 }
 
 .deliveryTitle {
   margin: 0 0 4px;
-  color: #175844;
+  color: #031849;
   font-family: 'Montserrat', sans-serif;
   font-size: 12.5px;
   font-weight: 700;
@@ -293,7 +293,7 @@
 
 .delivery p {
   margin: 0;
-  color: #5e7a6e;
+  color: #5e6e7c;
   font-size: 11.5px;
   line-height: 1.65;
 }
@@ -313,7 +313,7 @@
 
 .relatedTitle {
   margin: 0;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(22px, 2.6vw, 30px);
   font-weight: 600;
@@ -324,7 +324,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #1f6b52;
+  color: #052263;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -333,7 +333,7 @@
 }
 
 .viewAll:hover {
-  color: #143d36;
+  color: #131b2e;
   text-decoration: none;
 }
 
@@ -346,7 +346,7 @@
 .relatedCard {
   display: block;
   overflow: hidden;
-  border: 1px solid #e6ebe8;
+  border: 1px solid #e7ecf0;
   border-radius: 16px;
   background: #ffffff;
   text-decoration: none;
@@ -357,14 +357,14 @@
 .relatedCard:focus-visible {
   transform: translateY(-3px);
   text-decoration: none;
-  box-shadow: 0 14px 30px rgba(20, 61, 54, 0.12);
+  box-shadow: 0 14px 30px rgba(19,27,46, 0.12);
   outline: none;
 }
 
 .relatedMedia {
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: #eef1ee;
+  background: #eef1f4;
 }
 
 .relatedMedia img {
@@ -386,7 +386,7 @@
 
 .relatedCat {
   display: block;
-  color: #8a9b94;
+  color: #8995a1;
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -395,7 +395,7 @@
 
 .relatedName {
   margin: 6px 0 8px;
-  color: #274940;
+  color: #263145;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -403,7 +403,7 @@
 }
 
 .relatedPrice {
-  color: #173c35;
+  color: #131b2e;
   font-size: 13px;
   font-weight: 700;
 }

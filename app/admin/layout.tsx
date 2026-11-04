@@ -2,7 +2,7 @@ import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
-import { requireAdmin } from '@/lib/auth/require-admin';
+import { requireStaff } from '@/lib/auth/require-admin';
 import './admin.css';
 
 export const instant = false;
@@ -35,18 +35,18 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  themeColor: '#f6f8f7',
+  themeColor: '#f6f8fa',
   userScalable: false,
 };
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
 
   if (!authCheck.authorized) {
     if (authCheck.status === 401) {
       redirect('/auth/sign-in?redirectTo=/admin');
     }
-    // If signed in but not an admin (e.g. regular customer)
+    // If signed in but not a Medixa team member (e.g. regular customer)
     redirect('/auth/sign-in?error=unauthorized');
   }
 

@@ -13,7 +13,7 @@ export default function SignInPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('error') === 'unauthorized') {
-        return 'Access restricted: Administrator privileges are required to access Medixa Admin Studio. Please sign in with an admin account.';
+        return 'Access restricted: Medixa team privileges are required to access the Admin Studio. Please sign in with an administrator or shop manager account.';
       }
     }
     return null;
@@ -43,7 +43,22 @@ export default function SignInPage() {
         return;
       }
       const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
-      router.push(safeRedirect(redirectTo, '/'));
+      let destination = safeRedirect(redirectTo, '/');
+
+      // Medixa team members should land in the admin studio by default instead
+      // of being sent back to the storefront home page.
+      if (destination === '/') {
+        try {
+          const meRes = await fetch('/api/user/me', { cache: 'no-store' });
+          const me = (await meRes.json().catch(() => null)) as { user?: { role?: string } } | null;
+          const role = String(me?.user?.role || '').toUpperCase();
+          if (role === 'ADMIN' || role === 'EDITOR') destination = '/admin';
+        } catch {
+          // Fall back to the storefront if the role lookup fails.
+        }
+      }
+
+      router.push(destination);
       router.refresh();
     } catch {
       setError('Something went wrong. Check your connection and try again.');

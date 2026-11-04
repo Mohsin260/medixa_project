@@ -72,17 +72,17 @@ export default function BlogDirectoryPage() {
       <Header />
 
       {/* Breadcrumb Header */}
-      <div style={{ background: '#f5faf7', padding: '36px 0', borderBottom: '1px solid #e5ede8' }}>
+      <div style={{ background: '#f5f6fa', padding: '36px 0', borderBottom: '1px solid #e5ebf1' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12 text-center">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Medixa Clinical Journal
               </span>
-              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#173c35', margin: '6px 0 0' }}>
+              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#131b2e', margin: '6px 0 0' }}>
                 Insights for Healthcare Heroes
               </h1>
-              <p style={{ fontSize: 13, color: '#748b81', margin: '8px auto 0', maxWidth: 500 }}>
+              <p style={{ fontSize: 13, color: '#738290', margin: '8px auto 0', maxWidth: 500 }}>
                 Fabric science, clinical shift ergonomics, and medical lifestyle news curated by Medixa.
               </p>
             </div>
@@ -91,7 +91,7 @@ export default function BlogDirectoryPage() {
       </div>
 
       {/* Main Blog Grid */}
-      <div style={{ padding: '60px 0 90px', background: '#fafcfb' }}>
+      <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
             {posts.map((post, idx) => (
@@ -100,15 +100,15 @@ export default function BlogDirectoryPage() {
                   style={{
                     background: '#ffffff',
                     borderRadius: 20,
-                    border: '1px solid #e6ebe8',
+                    border: '1px solid #e7ecf0',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     height: '100%',
-                    boxShadow: '0 4px 20px rgba(20, 61, 54, 0.04)',
+                    boxShadow: '0 4px 20px rgba(19,27,46, 0.04)',
                   }}
                 >
-                  <div style={{ position: 'relative', height: 240, overflow: 'hidden', background: '#f0f5f2' }}>
+                  <div style={{ position: 'relative', height: 240, overflow: 'hidden', background: '#f0f4f8' }}>
                     <Link href={`/blog/${post.slug}`} style={{ display: 'block', height: '100%' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -122,7 +122,7 @@ export default function BlogDirectoryPage() {
                         position: 'absolute',
                         top: 14,
                         left: 14,
-                        background: 'rgba(23, 60, 53, 0.88)',
+                        background: 'rgba(19,27,46, 0.88)',
                         color: '#ffffff',
                         fontSize: 10,
                         fontWeight: 700,
@@ -137,11 +137,11 @@ export default function BlogDirectoryPage() {
                   </div>
 
                   <div style={{ padding: '24px 22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <div style={{ fontSize: 11, color: '#8aa096', marginBottom: 6 }}>
+                    <div style={{ fontSize: 11, color: '#8995a3', marginBottom: 6 }}>
                       {new Date(post.createdAt).toLocaleDateString('en-PK', { month: 'short', day: 'numeric', year: 'numeric' })} · Medixa Journal
                     </div>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#173c35', margin: '0 0 10px', lineHeight: 1.35 }}>
-                      <Link href={`/blog/${post.slug}`} style={{ color: '#173c35', textDecoration: 'none' }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#131b2e', margin: '0 0 10px', lineHeight: 1.35 }}>
+                      <Link href={`/blog/${post.slug}`} style={{ color: '#131b2e', textDecoration: 'none' }}>
                         {post.title}
                       </Link>
                     </h3>
@@ -153,7 +153,7 @@ export default function BlogDirectoryPage() {
                       style={{
                         fontSize: 13,
                         fontWeight: 700,
-                        color: '#1f6b52',
+                        color: '#052263',
                         textDecoration: 'none',
                         display: 'inline-flex',
                         alignItems: 'center',

@@ -58,8 +58,8 @@ function TrendCard({ item, showOldPrice = false }: { item: TrendItem; showOldPri
           style={{
             borderRadius: 8,
             overflow: 'hidden',
-            background: '#f8faf9',
-            border: '1px solid #edf2ef',
+            background: '#f8fafc',
+            border: '1px solid #edf1f5',
           }}
         >
           <a href={`/products/${item.slug}`}>

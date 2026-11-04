@@ -4,7 +4,7 @@
   gap: 18px;
   margin-top: 22px;
   padding-top: 22px;
-  border-top: 1px solid #e9eeeb;
+  border-top: 1px solid #e9edf1;
 }
 
 .optionGroup {
@@ -21,7 +21,7 @@
 }
 
 .optionLabel {
-  color: #274940;
+  color: #263145;
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
   font-weight: 700;
@@ -30,7 +30,7 @@
 }
 
 .optionValue {
-  color: #6f817a;
+  color: #6e7d8c;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 500;
@@ -49,7 +49,7 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  border: 1.5px solid #dfe7e3;
+  border: 1.5px solid #dde5ec;
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
@@ -58,13 +58,13 @@
 
 .colorButton:hover,
 .colorButton:focus-visible {
-  border-color: #93bfa9;
+  border-color: #94a6c9;
   outline: none;
 }
 
 .colorActive {
-  border-color: #1f6b52;
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #cfe7db;
+  border-color: #052263;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #d1d8e8;
 }
 
 .swatch {
@@ -85,10 +85,10 @@
   min-width: 46px;
   height: 38px;
   padding: 0 12px;
-  border: 1.5px solid #dfe7e3;
+  border: 1.5px solid #dde5ec;
   border-radius: 9px;
   background: #ffffff;
-  color: #3d554d;
+  color: #3c4a58;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -98,14 +98,14 @@
 
 .sizeButton:hover,
 .sizeButton:focus-visible {
-  border-color: #93bfa9;
+  border-color: #94a6c9;
   outline: none;
 }
 
 .sizeActive {
-  border-color: #1f6b52;
-  background: #eaf5ef;
-  color: #175844;
+  border-color: #052263;
+  background: #e9ecf4;
+  color: #031849;
 }
 
 .quantityRow {
@@ -120,7 +120,7 @@
   display: inline-flex;
   align-items: center;
   overflow: hidden;
-  border: 1.5px solid #dfe7e3;
+  border: 1.5px solid #dde5ec;
   border-radius: 9px;
   background: #ffffff;
 }
@@ -130,26 +130,26 @@
   height: 38px;
   border: 0;
   background: transparent;
-  color: #274940;
+  color: #263145;
   font-size: 11px;
   cursor: pointer;
 }
 
 .quantity button:hover:not(:disabled),
 .quantity button:focus-visible {
-  background: #eef6f1;
+  background: #eef1f8;
   outline: none;
 }
 
 .quantity button:disabled {
-  color: #bcc7c2;
+  color: #bbc4ce;
   cursor: not-allowed;
 }
 
 .quantity span {
   min-width: 42px;
   text-align: center;
-  color: #173c35;
+  color: #131b2e;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -157,7 +157,7 @@
 
 .stock {
   margin: 0;
-  color: #2d7d60;
+  color: #041d52;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -194,35 +194,35 @@
 }
 
 .addButton {
-  border: 1.5px solid #1f6b52;
+  border: 1.5px solid #052263;
   background: #ffffff;
-  color: #1f6b52;
+  color: #052263;
 }
 
 .addButton:hover,
 .addButton:focus-visible {
-  background: #eef6f1;
+  background: #eef1f8;
   text-decoration: none;
   outline: none;
 }
 
 .buyButton {
-  border: 1.5px solid #143d36;
-  background: #143d36;
+  border: 1.5px solid #131b2e;
+  background: #131b2e;
   color: #ffffff;
 }
 
 .buyButton:hover,
 .buyButton:focus-visible {
-  background: #1f6b52;
-  border-color: #1f6b52;
+  background: #052263;
+  border-color: #052263;
   text-decoration: none;
   outline: none;
 }
 
 .summary {
   margin: 0;
-  color: #8a9b94;
+  color: #8995a1;
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
 }

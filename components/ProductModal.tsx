@@ -68,7 +68,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
           position: 'absolute',
           top: 14,
           right: 14,
-          background: '#173c35',
+          background: '#131b2e',
           color: '#ffffff',
           border: 'none',
           width: 38,
@@ -95,7 +95,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
               <div
                 className="product-tab-content"
                 style={{
-                  background: '#f8faf9',
+                  background: '#f8fafc',
                   borderRadius: 10,
                   overflow: 'hidden',
                   textAlign: 'center',
@@ -121,7 +121,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                         position: 'absolute',
                         top: 12,
                         left: 12,
-                        background: '#1f6b52',
+                        background: '#052263',
                         color: '#ffffff',
                         padding: '4px 10px',
                         borderRadius: 4,
@@ -156,7 +156,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                         style={{
                           border:
                             activeImage === imgSrc
-                              ? '2px solid #1f6b52'
+                              ? '2px solid #052263'
                               : '1px solid #dceed6',
                           borderRadius: 8,
                           overflow: 'hidden',
@@ -188,7 +188,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: '#1f6b52',
+                color: '#052263',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
               }}
@@ -196,7 +196,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
               {product.collection} • {product.category}
             </span>
 
-            <h2 className="spd-title" style={{ fontSize: 24, fontWeight: 700, color: '#173c35', marginTop: 4, marginBottom: 8 }}>
+            <h2 className="spd-title" style={{ fontSize: 24, fontWeight: 700, color: '#131b2e', marginTop: 4, marginBottom: 8 }}>
               {product.title}
             </h2>
 
@@ -218,7 +218,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
             </div>
 
             {/* Pricing */}
-            <p className="spd-price" style={{ fontSize: 22, fontWeight: 700, color: '#173c35', marginBottom: 14 }}>
+            <p className="spd-price" style={{ fontSize: 22, fontWeight: 700, color: '#131b2e', marginBottom: 14 }}>
               {formatPrice(product.price)}
               {' '}
               {product.compareAt > product.price && (
@@ -229,8 +229,8 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
               {product.compareAt > product.price && (
                 <span
                   style={{
-                    background: '#e8f4ef',
-                    color: '#1f6b52',
+                    background: '#e9edf5',
+                    color: '#052263',
                     padding: '2px 8px',
                     borderRadius: 4,
                     fontSize: 12,
@@ -260,7 +260,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
             {product.colors && product.colors.length > 0 && (
               <div className="spd-select-color" style={{ marginBottom: 16 }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', display: 'block', marginBottom: 6 }}>
-                  Select Color: <strong style={{ color: '#1f6b52' }}>{selectedColor}</strong>
+                  Select Color: <strong style={{ color: '#052263' }}>{selectedColor}</strong>
                 </span>
                 <ul style={{ display: 'flex', gap: 8, padding: 0, margin: 0, listStyle: 'none' }}>
                   {product.colors.map((c) => (
@@ -276,7 +276,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                           background: c.value,
                           border:
                             selectedColor === c.name
-                              ? '3px solid #1f6b52'
+                              ? '3px solid #052263'
                               : '1.5px solid #cbd5e1',
                           outline: selectedColor === c.name ? '2px solid #a7f3d0' : 'none',
                           cursor: 'pointer',
@@ -296,9 +296,9 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
               <div className="spd-select-size" style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b' }}>
-                    Select Size: <strong style={{ color: '#1f6b52' }}>{selectedSize}</strong>
+                    Select Size: <strong style={{ color: '#052263' }}>{selectedSize}</strong>
                   </span>
-                  <Link href="/size-guide" onClick={onClose} style={{ fontSize: 11, color: '#1f6b52', fontWeight: 600 }}>
+                  <Link href="/size-guide" onClick={onClose} style={{ fontSize: 11, color: '#052263', fontWeight: 600 }}>
                     📏 Size Guide
                   </Link>
                 </div>
@@ -313,9 +313,9 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                           borderRadius: 6,
                           border:
                             selectedSize === s
-                              ? '1.5px solid #1f6b52'
+                              ? '1.5px solid #052263'
                               : '1px solid #d1d5db',
-                          background: selectedSize === s ? '#1f6b52' : '#ffffff',
+                          background: selectedSize === s ? '#052263' : '#ffffff',
                           color: selectedSize === s ? '#ffffff' : '#1f2937',
                           fontSize: 12,
                           fontWeight: 700,
@@ -349,12 +349,12 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                   style={{
                     width: 36,
                     height: '100%',
-                    background: '#f8faf9',
+                    background: '#f8fafc',
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 700,
                     fontSize: 16,
-                    color: '#173c35',
+                    color: '#131b2e',
                   }}
                 >
                   -
@@ -381,12 +381,12 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                   style={{
                     width: 36,
                     height: '100%',
-                    background: '#f8faf9',
+                    background: '#f8fafc',
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 700,
                     fontSize: 16,
-                    color: '#173c35',
+                    color: '#131b2e',
                   }}
                 >
                   +
@@ -398,7 +398,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                 onClick={handleAddToCart}
                 className="spd-add-to hvr-bs"
                 style={{
-                  background: added ? '#15803d' : '#1f6b52',
+                  background: added ? '#15803d' : '#052263',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: 6,
@@ -418,12 +418,12 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
             </div>
 
             {/* SKU & Category Meta */}
-            <div className="spd-meta" style={{ borderTop: '1px solid #eef2f0', paddingTop: 14 }}>
+            <div className="spd-meta" style={{ borderTop: '1px solid #eef1f4', paddingTop: 14 }}>
               <p style={{ margin: '4px 0', fontSize: 12, color: '#64748b' }}>
-                SKU: <span style={{ fontWeight: 600, color: '#173c35' }}>{product.sku}</span>
+                SKU: <span style={{ fontWeight: 600, color: '#131b2e' }}>{product.sku}</span>
               </p>
               <p style={{ margin: '4px 0', fontSize: 12, color: '#64748b' }}>
-                Category: <span style={{ fontWeight: 600, color: '#173c35' }}>{product.collection} ({product.category})</span>
+                Category: <span style={{ fontWeight: 600, color: '#131b2e' }}>{product.collection} ({product.category})</span>
               </p>
             </div>
 
@@ -435,7 +435,7 @@ function ProductModalContent({ product, onClose }: ProductModalContentProps) {
                 style={{
                   fontSize: 13,
                   fontWeight: 700,
-                  color: '#1f6b52',
+                  color: '#052263',
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',

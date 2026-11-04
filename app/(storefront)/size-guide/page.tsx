@@ -31,17 +31,17 @@ export default function SizeGuidePage() {
       <Header />
 
       {/* Breadcrumb Header */}
-      <div style={{ background: '#f5faf7', padding: '36px 0', borderBottom: '1px solid #e5ede8' }}>
+      <div style={{ background: '#f5f6fa', padding: '36px 0', borderBottom: '1px solid #e5ebf1' }}>
         <div className="container">
           <div className="row">
             <div className="col-xs-12 text-center">
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#1f6b52', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#052263', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Fit & Dimensions
               </span>
-              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#173c35', margin: '6px 0 0' }}>
+              <h1 style={{ fontSize: 28, fontWeight: 800, color: '#131b2e', margin: '6px 0 0' }}>
                 Medixa Scrubs Size Chart
               </h1>
-              <p style={{ fontSize: 13, color: '#748b81', margin: '8px auto 0', maxWidth: 520 }}>
+              <p style={{ fontSize: 13, color: '#738290', margin: '8px auto 0', maxWidth: 520 }}>
                 All measurements are in inches. Our 4-way stretch fabric provides a relaxed, flexible drape for long hospital shifts.
               </p>
             </div>
@@ -50,7 +50,7 @@ export default function SizeGuidePage() {
       </div>
 
       {/* Main Content */}
-      <div style={{ padding: '60px 0 90px', background: '#fafcfb' }}>
+      <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-10 col-md-offset-1 col-xs-12">
@@ -65,9 +65,9 @@ export default function SizeGuidePage() {
                     fontSize: 14,
                     fontWeight: 700,
                     border: 'none',
-                    background: activeTab === 'men' ? '#1f6b52' : '#ffffff',
-                    color: activeTab === 'men' ? '#ffffff' : '#4f665e',
-                    boxShadow: activeTab === 'men' ? '0 4px 14px rgba(31, 107, 82, 0.25)' : 'none',
+                    background: activeTab === 'men' ? '#052263' : '#ffffff',
+                    color: activeTab === 'men' ? '#ffffff' : '#4f6472',
+                    boxShadow: activeTab === 'men' ? '0 4px 14px rgba(5, 34, 99, 0.25)' : 'none',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
@@ -83,9 +83,9 @@ export default function SizeGuidePage() {
                     fontSize: 14,
                     fontWeight: 700,
                     border: 'none',
-                    background: activeTab === 'women' ? '#1f6b52' : '#ffffff',
-                    color: activeTab === 'women' ? '#ffffff' : '#4f665e',
-                    boxShadow: activeTab === 'women' ? '0 4px 14px rgba(31, 107, 82, 0.25)' : 'none',
+                    background: activeTab === 'women' ? '#052263' : '#ffffff',
+                    color: activeTab === 'women' ? '#ffffff' : '#4f6472',
+                    boxShadow: activeTab === 'women' ? '0 4px 14px rgba(5, 34, 99, 0.25)' : 'none',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
@@ -99,22 +99,22 @@ export default function SizeGuidePage() {
                 style={{
                   background: '#ffffff',
                   borderRadius: 20,
-                  border: '1px solid #e6ebe8',
+                  border: '1px solid #e7ecf0',
                   padding: 30,
-                  boxShadow: '0 8px 30px rgba(20, 61, 54, 0.05)',
+                  boxShadow: '0 8px 30px rgba(19,27,46, 0.05)',
                   marginBottom: 40,
                 }}
               >
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 600 }}>
                     <thead>
-                      <tr style={{ background: '#f5faf7', borderBottom: '2px solid #e1ebe5' }}>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Size</th>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Chest (Inches)</th>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Top Length</th>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Waist (Elastic)</th>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Hip</th>
-                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#173c35' }}>Trouser Length</th>
+                      <tr style={{ background: '#f5f6fa', borderBottom: '2px solid #e2e6ef' }}>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Size</th>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Chest (Inches)</th>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Top Length</th>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Waist (Elastic)</th>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Hip</th>
+                        <th style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#131b2e' }}>Trouser Length</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -122,18 +122,18 @@ export default function SizeGuidePage() {
                         <tr
                           key={row.size}
                           style={{
-                            borderBottom: '1px solid #edf2ef',
-                            background: idx % 2 === 0 ? '#ffffff' : '#fafcfb',
+                            borderBottom: '1px solid #edf1f5',
+                            background: idx % 2 === 0 ? '#ffffff' : '#fafcfd',
                           }}
                         >
-                          <td style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#1f6b52' }}>
+                          <td style={{ padding: '14px 16px', fontSize: 13, fontWeight: 800, color: '#052263' }}>
                             {row.size}
                           </td>
-                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#334e45' }}>{row.chest}</td>
-                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#334e45' }}>{row.topLength}</td>
-                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#334e45' }}>{row.waist}</td>
-                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#334e45' }}>{row.hip}</td>
-                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#334e45' }}>{row.trouserLength}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#33415a' }}>{row.chest}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#33415a' }}>{row.topLength}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#33415a' }}>{row.waist}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#33415a' }}>{row.hip}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 13, color: '#33415a' }}>{row.trouserLength}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -144,30 +144,30 @@ export default function SizeGuidePage() {
               {/* Measuring Guidelines */}
               <div className="row">
                 <div className="col-md-4 col-sm-6 col-xs-12" style={{ marginBottom: 20 }}>
-                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e6ebe8', padding: 22, height: '100%' }}>
+                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e7ecf0', padding: 22, height: '100%' }}>
                     <div style={{ fontSize: 20, marginBottom: 8 }}>📏</div>
-                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#173c35', margin: '0 0 6px' }}>1. Chest / Bust</h4>
-                    <p style={{ fontSize: 12, color: '#6d837b', lineHeight: 1.5, margin: 0 }}>
+                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#131b2e', margin: '0 0 6px' }}>1. Chest / Bust</h4>
+                    <p style={{ fontSize: 12, color: '#6c7b8a', lineHeight: 1.5, margin: 0 }}>
                       Measure around the fullest part of your chest, keeping the tape horizontal under the arms and across shoulder blades.
                     </p>
                   </div>
                 </div>
 
                 <div className="col-md-4 col-sm-6 col-xs-12" style={{ marginBottom: 20 }}>
-                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e6ebe8', padding: 22, height: '100%' }}>
+                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e7ecf0', padding: 22, height: '100%' }}>
                     <div style={{ fontSize: 20, marginBottom: 8 }}>👖</div>
-                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#173c35', margin: '0 0 6px' }}>2. Waist & Inseam</h4>
-                    <p style={{ fontSize: 12, color: '#6d837b', lineHeight: 1.5, margin: 0 }}>
+                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#131b2e', margin: '0 0 6px' }}>2. Waist & Inseam</h4>
+                    <p style={{ fontSize: 12, color: '#6c7b8a', lineHeight: 1.5, margin: 0 }}>
                       Our trousers feature an elastic waistband with drawstrings for tailored tension. Measure around your natural waistline.
                     </p>
                   </div>
                 </div>
 
                 <div className="col-md-4 col-sm-12 col-xs-12" style={{ marginBottom: 20 }}>
-                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e6ebe8', padding: 22, height: '100%' }}>
+                  <div style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #e7ecf0', padding: 22, height: '100%' }}>
                     <div style={{ fontSize: 20, marginBottom: 8 }}>🔄</div>
-                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#173c35', margin: '0 0 6px' }}>3. Free Exchange</h4>
-                    <p style={{ fontSize: 12, color: '#6d837b', lineHeight: 1.5, margin: 0 }}>
+                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#131b2e', margin: '0 0 6px' }}>3. Free Exchange</h4>
+                    <p style={{ fontSize: 12, color: '#6c7b8a', lineHeight: 1.5, margin: 0 }}>
                       Not sure about your size? We offer a 7-day hassle-free size exchange policy across Pakistan with courier pickup.
                     </p>
                   </div>
@@ -180,14 +180,14 @@ export default function SizeGuidePage() {
                   href="/shop"
                   style={{
                     display: 'inline-block',
-                    background: '#1f6b52',
+                    background: '#052263',
                     color: '#ffffff',
                     fontWeight: 700,
                     fontSize: 14,
                     padding: '14px 32px',
                     borderRadius: 30,
                     textDecoration: 'none',
-                    boxShadow: '0 6px 18px rgba(31, 107, 82, 0.25)',
+                    boxShadow: '0 6px 18px rgba(5, 34, 99, 0.25)',
                   }}
                 >
                   Explore Medical Scrubs Catalog

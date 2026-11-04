@@ -129,7 +129,7 @@ export default function ProductCardActions({
             left: '50%',
             transform: 'translateX(-50%)',
             marginBottom: 8,
-            background: 'rgba(23, 60, 53, 0.95)',
+            background: 'rgba(19,27,46, 0.95)',
             color: '#ffffff',
             padding: '5px 12px',
             borderRadius: 6,

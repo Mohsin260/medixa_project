@@ -423,14 +423,14 @@ export default function CustomerConcierge() {
                     style={{
                       marginTop: 8,
                       width: '85%',
-                      background: '#eef8f3',
-                      border: '1px solid #c2e5d5',
+                      background: '#eef1f8',
+                      border: '1px solid #c6cee3',
                       borderRadius: 10,
                       padding: 12,
                       fontSize: 12,
                     }}
                   >
-                    <div style={{ fontWeight: 700, color: '#173c35', marginBottom: 4 }}>
+                    <div style={{ fontWeight: 700, color: '#131b2e', marginBottom: 4 }}>
                       Order: {msg.trackingData.orderNumber}
                     </div>
                     <div style={{ color: '#4b5563' }}>Status: <strong>{msg.trackingData.status.toUpperCase()}</strong></div>
@@ -503,7 +503,7 @@ export default function CustomerConcierge() {
 
           {/* Quick WhatsApp Concierge Bar */}
           <div className={styles.quickBar}>
-            <span style={{ color: '#173c35', fontWeight: 600 }}>Emergency Clinical Order?</span>
+            <span style={{ color: '#131b2e', fontWeight: 600 }}>Emergency Clinical Order?</span>
             <a
               href="https://wa.me/923435114065?text=Hi%20Medixa%2C%20I%20have%20an%20urgent%20scrubs%20request."
               target="_blank"

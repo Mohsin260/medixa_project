@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/auth/require-admin';
+import { requireStaff } from '@/lib/auth/require-admin';
 import { db } from '@/lib/db';
 import { ProductStatus } from '@/generated/prisma/client';
 
 export async function GET(request: NextRequest) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const authCheck = await requireAdmin();
+  const authCheck = await requireStaff();
   if (!authCheck.authorized) {
     return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
   }

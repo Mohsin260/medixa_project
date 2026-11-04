@@ -84,6 +84,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const requestedRole = role.trim().toLowerCase();
+  const assignedNeonRole =
+    requestedRole === 'admin' ? 'admin' : requestedRole === 'editor' ? 'editor' : 'user';
+  const assignedPrismaRole =
+    assignedNeonRole === 'admin' ? 'ADMIN' : assignedNeonRole === 'editor' ? 'EDITOR' : 'CUSTOMER';
+
   if (password.length < 8) {
     return NextResponse.json(
       { error: 'Password must be at least 8 characters long.' },
@@ -124,13 +130,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const assignedRole = role.toLowerCase() === 'admin' ? 'admin' : 'user';
-
-    // 2. Set role and mark verified if admin
-    if (assignedRole === 'admin') {
+    // 2. Set role and mark verified for internal team members
+    if (assignedNeonRole !== 'user') {
       await db.$executeRaw`
         UPDATE neon_auth."user" 
-        SET role = 'admin', "emailVerified" = true 
+        SET role = ${assignedNeonRole}, "emailVerified" = true 
         WHERE email = ${email.trim().toLowerCase()}
       `;
     }
@@ -140,13 +144,13 @@ export async function POST(request: NextRequest) {
       where: { email: email.trim().toLowerCase() },
       update: {
         name: name?.trim() || email.split('@')[0],
-        role: assignedRole === 'admin' ? 'ADMIN' : 'CUSTOMER',
+        role: assignedPrismaRole,
         status: 'ACTIVE',
       },
       create: {
         email: email.trim().toLowerCase(),
         name: name?.trim() || email.split('@')[0],
-        role: assignedRole === 'admin' ? 'ADMIN' : 'CUSTOMER',
+        role: assignedPrismaRole,
         status: 'ACTIVE',
       },
     });
@@ -157,7 +161,7 @@ export async function POST(request: NextRequest) {
         id: resData.user?.id,
         email: email.trim().toLowerCase(),
         name: name?.trim(),
-        role: assignedRole,
+        role: assignedNeonRole,
       },
     });
   } catch (err) {
@@ -177,7 +181,7 @@ export async function PATCH(request: NextRequest) {
 
   const body = (await request.json().catch(() => ({}))) as {
     email?: string;
-    role?: 'admin' | 'user';
+    role?: 'admin' | 'editor' | 'user';
   };
 
   const { email, role } = body;
@@ -186,7 +190,11 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Email and new role are required.' }, { status: 400 });
   }
 
-  const targetRole = role.toLowerCase() === 'admin' ? 'admin' : 'user';
+  const requestedRole = role.toLowerCase();
+  const targetRole =
+    requestedRole === 'admin' ? 'admin' : requestedRole === 'editor' ? 'editor' : 'user';
+  const targetPrismaRole =
+    targetRole === 'admin' ? 'ADMIN' : targetRole === 'editor' ? 'EDITOR' : 'CUSTOMER';
 
   // Prevent admin from accidentally demoting themselves if they are the only admin
   if (email.toLowerCase() === authCheck.user.email.toLowerCase() && targetRole !== 'admin') {
@@ -206,7 +214,7 @@ export async function PATCH(request: NextRequest) {
     await db.user.updateMany({
       where: { email: email.trim().toLowerCase() },
       data: {
-        role: targetRole === 'admin' ? 'ADMIN' : 'CUSTOMER',
+        role: targetPrismaRole,
       },
     });
 

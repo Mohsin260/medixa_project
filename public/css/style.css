@@ -1039,7 +1039,7 @@ ul.menu-list li .hot::after {
 /*----------------------------------------*/
 
 .home1-slider-container {
-    box-shadow: 0 0 8px 0 rgb(219, 219, 219);
+    box-shadow: none;
 }
 
 .home1-slider-container .nivoSlider img {
@@ -1582,7 +1582,7 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-title h2::after {
-    background: #1f6b52 none repeat scroll 0 0;
+    background: #052263 none repeat scroll 0 0;
     bottom: -23px;
     content: "";
     height: 2px;
@@ -1601,7 +1601,7 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-off-percent {
-    color: #1f6b52;
+    color: #052263;
     font-size: 38px;
     font-weight: 700;
     letter-spacing: 0;
@@ -1616,9 +1616,9 @@ ul.menu-list li .hot::after {
 
 .special-offer .timer-area .cdown {
     background: #fff none repeat scroll 0 0;
-    border: 2px solid #1f6b52;
+    border: 2px solid #052263;
     border-radius: 16px !important;
-    box-shadow: 0 4px 12px rgba(31, 107, 82, 0.12);
+    box-shadow: 0 4px 12px rgba(5, 34, 99, 0.12);
     display: inline-block;
     height: 85px;
     width: 85px;
@@ -1646,7 +1646,7 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-view {
-    background: #1f6b52 none repeat scroll 0 0;
+    background: #052263 none repeat scroll 0 0;
     border-radius: 10px !important;
     color: #ffffff;
     display: inline-block;
@@ -1661,7 +1661,7 @@ ul.menu-list li .hot::after {
 }
 
 .special-offer .so-view:hover {
-    background: #175440;
+    background: #031849;
     color: #ffffff;
 }
 
