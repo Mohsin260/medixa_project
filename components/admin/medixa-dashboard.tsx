@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   BookOpenText,
@@ -9,6 +9,7 @@ import {
   CloudUpload,
   ImageIcon,
   KeyRound,
+  Layers,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -392,23 +393,33 @@ export default function MedixaDashboard({ initialUser }: { initialUser?: Dashboa
           <p className="px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#99a5af]">Store Modules</p>
           <nav className="mt-3 flex flex-col gap-1">
             {visibleNav.map(({ label, icon: Icon }) => (
-              <button
-                key={label}
-                onClick={() => {
-                  setActive(label);
-                  setChangePasswordOpen(false);
-                  setMobileNav(false);
-                }}
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-colors',
-                  active === label
-                    ? 'bg-[#e9ecf4] font-semibold text-[#041d52]'
-                    : 'text-[#707d8b] hover:bg-[#f4f6f9] hover:text-[#33415a]',
-                )}
-              >
-                <Icon size={17} />
-                {label}
-              </button>
+              <Fragment key={label}>
+                <button
+                  onClick={() => {
+                    setActive(label);
+                    setChangePasswordOpen(false);
+                    setMobileNav(false);
+                  }}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-colors',
+                    active === label
+                      ? 'bg-[#e9ecf4] font-semibold text-[#041d52]'
+                      : 'text-[#707d8b] hover:bg-[#f4f6f9] hover:text-[#33415a]',
+                  )}
+                >
+                  <Icon size={17} />
+                  {label}
+                </button>
+                {label === 'Products' ? (
+                  <a
+                    href="/admin/bundles"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium text-[#707d8b] transition-colors hover:bg-[#f4f6f9] hover:text-[#33415a]"
+                  >
+                    <Layers size={17} />
+                    Bundle
+                  </a>
+                ) : null}
+              </Fragment>
             ))}
           </nav>
         </div>

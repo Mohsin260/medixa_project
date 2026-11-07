@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AdminFullPage } from '@/components/admin/admin-full-page';
+import { BundleOfferManager } from '@/components/admin/bundle-offer-form';
 
 export interface AdminProduct {
   id: string;
@@ -875,6 +876,12 @@ function ProductFormPage({
             </Button>
           </div>
       </form>
+
+      {isEdit && product ? (
+        <div className="mt-6">
+          <BundleOfferManager productId={product.id} productTitle={product.title} embedded />
+        </div>
+      ) : null}
     </AdminFullPage>
   );
 }

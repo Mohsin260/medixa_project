@@ -4,6 +4,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart';
+import { roundCurrency } from '@/lib/bundle-pricing';
 import { useWishlist } from '@/lib/wishlist';
 import { formatPrice } from '@/lib/products';
 import styles from './Header.module.css';
@@ -515,7 +516,7 @@ export default function Header() {
                                     {item.title}
                                   </a>
                                   <span className="mcp-qty">
-                                    {item.quantity} x <span className="mcp-price">{formatPrice(item.price)}</span>
+                                    {item.quantity} x <span className="mcp-price">{formatPrice(roundCurrency(item.price))}</span>
                                   </span>
                                   <span className={styles.variant}>
                                     {item.color} / {item.size}
@@ -547,7 +548,7 @@ export default function Header() {
                       <div className="my-cart-total-cost">
                         <span>Total cost</span>
                         {' '}
-                        <span className="cost">{formatPrice(subtotal)}</span>
+                        <span className="cost">{formatPrice(roundCurrency(subtotal))}</span>
                       </div>
                       <div className="viewcart-checkout">
                         <a className="viewcart" href="/cart">View cart</a>

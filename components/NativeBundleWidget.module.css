@@ -1,0 +1,224 @@
+.widget {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #e2e8ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(19, 27, 46, 0.04);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  color: #131b2e;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #7e8a96;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eaf7f0;
+  color: #1b7a54;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tier {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid #e0e7ee;
+  border-radius: 10px;
+  background: #fbfcfd;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.tier:hover {
+  border-color: #b9c6d8;
+  background: #ffffff;
+}
+
+.tier:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(5, 34, 99, 0.28);
+}
+
+.tierActive {
+  border-color: #052263;
+  background: #f3f6fc;
+  box-shadow: 0 0 0 1px rgba(5, 34, 99, 0.16);
+}
+
+.tierMain {
+  min-width: 0;
+}
+
+.tierTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #c7d1dc;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #7a8896;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.qtyActive {
+  border-color: #052263;
+  background: #052263;
+  color: #ffffff;
+}
+
+.tierLabel {
+  overflow: hidden;
+  color: #1d2739;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tierDiscount {
+  display: block;
+  margin-top: 3px;
+  color: #8b98a4;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.tierPrice {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.tierUnit {
+  display: block;
+  color: #052263;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tierPer {
+  display: block;
+  color: #8b98a4;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.summary {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #e6edf4;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  color: #6f7d8a;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.rowValue {
+  color: #495764;
+  font-weight: 500;
+}
+
+.strike {
+  text-decoration: line-through;
+}
+
+.savings,
+.savings .rowValue {
+  color: #1b7a54;
+}
+
+.totalRow {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e9f0;
+}
+
+.totalLabel {
+  color: #131b2e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.totalValue {
+  color: #052263;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: #8b98a4;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.hintActive {
+  color: #1b7a54;
+}
+
+@media (min-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

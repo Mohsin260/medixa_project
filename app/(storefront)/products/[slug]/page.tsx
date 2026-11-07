@@ -2,12 +2,14 @@
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import LegacyScripts from '@/components/LegacyScripts';
+import { ProductBundleSection } from '@/components/ProductBundleSection';
 import ProductGallery from '@/components/ProductGallery';
 import ProductPurchasePanel from '@/components/ProductPurchasePanel';
 import { ProductSelectionProvider } from '@/components/ProductSelection';
 import { formatPrice, getProductBySlug, getProductSlugs, getRelatedProducts } from '@/lib/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import styles from './page.module.css';
 
 interface PageProps {
@@ -118,7 +120,9 @@ export default async function ProductPage({ params }: PageProps) {
                   ))}
                 </ul>
 
-                <ProductPurchasePanel product={product} />
+                <Suspense fallback={<ProductPurchasePanel product={product} />}>
+                  <ProductBundleSection product={product} slug={product.slug} />
+                </Suspense>
 
                 <div className={styles.trustRow}>
                   <span>

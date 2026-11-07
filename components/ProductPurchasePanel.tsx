@@ -6,11 +6,23 @@ import { useEffect, useRef, useState } from 'react';
 import { useProductSelection } from './ProductSelection';
 import styles from './ProductPurchasePanel.module.css';
 
-interface ProductPurchasePanelProps {
-  product: Product;
+export interface ProductBundleSelection {
+  offerId: number;
+  tierId: number;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
 }
 
-export default function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
+interface ProductPurchasePanelProps {
+  product: Product;
+  bundle?: ProductBundleSelection | null;
+}
+
+export default function ProductPurchasePanel({
+  product,
+  bundle = null,
+}: ProductPurchasePanelProps) {
   const selection = useProductSelection();
   const [localColor, setLocalColor] = useState(product.colors[0]?.name || '');
   const color = selection?.color ?? localColor;
@@ -33,7 +45,10 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
     [],
   );
 
-  const total = product.price * quantity;
+  const isBundle = Boolean(bundle);
+  const effectiveQuantity = bundle ? bundle.quantity : quantity;
+  const effectiveUnitPrice = bundle ? bundle.unitPrice : product.price;
+  const total = bundle ? bundle.totalPrice : product.price * quantity;
 
   const resetAdded = () => {
     setAdded(false);
@@ -48,11 +63,13 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
       slug: product.slug,
       title: product.title,
       image: product.image,
-      price: product.price,
+      price: effectiveUnitPrice,
       compareAt: product.compareAt,
       color,
       size,
-      quantity,
+      quantity: effectiveQuantity,
+      bundleOfferId: bundle?.offerId ?? null,
+      bundleTierId: bundle?.tierId ?? null,
     });
 
     if (goToCheckout) {
@@ -123,26 +140,29 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
           <span className={styles.optionValue}>{formatPrice(total)}</span>
         </div>
         <div className={styles.quantityRow}>
-          <div className={styles.quantity}>
+          <div
+            className={styles.quantity}
+            title={isBundle ? 'Quantity is set by the selected bundle' : undefined}
+          >
             <button
               type="button"
               onClick={() => {
                 setQuantity((value) => Math.max(1, value - 1));
                 resetAdded();
               }}
-              disabled={quantity <= 1}
+              disabled={isBundle || quantity <= 1}
               aria-label="Decrease quantity"
             >
               <i className="fa fa-minus" aria-hidden="true" />
             </button>
-            <span aria-live="polite">{quantity}</span>
+            <span aria-live="polite">{effectiveQuantity}</span>
             <button
               type="button"
               onClick={() => {
                 setQuantity((value) => Math.min(10, value + 1));
                 resetAdded();
               }}
-              disabled={quantity >= 10}
+              disabled={isBundle || quantity >= 10}
               aria-label="Increase quantity"
             >
               <i className="fa fa-plus" aria-hidden="true" />
@@ -170,7 +190,8 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
       </div>
 
       <p className={styles.summary} aria-live="polite">
-        {color} · Size {size} · Qty {quantity}
+        {color} · Size {size} · Qty {effectiveQuantity}
+        {isBundle ? ' · Bundle pricing' : ''}
       </p>
     </div>
   );

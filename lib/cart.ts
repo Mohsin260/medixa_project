@@ -13,6 +13,8 @@ export interface CartItem {
   color: string;
   size: string;
   quantity: number;
+  bundleOfferId?: number | null;
+  bundleTierId?: number | null;
 }
 
 export type NewCartItem = Partial<CartItem> & Pick<CartItem, 'slug' | 'title' | 'image' | 'price'>;
@@ -20,8 +22,21 @@ export type NewCartItem = Partial<CartItem> & Pick<CartItem, 'slug' | 'title' | 
 const STORAGE_KEY = 'medixa-cart';
 const MAX_QUANTITY = 99;
 
-const buildItemId = (slug: string, color?: string, size?: string) =>
-  `${slug}::${color || ''}::${size || ''}`;
+const buildItemId = (
+  slug: string,
+  color?: string,
+  size?: string,
+  bundleTierId?: number | null,
+) => {
+  const bundleSuffix = bundleTierId != null ? `::bundle-${bundleTierId}` : '';
+  return `${slug}::${color || ''}::${size || ''}${bundleSuffix}`;
+};
+
+function toNullableNumber(value: unknown): number | null {
+  if (value == null || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
 
 function sanitizeItem(item: unknown): CartItem | null {
   if (!item || typeof item !== 'object') {
@@ -38,11 +53,15 @@ function sanitizeItem(item: unknown): CartItem | null {
     price: rawPrice,
     compareAt: rawCompareAt,
     quantity: rawQuantity,
+    bundleOfferId: rawBundleOfferId,
+    bundleTierId: rawBundleTierId,
   } = item as Partial<CartItem>;
 
   const price = Number(rawPrice);
   const compareAt = Number(rawCompareAt);
   const quantity = Number(rawQuantity ?? 1);
+  const bundleOfferId = toNullableNumber(rawBundleOfferId);
+  const bundleTierId = toNullableNumber(rawBundleTierId);
 
   if (typeof slug !== 'string' || !slug) return null;
   if (typeof title !== 'string' || !title) return null;
@@ -51,7 +70,7 @@ function sanitizeItem(item: unknown): CartItem | null {
   if (!Number.isFinite(quantity) || quantity < 1) return null;
 
   return {
-    id: typeof id === 'string' && id ? id : buildItemId(slug, color, size),
+    id: typeof id === 'string' && id ? id : buildItemId(slug, color, size, bundleTierId),
     slug,
     title,
     image,
@@ -60,6 +79,8 @@ function sanitizeItem(item: unknown): CartItem | null {
     color: typeof color === 'string' ? color : '',
     size: typeof size === 'string' ? size : '',
     quantity: Math.min(MAX_QUANTITY, Math.floor(quantity)),
+    bundleOfferId,
+    bundleTierId,
   };
 }
 

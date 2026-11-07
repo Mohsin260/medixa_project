@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useCart } from '@/lib/cart';
+import { roundCurrency } from '@/lib/bundle-pricing';
 import { formatPrice } from '@/lib/products';
 import styles from './CartPageContent.module.css';
 
@@ -64,7 +65,9 @@ export default function CartPageContent() {
                       <a className={styles.itemName} href={`/products/${item.slug}`}>
                         {item.title}
                       </a>
-                      <span className={styles.itemPrice}>{formatPrice(item.price)}</span>
+                      <span className={styles.itemPrice}>
+                        {formatPrice(roundCurrency(item.price))}
+                      </span>
 
                       <div className={styles.itemActions}>
                         <div className={styles.quantity}>
@@ -98,7 +101,7 @@ export default function CartPageContent() {
                     </div>
 
                     <div className={styles.lineTotal}>
-                      {formatPrice(item.price * item.quantity)}
+                      {formatPrice(roundCurrency(item.price * item.quantity))}
                     </div>
                   </article>
                 ))}
@@ -118,7 +121,7 @@ export default function CartPageContent() {
                     <span>
                       Subtotal ({count} {count === 1 ? 'item' : 'items'})
                     </span>
-                    <span>{formatPrice(subtotal)}</span>
+                    <span>{formatPrice(roundCurrency(subtotal))}</span>
                   </div>
                   <div className={styles.summaryRow}>
                     <span>Delivery</span>
@@ -126,7 +129,7 @@ export default function CartPageContent() {
                   </div>
                   <div className={styles.totalRow}>
                     <span>Total</span>
-                    <span>{formatPrice(subtotal)}</span>
+                    <span>{formatPrice(roundCurrency(subtotal))}</span>
                   </div>
                 </div>
 
