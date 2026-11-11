@@ -456,9 +456,32 @@ export default function ProductModal() {
   const quickViewSlug = useUiStore((state) => state.quickViewSlug);
   const closeQuickView = useUiStore((state) => state.closeQuickView);
 
-  const product = quickViewSlug
+  const fallback = quickViewSlug
     ? getProductBySlug(quickViewSlug) || products[0]
     : products[0];
+
+  const [liveProduct, setLiveProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    if (!quickViewSlug) {
+      setLiveProduct(null);
+      return;
+    }
+    let ignore = false;
+    fetch(`/api/products/${quickViewSlug}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!ignore && data && data.slug) {
+          setLiveProduct(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, [quickViewSlug]);
+
+  const product = (liveProduct && liveProduct.slug === quickViewSlug) ? liveProduct : fallback;
 
   const handleClose = useCallback(() => {
     closeQuickView();

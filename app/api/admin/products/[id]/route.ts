@@ -21,7 +21,7 @@ export async function GET(
         category: true,
         collection: true,
         variants: true,
-        images: true,
+        images: { orderBy: { sortOrder: 'asc' } },
       },
     });
 
@@ -60,6 +60,7 @@ export async function PUT(
     badge,
     status,
     image,
+    images,
     features,
     inventory,
     categoryName,
@@ -76,9 +77,42 @@ export async function PUT(
     if (compareAt !== undefined) updateData.compareAt = compareAt ? Number(compareAt) : null;
     if (badge !== undefined) updateData.badge = badge || null;
     if (status !== undefined) updateData.status = status as ProductStatus;
-    if (image !== undefined) updateData.image = image;
     if (features !== undefined) {
       updateData.features = Array.isArray(features) ? features : [features].filter(Boolean);
+    }
+
+    // Process media and cover image
+    let normalizedImages: Array<{ url: string; alt?: string; sortOrder: number }> | null = null;
+    if (images !== undefined) {
+      const rawImagesList = Array.isArray(images) ? images : [];
+      normalizedImages = rawImagesList
+        .map((item: unknown, index: number) => {
+          if (typeof item === 'string') return { url: item, alt: title, sortOrder: index };
+          if (item && typeof item === 'object' && 'url' in item) {
+            const typed = item as { url: string; alt?: string; sortOrder?: number };
+            return { url: typed.url, alt: typed.alt || title, sortOrder: typed.sortOrder ?? index };
+          }
+          return null;
+        })
+        .filter((item): item is { url: string; alt: string | undefined; sortOrder: number } => Boolean(item && item.url));
+
+      let featuredImage = image?.trim();
+      if (!featuredImage && normalizedImages.length > 0) {
+        featuredImage = normalizedImages[0].url;
+      }
+
+      if (featuredImage) {
+        updateData.image = featuredImage;
+        const existingIndex = normalizedImages.findIndex((img) => img.url === featuredImage);
+        if (existingIndex > 0) {
+          const [item] = normalizedImages.splice(existingIndex, 1);
+          normalizedImages.unshift(item);
+        } else if (existingIndex === -1) {
+          normalizedImages.unshift({ url: featuredImage, alt: title, sortOrder: 0 });
+        }
+      }
+    } else if (image !== undefined) {
+      updateData.image = image;
     }
 
     if (categoryName) {
@@ -111,6 +145,20 @@ export async function PUT(
       updateData.collectionId = collection.id;
     }
 
+    if (normalizedImages !== null) {
+      await db.productImage.deleteMany({ where: { productId: id } });
+      if (normalizedImages.length > 0) {
+        await db.productImage.createMany({
+          data: normalizedImages.map((img, idx) => ({
+            productId: id,
+            url: img.url,
+            alt: img.alt || null,
+            sortOrder: idx,
+          })),
+        });
+      }
+    }
+
     const updated = await db.product.update({
       where: { id },
       data: updateData,
@@ -118,6 +166,7 @@ export async function PUT(
         category: true,
         collection: true,
         variants: true,
+        images: { orderBy: { sortOrder: 'asc' } },
       },
     });
 

@@ -1,5 +1,8 @@
+'use client';
+
 /* eslint-disable @next/next/no-img-element */
-import { formatPrice, getProductBySlug } from '@/lib/products';
+import { useEffect, useState } from 'react';
+import { formatPrice, getProductBySlug, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
 
 interface TrendItem {
@@ -43,10 +46,18 @@ const trending: TrendItem[] = [
   },
 ];
 
-function TrendCard({ item, showOldPrice = false }: { item: TrendItem; showOldPrice?: boolean }) {
-  const product = getProductBySlug(item.slug);
+function TrendCard({
+  item,
+  showOldPrice = false,
+  liveProduct,
+}: {
+  item: TrendItem;
+  showOldPrice?: boolean;
+  liveProduct?: Product;
+}) {
+  const product = liveProduct || getProductBySlug(item.slug);
   const title = item.customTitle || product?.title || 'Medixa Scrub Suits';
-  const image = item.customImage || product?.image || '/img/real-product-images/regal/regal-thumbnail.webp';
+  const image = liveProduct?.image || product?.image || item.customImage || '/img/real-product-images/regal/regal-thumbnail.webp';
   const price = product?.price ? formatPrice(product.price) : 'Rs 5,391';
   const compareAt = product?.compareAt ? formatPrice(product.compareAt) : null;
 
@@ -114,6 +125,27 @@ function TrendCard({ item, showOldPrice = false }: { item: TrendItem; showOldPri
 }
 
 export default function TopSaleTrend() {
+  const [productMap, setProductMap] = useState<Record<string, Product>>({});
+
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/products')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: Product[]) => {
+        if (!ignore && Array.isArray(data)) {
+          const map: Record<string, Product> = {};
+          for (const p of data) {
+            map[p.slug] = p;
+          }
+          setProductMap(map);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   return (
     <div className="top-sale-trend-area">
       <div className="container">
@@ -123,7 +155,7 @@ export default function TopSaleTrend() {
             <div className="top-sale-trend top-rated">
               <h4 className="tst-title">top rated</h4>
               {topRated.map((item, idx) => (
-                <TrendCard key={`${item.slug}-${idx}`} item={item} showOldPrice />
+                <TrendCard key={`${item.slug}-${idx}`} item={item} liveProduct={productMap[item.slug]} showOldPrice />
               ))}
             </div>
           </div>
@@ -133,7 +165,7 @@ export default function TopSaleTrend() {
             <div className="top-sale-trend on-sale">
               <h4 className="tst-title">on sale</h4>
               {onSale.map((item, idx) => (
-                <TrendCard key={`${item.slug}-${idx}`} item={item} showOldPrice />
+                <TrendCard key={`${item.slug}-${idx}`} item={item} liveProduct={productMap[item.slug]} showOldPrice />
               ))}
             </div>
           </div>
@@ -143,7 +175,7 @@ export default function TopSaleTrend() {
             <div className="top-sale-trend trending">
               <h4 className="tst-title">trending</h4>
               {trending.map((item, idx) => (
-                <TrendCard key={`${item.slug}-${idx}`} item={item} showOldPrice />
+                <TrendCard key={`${item.slug}-${idx}`} item={item} liveProduct={productMap[item.slug]} showOldPrice />
               ))}
             </div>
           </div>

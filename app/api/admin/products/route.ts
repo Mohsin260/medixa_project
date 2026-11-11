@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
         include: {
           category: { select: { id: true, name: true, slug: true } },
           collection: { select: { id: true, name: true, slug: true } },
+          images: { orderBy: { sortOrder: 'asc' } },
           variants: { select: { id: true, size: true, color: true, inventory: true, price: true } },
           _count: { select: { orderItems: true } },
         },
@@ -64,6 +65,12 @@ export async function GET(request: NextRequest) {
         reviewCount: p.reviewCount,
         status: p.status,
         image: p.image,
+        images: p.images.map((img) => ({
+          id: img.id,
+          url: img.url,
+          alt: img.alt,
+          sortOrder: img.sortOrder,
+        })),
         features: p.features,
         category: p.category?.name || 'General',
         categoryId: p.categoryId,
@@ -105,7 +112,8 @@ export async function POST(request: NextRequest) {
     status = 'PUBLISHED',
     categoryName = "Men's Scrubs",
     collectionName = 'Standard',
-    image = '/img/real-product-images/Forte/Forte-Naval-1.webp',
+    image = '',
+    images = [],
     features = [],
     inventory = 50,
   } = body;
@@ -148,7 +156,42 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 3. Create Product
+    // 3. Normalize images and determine primary featured image
+    const rawImagesList = Array.isArray(images) ? images : [];
+    const normalizedImages = rawImagesList
+      .map((item: unknown, index: number) => {
+        if (typeof item === 'string') return { url: item, alt: title, sortOrder: index };
+        if (item && typeof item === 'object' && 'url' in item) {
+          const typed = item as { url: string; alt?: string; sortOrder?: number };
+          return { url: typed.url, alt: typed.alt || title, sortOrder: typed.sortOrder ?? index };
+        }
+        return null;
+      })
+      .filter((item): item is { url: string; alt: string; sortOrder: number } => Boolean(item && item.url));
+
+    let featuredImage = image?.trim();
+    if (!featuredImage) {
+      featuredImage = normalizedImages[0]?.url || '/img/real-product-images/Forte/Forte-Naval-1.webp';
+    }
+
+    // Ensure the featured image is part of normalizedImages at index 0 if not present
+    const existingIndex = normalizedImages.findIndex((img) => img.url === featuredImage);
+    if (existingIndex > 0) {
+      // Move to top
+      const [item] = normalizedImages.splice(existingIndex, 1);
+      normalizedImages.unshift(item);
+    } else if (existingIndex === -1 && featuredImage) {
+      normalizedImages.unshift({ url: featuredImage, alt: title, sortOrder: 0 });
+    }
+
+    // Re-index sortOrder
+    const finalImagesToCreate = normalizedImages.map((img, idx) => ({
+      url: img.url,
+      alt: img.alt || title,
+      sortOrder: idx,
+    }));
+
+    // 4. Create Product
     const product = await db.product.create({
       data: {
         title,
@@ -159,10 +202,13 @@ export async function POST(request: NextRequest) {
         compareAt: compareAt ? Number(compareAt) : null,
         badge: badge || null,
         status: status as ProductStatus,
-        image,
+        image: featuredImage,
         features: Array.isArray(features) ? features : [features].filter(Boolean),
         categoryId: category.id,
         collectionId: collection.id,
+        images: {
+          create: finalImagesToCreate,
+        },
         variants: {
           create: [
             {
@@ -176,6 +222,7 @@ export async function POST(request: NextRequest) {
       include: {
         category: true,
         collection: true,
+        images: { orderBy: { sortOrder: 'asc' } },
         variants: true,
       },
     });

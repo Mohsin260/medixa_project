@@ -7,6 +7,7 @@ import ProductGallery from '@/components/ProductGallery';
 import ProductPurchasePanel from '@/components/ProductPurchasePanel';
 import { ProductSelectionProvider } from '@/components/ProductSelection';
 import { formatPrice, getProductBySlug, getProductSlugs, getRelatedProducts } from '@/lib/products';
+import { getStorefrontProduct } from '@/lib/server/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -24,7 +25,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = (await getStorefrontProduct(slug)) || getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -64,7 +65,7 @@ function Rating({ rating, reviews }: { rating: number; reviews: number }) {
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getStorefrontProduct(slug);
 
   if (!product) {
     notFound();

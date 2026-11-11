@@ -2,9 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowLeft,
+  ArrowRight,
   Check,
   CircleAlert,
   Edit3,
+  ExternalLink,
+  GripVertical,
   Image as ImageIcon,
   Loader2,
   MoreHorizontal,
@@ -12,13 +16,23 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Star,
   Trash2,
   UploadCloud,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AdminFullPage } from '@/components/admin/admin-full-page';
 import { BundleOfferManager } from '@/components/admin/bundle-offer-form';
+import { getProductBySlug } from '@/lib/products';
+
+export interface AdminProductImage {
+  id?: string;
+  url: string;
+  alt?: string | null;
+  sortOrder?: number;
+}
 
 export interface AdminProduct {
   id: string;
@@ -33,6 +47,7 @@ export interface AdminProduct {
   reviewCount: number;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   image: string;
+  images?: AdminProductImage[] | string[];
   features: string[];
   category: string;
   collection: string;
@@ -421,7 +436,64 @@ function ProductFormPage({
   const [inventory, setInventory] = useState(product ? String(product.inventory) : '50');
   const [status, setStatus] = useState<'PUBLISHED' | 'DRAFT' | 'ARCHIVED'>(product?.status || 'PUBLISHED');
   const [badge, setBadge] = useState(product?.badge || '');
-  const [image, setImage] = useState(product?.image || '/img/real-product-images/Forte/Forte-Naval-1.webp');
+  const initialImages = useMemo(() => {
+    const list: string[] = [];
+    if (product?.images && Array.isArray(product.images) && product.images.length > 0) {
+      for (const img of product.images) {
+        const url = typeof img === 'string' ? img : img.url;
+        if (url && !list.includes(url)) list.push(url);
+      }
+    }
+    if (list.length === 0 && product?.slug) {
+      const fallback = getProductBySlug(product.slug);
+      if (fallback?.images && Array.isArray(fallback.images)) {
+        for (const url of fallback.images) {
+          if (url && !list.includes(url)) list.push(url);
+        }
+      }
+    }
+    if (product?.image && !list.includes(product.image)) {
+      list.unshift(product.image);
+    }
+    return list;
+  }, [product]);
+
+  const [images, setImages] = useState<string[]>(initialImages);
+  const [image, setImage] = useState<string>(
+    product?.image || initialImages[0] || '/img/real-product-images/Forte/Forte-Naval-1.webp'
+  );
+  const [directUrlInput, setDirectUrlInput] = useState('');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+  // Auto-fetch fresh images from DB on edit
+  useEffect(() => {
+    if (!product?.id) return;
+    let ignore = false;
+    fetch(`/api/admin/products/${product.id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (ignore || !data?.product) return;
+        const fetchedList: string[] = [];
+        if (Array.isArray(data.product.images) && data.product.images.length > 0) {
+          for (const img of data.product.images) {
+            const url = typeof img === 'string' ? img : img.url;
+            if (url && !fetchedList.includes(url)) fetchedList.push(url);
+          }
+        }
+        if (data.product.image && !fetchedList.includes(data.product.image)) {
+          fetchedList.unshift(data.product.image);
+        }
+        if (fetchedList.length > 0) {
+          setImages(fetchedList);
+          if (data.product.image) setImage(data.product.image);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, [product?.id]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -439,38 +511,110 @@ function ProductFormPage({
     { label: 'Standard Scrub', url: '/img/real-product-images/standard/standard-thumbnail.webp' },
   ];
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleFileUpload(files: FileList | File[] | null) {
+    if (!files || files.length === 0) return;
 
     setUploadingImage(true);
     setUploadError(null);
 
+    const uploadedUrls: string[] = [];
+
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
-      });
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setUploadError(data.error || 'Failed to upload image');
-        return;
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || `Failed to upload ${file.name}`);
+        }
+
+        if (data.url) {
+          uploadedUrls.push(data.url);
+        }
       }
 
-      if (data.url) {
-        setImage(data.url);
+      if (uploadedUrls.length > 0) {
+        setImages((prev) => {
+          const next = [...prev];
+          for (const url of uploadedUrls) {
+            if (!next.includes(url)) next.push(url);
+          }
+          return next;
+        });
+
+        setImage((prev) => {
+          if (!prev || prev.includes('/Forte-Naval-1.webp') || images.length === 0) {
+            return uploadedUrls[0];
+          }
+          return prev;
+        });
       }
-    } catch {
-      setUploadError('Network error uploading file');
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Network error uploading file(s)');
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  }
+
+  function handleSetAsCover(url: string) {
+    setImage(url);
+    setImages((prev) => [url, ...prev.filter((u) => u !== url)]);
+  }
+
+  function handleMoveImage(index: number, direction: 'left' | 'right') {
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
+
+    const next = [...images];
+    const temp = next[index];
+    next[index] = next[targetIndex];
+    next[targetIndex] = temp;
+
+    setImages(next);
+    // Position 0 is always the main upfront cover image (Shopify behavior)
+    setImage(next[0]);
+  }
+
+  function handleRemoveImage(index: number) {
+    const removedUrl = images[index];
+    const next = images.filter((_, idx) => idx !== index);
+    setImages(next);
+
+    if (image === removedUrl) {
+      setImage(next[0] || '');
+    }
+  }
+
+  function handleAddDirectUrl() {
+    const trimmed = directUrlInput.trim();
+    if (!trimmed) return;
+    if (!images.includes(trimmed)) {
+      setImages((prev) => [...prev, trimmed]);
+      if (!image || images.length === 0) {
+        setImage(trimmed);
+      }
+    }
+    setDirectUrlInput('');
+    setShowUrlInput(false);
+  }
+
+  function handleAddPresetOrLibrary(url: string) {
+    if (!images.includes(url)) {
+      setImages((prev) => [...prev, url]);
+      if (!image || images.length === 0) {
+        setImage(url);
+      }
+    } else {
+      handleSetAsCover(url);
     }
   }
 
@@ -519,7 +663,8 @@ function ProductFormPage({
           inventory: Number(inventory),
           status,
           badge: badge || null,
-          image,
+          image: image || images[0] || '',
+          images,
         }),
       });
 
@@ -678,119 +823,300 @@ function ProductFormPage({
             />
           </div>
 
-          {/* Media / Product Image Section */}
-          <div className="rounded-xl border border-[#e1e8ee] bg-[#f9fafc] p-3.5 space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold text-[#293447]">
-                Product Image & Media
-              </label>
-              <span className="text-[11px] text-[#71808f]">JPG, PNG, WEBP, AVIF (Max 15MB)</span>
+          {/* Media / Product Media & Gallery Section (Shopify-Style) */}
+          <div className="rounded-2xl border border-[#dde5ec] bg-[#f8fafc] p-4 sm:p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#edf1f5] pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-bold text-[#131b2e]">Product Media</label>
+                  <span className="rounded-full bg-[#052263]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#052263]">
+                    {images.length} {images.length === 1 ? 'image' : 'images'}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-[#637282]">
+                  The first image is the <strong>Main Cover image</strong> displayed upfront on all collection grids and storefront listings.
+                </p>
+              </div>
+
+              {/* Action buttons header */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={uploadingImage}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#052263] bg-[#052263] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#031849] disabled:opacity-50"
+                >
+                  {uploadingImage ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin" />
+                      Uploading…
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud size={13} />
+                      Upload New
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={toggleMediaPicker}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#dde5ec] bg-white px-3 py-1.5 text-xs font-medium text-[#293447] shadow-sm transition hover:bg-[#f1f4f8]"
+                >
+                  <ImageIcon size={13} />
+                  {showMediaPicker ? 'Hide Library' : 'Select Existing'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowUrlInput((v) => !v)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#dde5ec] bg-white px-3 py-1.5 text-xs font-medium text-[#293447] shadow-sm transition hover:bg-[#f1f4f8]"
+                >
+                  <Plus size={13} />
+                  Add URL
+                </button>
+              </div>
             </div>
 
+            {/* Hidden multi-file input */}
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               className="hidden"
-              onChange={handleFileUpload}
+              onChange={(e) => handleFileUpload(e.target.files)}
             />
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* Thumbnail Preview */}
-              <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-[#dbe4eb] bg-white flex items-center justify-center">
-                {image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={image}
-                    alt="Product preview"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = '/img/real-product-images/Forte/Forte-Naval-1.webp';
-                    }}
-                  />
-                ) : (
-                  <ImageIcon size={24} className="text-[#a3aeb8]" />
-                )}
+            {uploadError && (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-700">
+                <CircleAlert size={14} className="shrink-0" />
+                <span>{uploadError}</span>
               </div>
+            )}
 
-              {/* Action buttons & URL input */}
-              <div className="flex-1 space-y-2">
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    disabled={uploadingImage}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#052263] bg-[#052263] px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-[#031849] disabled:opacity-50"
-                  >
-                    {uploadingImage ? (
-                      <>
-                        <Loader2 size={13} className="animate-spin" />
-                        Uploading…
-                      </>
-                    ) : (
-                      <>
-                        <UploadCloud size={13} />
-                        Upload New Image
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={toggleMediaPicker}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#dbe4eb] bg-white px-3 py-1.5 text-xs font-medium text-[#293447] shadow-sm transition hover:bg-[#f2f5f8]"
-                  >
-                    <ImageIcon size={13} />
-                    {showMediaPicker ? 'Hide Library' : 'Choose from Library'}
-                  </button>
-                </div>
-
+            {/* Add Direct URL bar */}
+            {showUrlInput && (
+              <div className="flex items-center gap-2 rounded-xl border border-[#dbe4eb] bg-white p-2.5 shadow-sm">
                 <input
                   type="text"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  placeholder="Or enter direct image URL / path..."
-                  required
-                  className="h-8.5 w-full rounded-lg border border-[#dbe4eb] bg-white px-2.5 text-xs text-[#1d2739] outline-none transition focus:border-[#052263] focus:ring-1 focus:ring-[#052263]/15"
+                  value={directUrlInput}
+                  onChange={(e) => setDirectUrlInput(e.target.value)}
+                  placeholder="Paste direct image URL (e.g. /img/... or https://...)"
+                  className="h-8 flex-1 rounded-lg border border-[#dde5ec] bg-[#fafcfd] px-2.5 text-xs text-[#1d2739] outline-none transition focus:border-[#052263] focus:bg-white"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddDirectUrl();
+                    }
+                  }}
                 />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleAddDirectUrl}
+                  className="h-8 bg-[#052263] px-3 text-xs text-white hover:bg-[#031849]"
+                >
+                  Add Image
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowUrlInput(false)}
+                  className="rounded-lg p-1 text-[#71808f] hover:bg-[#f2f5f8]"
+                >
+                  <X size={15} />
+                </button>
               </div>
-            </div>
-
-            {uploadError && (
-              <p className="text-xs text-rose-600 flex items-center gap-1">
-                <CircleAlert size={12} /> {uploadError}
-              </p>
             )}
+
+            {/* Drag & Drop Area / Grid */}
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                  handleFileUpload(e.dataTransfer.files);
+                }
+              }}
+              className={cn(
+                'rounded-xl border-2 border-dashed p-3 transition-colors',
+                isDraggingOver
+                  ? 'border-[#052263] bg-[#052263]/5'
+                  : 'border-[#d8e1e8] bg-white'
+              )}
+            >
+              {images.length === 0 ? (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center py-10 cursor-pointer text-center"
+                >
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-[#f0f4f8] text-[#052263] mb-3">
+                    <UploadCloud size={28} />
+                  </div>
+                  <p className="text-xs font-semibold text-[#1e293b]">
+                    Click or drag & drop product images here
+                  </p>
+                  <p className="mt-1 text-[11px] text-[#71808f]">
+                    Supports JPG, PNG, WEBP, AVIF (select multiple files to bulk upload)
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {images.map((imgUrl, idx) => {
+                    const isCover = idx === 0 || imgUrl === image;
+                    return (
+                      <div
+                        key={`${imgUrl}-${idx}`}
+                        className={cn(
+                          'group relative flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition',
+                          isCover
+                            ? 'border-2 border-[#052263] ring-2 ring-[#052263]/15'
+                            : 'border-[#dde5ec] hover:border-[#b4c3d4]'
+                        )}
+                      >
+                        {/* Image Preview Container */}
+                        <div className="relative aspect-square w-full overflow-hidden bg-[#f3f6f9]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={imgUrl}
+                            alt={`Product image ${idx + 1}`}
+                            className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/img/real-product-images/Forte/Forte-Naval-1.webp';
+                            }}
+                          />
+
+                          {/* Cover / Position Badge */}
+                          {isCover ? (
+                            <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-md bg-[#052263] px-2 py-0.5 text-[10px] font-bold text-white shadow">
+                              <Star size={10} className="fill-white" />
+                              Main Cover
+                            </span>
+                          ) : (
+                            <span className="absolute top-2 left-2 inline-flex items-center rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                              #{idx + 1}
+                            </span>
+                          )}
+
+                          {/* Hover action overlay */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                            {!isCover && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetAsCover(imgUrl)}
+                                title="Set as Main Cover image"
+                                className="inline-flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-[11px] font-semibold text-[#052263] shadow hover:bg-neutral-100"
+                              >
+                                <Star size={11} className="fill-[#052263]" />
+                                Set Cover
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(idx)}
+                              title="Delete from product"
+                              className="rounded-lg bg-white p-1 text-rose-600 shadow hover:bg-rose-50"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Bottom reorder toolbar */}
+                        <div className="flex items-center justify-between border-t border-[#edf1f5] bg-[#fafcfd] px-2 py-1 text-[11px]">
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveImage(idx, 'left')}
+                              title="Move earlier"
+                              className="rounded p-0.5 text-[#627383] hover:bg-[#edf2f7] disabled:opacity-30 disabled:hover:bg-transparent"
+                            >
+                              <ArrowLeft size={12} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === images.length - 1}
+                              onClick={() => handleMoveImage(idx, 'right')}
+                              title="Move later"
+                              className="rounded p-0.5 text-[#627383] hover:bg-[#edf2f7] disabled:opacity-30 disabled:hover:bg-transparent"
+                            >
+                              <ArrowRight size={12} />
+                            </button>
+                          </div>
+
+                          {!isCover ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSetAsCover(imgUrl)}
+                              className="text-[10px] font-semibold text-[#052263] hover:underline"
+                            >
+                              Make cover
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-bold text-[#052263]">Cover</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Add more tile inside grid */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="flex aspect-square flex-col items-center justify-center rounded-xl border border-dashed border-[#ccd7e2] bg-[#f8fafc] text-[#6b7b8a] transition hover:border-[#052263] hover:bg-white hover:text-[#052263]"
+                  >
+                    <Plus size={20} className="mb-1" />
+                    <span className="text-[11px] font-semibold">Add more</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Expandable Media Library / Preset Picker */}
             {showMediaPicker && (
-              <div className="mt-2 rounded-xl border border-[#dde5ec] bg-white p-3 space-y-3">
+              <div className="mt-3 rounded-xl border border-[#dde5ec] bg-white p-3.5 space-y-3 shadow-sm">
                 <div>
-                  <p className="text-[11px] font-semibold text-[#5c6c7a] mb-1.5 uppercase tracking-wider">
-                    Quick Brand Presets
+                  <p className="text-[11px] font-bold text-[#5c6c7a] mb-1.5 uppercase tracking-wider">
+                    Quick Brand Presets (Click to add to gallery)
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {catalogPresets.map((preset) => (
-                      <button
-                        key={preset.url}
-                        type="button"
-                        onClick={() => setImage(preset.url)}
-                        className={cn(
-                          'rounded-md px-2.5 py-1 text-xs border transition',
-                          image === preset.url
-                            ? 'border-[#052263] bg-[#e9ecf4] font-semibold text-[#031849]'
-                            : 'border-[#dde5ec] bg-[#f9fafc] text-[#41505f] hover:bg-[#edf1f5]'
-                        )}
-                      >
-                        {preset.label}
-                      </button>
-                    ))}
+                    {catalogPresets.map((preset) => {
+                      const isAdded = images.includes(preset.url);
+                      return (
+                        <button
+                          key={preset.url}
+                          type="button"
+                          onClick={() => handleAddPresetOrLibrary(preset.url)}
+                          className={cn(
+                            'inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs border transition',
+                            isAdded
+                              ? 'border-[#052263] bg-[#e9ecf4] font-semibold text-[#031849]'
+                              : 'border-[#dde5ec] bg-[#f9fafc] text-[#41505f] hover:bg-[#edf1f5]'
+                          )}
+                        >
+                          {isAdded && <Check size={11} className="text-[#052263]" />}
+                          {preset.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-semibold text-[#5c6c7a] mb-1.5 uppercase tracking-wider">
-                    Uploaded Media Library
+                  <p className="text-[11px] font-bold text-[#5c6c7a] mb-1.5 uppercase tracking-wider">
+                    Uploaded Media Library (Click to add to product)
                   </p>
                   {loadingMedia ? (
                     <div className="flex items-center justify-center py-4 text-xs text-[#71808f] gap-2">
@@ -801,31 +1127,36 @@ function ProductFormPage({
                       No uploaded media found yet. Upload a file above or pick a preset.
                     </p>
                   ) : (
-                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-40 overflow-y-auto p-1">
-                      {libraryMedia.map((media) => (
-                        <button
-                          key={media.id}
-                          type="button"
-                          onClick={() => setImage(media.url)}
-                          className={cn(
-                            'group relative aspect-square overflow-hidden rounded-lg border transition hover:border-[#052263]',
-                            image === media.url ? 'border-2 border-[#052263] ring-2 ring-[#052263]/20' : 'border-[#dbe4eb]'
-                          )}
-                          title={media.filename}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={media.url}
-                            alt={media.filename}
-                            className="h-full w-full object-cover"
-                          />
-                          {image === media.url && (
-                            <div className="absolute inset-0 bg-[#052263]/25 flex items-center justify-center text-white">
-                              <Check size={16} className="drop-shadow" />
-                            </div>
-                          )}
-                        </button>
-                      ))}
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto p-1">
+                      {libraryMedia.map((media) => {
+                        const isAdded = images.includes(media.url);
+                        return (
+                          <button
+                            key={media.id}
+                            type="button"
+                            onClick={() => handleAddPresetOrLibrary(media.url)}
+                            className={cn(
+                              'group relative aspect-square overflow-hidden rounded-lg border transition hover:border-[#052263]',
+                              isAdded
+                                ? 'border-2 border-[#052263] ring-2 ring-[#052263]/20'
+                                : 'border-[#dbe4eb]'
+                            )}
+                            title={media.filename}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={media.url}
+                              alt={media.filename}
+                              className="h-full w-full object-cover"
+                            />
+                            {isAdded && (
+                              <div className="absolute inset-0 bg-[#052263]/30 flex items-center justify-center text-white">
+                                <Check size={16} className="drop-shadow" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

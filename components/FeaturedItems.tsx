@@ -1,13 +1,36 @@
+'use client';
+
 /* eslint-disable @next/next/no-html-link-for-pages */
-import { formatPrice, getProductBySlug } from '@/lib/products';
+import { useEffect, useState } from 'react';
+import { formatPrice, getProductBySlug, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
 
-const priceFor = (slug: string) => {
-  const product = getProductBySlug(slug);
-  return formatPrice(product?.price ?? 0);
-};
-
 export default function FeaturedItems() {
+  const [productMap, setProductMap] = useState<Record<string, Product>>({});
+
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/products')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: Product[]) => {
+        if (!ignore && Array.isArray(data)) {
+          const map: Record<string, Product> = {};
+          for (const p of data) {
+            map[p.slug] = p;
+          }
+          setProductMap(map);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const getProd = (slug: string) => productMap[slug] || getProductBySlug(slug);
+  const priceFor = (slug: string) => formatPrice(getProd(slug)?.price ?? 0);
+  const imageFor = (slug: string, fallback: string) => getProd(slug)?.image || fallback;
+  const titleFor = (slug: string, fallback: string) => getProd(slug)?.title || fallback;
   return (
     <div className="featured-item-area">
       <div className="container">
@@ -58,7 +81,7 @@ export default function FeaturedItems() {
                     <div className="single-featured-item">
                       <div className="sfi-img">
                         <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">
-                          <img src="/img/real-product-images/regal/regal-thumbnail.webp" alt="Regal Scrub Suits" />
+                          <img src={imageFor('regal-round-neck-male-medical-scrubs-pakistan', '/img/real-product-images/regal/regal-thumbnail.webp')} alt={titleFor('regal-round-neck-male-medical-scrubs-pakistan', 'Regal Scrub Suits')} />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
@@ -98,7 +121,7 @@ export default function FeaturedItems() {
                     <div className="single-featured-item">
                       <div className="sfi-img">
                         <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">
-                          <img src="/img/real-product-images/muse/muse-thumbnail.webp" alt="Muse Scrub Suits" />
+                          <img src={imageFor('muse-v-neck-female-medical-scrubs-pakistan', '/img/real-product-images/muse/muse-thumbnail.webp')} alt={titleFor('muse-v-neck-female-medical-scrubs-pakistan', 'Muse Scrub Suits')} />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
@@ -142,7 +165,7 @@ export default function FeaturedItems() {
                     <div className="single-featured-item">
                       <div className="sfi-img">
                         <a href="/products/forte-v-neck-male-medical-scrubs-pakistan">
-                          <img src="/img/real-product-images/Forte/Forte-thumbnail.webp" alt="Forte Scrub Suits" />
+                          <img src={imageFor('forte-v-neck-male-medical-scrubs-pakistan', '/img/real-product-images/Forte/Forte-thumbnail.webp')} alt={titleFor('forte-v-neck-male-medical-scrubs-pakistan', 'Forte Scrub Suits')} />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
@@ -189,7 +212,7 @@ export default function FeaturedItems() {
                     <div className="single-featured-item">
                       <div className="sfi-img">
                         <a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">
-                          <img src="/img/real-product-images/rebel/Rebel-thumbnail.webp" alt="Rebel Scrub Suits" />
+                          <img src={imageFor('rebel-collar-neck-female-medical-scrubs-pakistan', '/img/real-product-images/rebel/Rebel-thumbnail.webp')} alt={titleFor('rebel-collar-neck-female-medical-scrubs-pakistan', 'Rebel Scrub Suits')} />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
