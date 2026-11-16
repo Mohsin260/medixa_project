@@ -1,0 +1,35 @@
+.lookupCard {
+  padding: 32px 28px;
+}
+
+.lookupFormRow {
+  display: flex;
+  gap: 10px;
+}
+
+.lookupInput {
+  min-width: 0;
+}
+
+.lookupButton {
+  flex-shrink: 0;
+}
+
+@media (max-width: 575px) {
+  .lookupCard {
+    padding: 24px 18px;
+  }
+
+  .lookupFormRow {
+    flex-direction: column;
+  }
+
+  .lookupInput,
+  .lookupButton {
+    width: 100%;
+  }
+
+  .lookupInput {
+    flex: none;
+  }
+}

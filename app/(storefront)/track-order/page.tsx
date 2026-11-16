@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { formatPrice } from '@/lib/products';
+import styles from './track-order.module.css';
 
 interface TrackedOrder {
   orderNumber: string;
@@ -90,14 +91,14 @@ export default function TrackOrderPage() {
       <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
-            <div className="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+            <div className="col-md-8 col-md-offset-2 col-sm-11 col-sm-offset-1 col-xs-12">
               {/* Lookup Card */}
               <div
+                className={styles.lookupCard}
                 style={{
                   background: '#ffffff',
                   borderRadius: 20,
                   border: '1px solid #e7ecf0',
-                  padding: '32px 28px',
                   boxShadow: '0 8px 30px rgba(19,27,46, 0.05)',
                   marginBottom: 36,
                 }}
@@ -106,8 +107,9 @@ export default function TrackOrderPage() {
                   <label htmlFor="order-id" style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#131b2e', marginBottom: 8 }}>
                     Order Number / Reference ID
                   </label>
-                  <div style={{ display: 'flex', gap: 10 }}>
+                  <div className={styles.lookupFormRow}>
                     <input
+                      className={styles.lookupInput}
                       id="order-id"
                       type="text"
                       value={orderQuery}
@@ -119,7 +121,7 @@ export default function TrackOrderPage() {
                         height: 48,
                         borderRadius: 12,
                         border: '1.5px solid #d4dfd9',
-                        padding: '0 16px',
+                        padding: '16px 16px',
                         fontSize: 14,
                         color: '#131b2e',
                         outline: 'none',
@@ -127,6 +129,7 @@ export default function TrackOrderPage() {
                       }}
                     />
                     <button
+                      className={styles.lookupButton}
                       type="submit"
                       disabled={loading}
                       style={{

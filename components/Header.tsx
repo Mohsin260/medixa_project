@@ -95,7 +95,7 @@ export default function Header() {
                 {/* Mobile Menu Hamburger (Visible on small screens) */}
                 <button
                   type="button"
-                  onClick={() => setMobileNavOpen(true)}
+                  onClick={() => setMobileNavOpen((isOpen) => !isOpen)}
                   aria-label="Toggle navigation menu"
                   className="visible-xs visible-sm"
                   style={{
@@ -701,67 +701,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className="mobile-menu-area visible-xs visible-sm">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="mobile_menu">
-                <nav id="mobile_menu_active">
-                  <ul className="menu-list">
-                    <li>
-                      <a href="/">HOME</a>
-                    </li>
-                    <li>
-                      <a href="/shop?category=Men">MEN&apos;S SCRUBS</a>
-                      <ul>
-                        <li><a href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits</a></li>
-                        <li><a href="/products/forte-v-neck-male-medical-scrubs-pakistan">Forte V-Neck Scrubs</a></li>
-                        <li><a href="/shop?category=Men">All Men&apos;s Scrubs</a></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="/shop?category=Women">WOMEN&apos;S SCRUBS</a>
-                      <ul>
-                        <li><a href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits</a></li>
-                        <li><a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">Rebel Scrub Suits</a></li>
-                        <li><a href="/shop?category=Women">All Women&apos;s Scrubs</a></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="/shop">ALL SCRUB COLLECTIONS</a>
-                    </li>
-                    <li>
-                      <a href="/track-order">TRACK YOUR ORDER</a>
-                    </li>
-                    <li>
-                      <a href="/size-guide">SIZE CHART & GUIDE</a>
-                    </li>
-                    <li>
-                      <a href="/blog">CLINICAL JOURNAL</a>
-                    </li>
-                    <li>
-                      <a href="/about">ABOUT MEDIXA</a>
-                    </li>
-                    <li>
-                      <a href="/contact">CONTACT & WHATSAPP</a>
-                    </li>
-                    <li>
-                      <a href="/favourite">MY FAVOURITES</a>
-                    </li>
-                    <li>
-                      <a href="/cart">MY CART ({count})</a>
-                    </li>
-                    <li>
-                      <a href="/auth/sign-in">MY ACCOUNT</a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* Interactive Mobile Navigation Drawer */}
       {mobileNavOpen && (
         <div
