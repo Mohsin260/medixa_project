@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, requireStaff } from '@/lib/auth/require-admin';
 import { db } from '@/lib/db';
+import { normalizeProductColors } from '@/lib/product-colors';
 import { ProductStatus } from '@/generated/prisma/client';
 
 export async function GET(
@@ -22,6 +23,7 @@ export async function GET(
         collection: true,
         variants: true,
         images: { orderBy: { sortOrder: 'asc' } },
+        colors: { orderBy: { sortOrder: 'asc' } },
       },
     });
 
@@ -61,6 +63,8 @@ export async function PUT(
     status,
     image,
     images,
+    colors,
+    colorImages,
     features,
     inventory,
     categoryName,
@@ -115,6 +119,63 @@ export async function PUT(
       updateData.image = image;
     }
 
+    // --- Colour palette + per-colour image tagging (Shopify-style media) ---
+    // `colors`      -> which colours the product is offered in (ordered)
+    // `colorImages` -> colour name -> ordered image URLs tagged to that colour
+    const wantsColorSync = colors !== undefined || colorImages !== undefined;
+    if (wantsColorSync) {
+      const existingColors = await db.productColor.findMany({
+        where: { productId: id },
+        orderBy: { sortOrder: 'asc' },
+      });
+
+      const { rows, error: colorError } = normalizeProductColors({
+        colors,
+        colorImages,
+        baseColors: existingColors,
+        allowedUrls: normalizedImages
+          ? new Set(normalizedImages.map((img) => img.url))
+          : null,
+      });
+
+      if (colorError) {
+        return NextResponse.json({ error: colorError }, { status: 400 });
+      }
+
+      // Drop colours the product no longer offers (their variants stay but unlink).
+      const keepNames = new Set(rows.map((row) => row.name.toLowerCase()));
+      const removed = existingColors.filter(
+        (existing) => !keepNames.has(existing.name.toLowerCase()),
+      );
+      if (removed.length > 0) {
+        await db.productColor.deleteMany({
+          where: { id: { in: removed.map((existing) => existing.id) } },
+        });
+      }
+
+      for (const [index, row] of rows.entries()) {
+        const match = existingColors.find(
+          (existing) => existing.name.toLowerCase() === row.name.toLowerCase(),
+        );
+        if (match) {
+          await db.productColor.update({
+            where: { id: match.id },
+            data: { name: row.name, hex: row.hex, images: row.images, sortOrder: index },
+          });
+        } else {
+          await db.productColor.create({
+            data: {
+              productId: id,
+              name: row.name,
+              hex: row.hex,
+              images: row.images,
+              sortOrder: index,
+            },
+          });
+        }
+      }
+    }
+
     if (categoryName) {
       let category = await db.category.findFirst({
         where: { name: { equals: categoryName, mode: 'insensitive' } },
@@ -167,6 +228,7 @@ export async function PUT(
         collection: true,
         variants: true,
         images: { orderBy: { sortOrder: 'asc' } },
+        colors: { orderBy: { sortOrder: 'asc' } },
       },
     });
 

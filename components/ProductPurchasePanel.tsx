@@ -62,7 +62,9 @@ export default function ProductPurchasePanel({
     addToCart({
       slug: product.slug,
       title: product.title,
-      image: product.image,
+      // Use the selected colour's lead image so the cart thumbnail matches
+      // the colour the shopper picked (falls back to the main cover).
+      image: selection?.images?.[0] || product.image,
       price: effectiveUnitPrice,
       compareAt: product.compareAt,
       color,

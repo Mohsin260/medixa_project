@@ -37,13 +37,18 @@ interface ThumbScrollState {
 
 export default function ProductGallery({ images, alt, badge }: ProductGalleryProps) {
   const selection = useProductSelection();
+  // Inside the selection provider the gallery follows the chosen colour and
+  // shows only that colour's photos; otherwise it shows every image.
+  const selectionImages = selection?.images;
   const galleryImages: string[] = useMemo(
-    () => (images?.length ? images : []),
-    [images],
+    () =>
+      selectionImages && selectionImages.length > 0
+        ? selectionImages
+        : images?.length
+          ? images
+          : [],
+    [selectionImages, images],
   );
-  const colorStartIndex = selection?.colorImages?.[selection.color]?.[0]
-    ? galleryImages.indexOf(selection.colorImages[selection.color][0])
-    : -1;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoom, setZoom] = useState<ZoomState>({ scale: 1, x: 0, y: 0 });
@@ -84,16 +89,6 @@ export default function ProductGallery({ images, alt, badge }: ProductGalleryPro
     setDragging(false);
   }
 
-  const [prevColorStart, setPrevColorStart] = useState(colorStartIndex);
-  if (colorStartIndex !== prevColorStart) {
-    setPrevColorStart(colorStartIndex);
-    if (colorStartIndex >= 0) {
-      setActiveIndex(colorStartIndex);
-      setZoom({ scale: 1, x: 0, y: 0 });
-      setDragging(false);
-    }
-  }
-
   const updateThumbScroll = useCallback(() => {
     const track = thumbsRef.current;
     if (!track) {
@@ -116,20 +111,14 @@ export default function ProductGallery({ images, alt, badge }: ProductGalleryPro
   }, []);
 
   useEffect(() => {
-    if (colorStartIndex < 0) {
-      return;
-    }
-    dragRef.current = null;
-    scrollThumbIntoView(colorStartIndex);
-  }, [colorStartIndex, scrollThumbIntoView]);
-
-  useEffect(() => {
     const track = thumbsRef.current;
     if (!track) {
       return undefined;
     }
 
     dragRef.current = null;
+    // A colour change swaps the whole set: start the thumbnail strip over.
+    track.scrollLeft = 0;
     updateThumbScroll();
     track.addEventListener('scroll', updateThumbScroll, { passive: true });
     window.addEventListener('resize', updateThumbScroll);

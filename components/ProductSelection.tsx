@@ -27,7 +27,11 @@ export function ProductSelectionProvider({
 }: ProductSelectionProviderProps) {
   const [color, setColor] = useState(colors[0]?.name || '');
 
-  const images = (colorImages && colorImages[color]) || fallbackImages;
+  // Only the selected colour's photos are shown (Shopify-style variant
+  // gallery). Colours without tagged images fall back to the full gallery.
+  const colorSpecific = colorImages?.[color];
+  const images =
+    colorSpecific && colorSpecific.length > 0 ? colorSpecific : fallbackImages;
 
   const value = useMemo(
     () => ({

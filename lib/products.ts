@@ -32,13 +32,24 @@ const GALLERY = [
   '/img/single-product/product-large3.jpg',
 ];
 
-const COLORS: ProductColor[] = [
+/**
+ * The standard Medixa colour palette. Every product may opt in to any subset
+ * of these colours; the admin panel toggles them per product and product
+ * images are tagged against them.
+ */
+export const STANDARD_COLORS: ProductColor[] = [
   { name: 'Black', value: '#000000' },
   { name: 'Grey', value: '#64748b' },
   { name: 'Olive Green', value: '#365314' },
   { name: 'Maroon', value: '#7f1d1d' },
   { name: 'Naval Light', value: '#1e3a5f' },
 ];
+
+export function getStandardColorHex(name: string): string {
+  return STANDARD_COLORS.find((color) => color.name.toLowerCase() === name.toLowerCase())?.value || '#111827';
+}
+
+const COLORS: ProductColor[] = STANDARD_COLORS;
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
 

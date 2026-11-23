@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireStaff } from '@/lib/auth/require-admin';
 import { db } from '@/lib/db';
+import { defaultProductColorRows, normalizeProductColors } from '@/lib/product-colors';
 import { ProductStatus } from '@/generated/prisma/client';
 
 export async function GET(request: NextRequest) {
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
           category: { select: { id: true, name: true, slug: true } },
           collection: { select: { id: true, name: true, slug: true } },
           images: { orderBy: { sortOrder: 'asc' } },
+          colors: { orderBy: { sortOrder: 'asc' } },
           variants: { select: { id: true, size: true, color: true, inventory: true, price: true } },
           _count: { select: { orderItems: true } },
         },
@@ -71,6 +73,7 @@ export async function GET(request: NextRequest) {
           alt: img.alt,
           sortOrder: img.sortOrder,
         })),
+        colors: p.colors.map((color) => ({ name: color.name, hex: color.hex })),
         features: p.features,
         category: p.category?.name || 'General',
         categoryId: p.categoryId,
@@ -114,6 +117,8 @@ export async function POST(request: NextRequest) {
     collectionName = 'Standard',
     image = '',
     images = [],
+    colors,
+    colorImages,
     features = [],
     inventory = 50,
   } = body;
@@ -191,7 +196,20 @@ export async function POST(request: NextRequest) {
       sortOrder: idx,
     }));
 
-    // 4. Create Product
+    // 4. Colour palette + per-colour image tagging (defaults to the standard palette)
+    const { rows: colorRows, error: colorError } = normalizeProductColors({
+      colors,
+      colorImages,
+      baseColors: defaultProductColorRows(),
+      allowedUrls: new Set(finalImagesToCreate.map((img) => img.url)),
+    });
+    if (colorError) {
+      return NextResponse.json({ error: colorError }, { status: 400 });
+    }
+    const finalColorRows =
+      colorRows.length > 0 ? colorRows : defaultProductColorRows();
+
+    // 5. Create Product
     const product = await db.product.create({
       data: {
         title,
@@ -209,6 +227,14 @@ export async function POST(request: NextRequest) {
         images: {
           create: finalImagesToCreate,
         },
+        colors: {
+          create: finalColorRows.map((row) => ({
+            name: row.name,
+            hex: row.hex,
+            images: row.images,
+            sortOrder: row.sortOrder,
+          })),
+        },
         variants: {
           create: [
             {
@@ -223,6 +249,7 @@ export async function POST(request: NextRequest) {
         category: true,
         collection: true,
         images: { orderBy: { sortOrder: 'asc' } },
+        colors: { orderBy: { sortOrder: 'asc' } },
         variants: true,
       },
     });

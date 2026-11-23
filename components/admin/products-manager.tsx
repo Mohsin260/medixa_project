@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AdminFullPage } from '@/components/admin/admin-full-page';
 import { BundleOfferManager } from '@/components/admin/bundle-offer-form';
-import { getProductBySlug } from '@/lib/products';
+import { getProductBySlug, getStandardColorHex, STANDARD_COLORS } from '@/lib/products';
 
 export interface AdminProductImage {
   id?: string;
@@ -48,6 +48,7 @@ export interface AdminProduct {
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   image: string;
   images?: AdminProductImage[] | string[];
+  colors?: Array<{ name: string; hex: string }>;
   features: string[];
   category: string;
   collection: string;
@@ -55,6 +56,26 @@ export interface AdminProduct {
   inventory: number;
   salesCount: number;
   createdAt: string;
+}
+
+/** Filter tab key for images that have no colour tag yet. */
+const UNTAGGED_FILTER = '__UNTAGGED';
+
+/**
+ * Seeds colour tags from the static catalogue when a product has no DB
+ * colours yet, so editors see the existing tagging as a starting point.
+ */
+function buildInitialImageTags(product: AdminProduct | null): Record<string, string> {
+  const tags: Record<string, string> = {};
+  const staticProduct = product?.slug ? getProductBySlug(product.slug) : undefined;
+  if (staticProduct?.colorImages) {
+    for (const [name, urls] of Object.entries(staticProduct.colorImages)) {
+      for (const url of urls) {
+        tags[url] = name;
+      }
+    }
+  }
+  return tags;
 }
 
 export function ProductsManager({
@@ -466,7 +487,24 @@ function ProductFormPage({
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  // Auto-fetch fresh images from DB on edit
+  // --- Colour palette + per-image colour tagging (Shopify-style media) ---
+  // enabledColors: which of the standard colours this product is sold in.
+  // imageTags:     image URL -> colour name it is tagged to (untagged = absent).
+  const [enabledColors, setEnabledColors] = useState<string[]>(() =>
+    product?.colors?.length
+      ? product.colors.map((color) => color.name)
+      : STANDARD_COLORS.map((color) => color.name),
+  );
+  const [imageTags, setImageTags] = useState<Record<string, string>>(() =>
+    buildInitialImageTags(product),
+  );
+  const [selectedUrls, setSelectedUrls] = useState<Set<string>>(() => new Set());
+  const [colorFilter, setColorFilter] = useState<string>('ALL');
+  const [bulkTagValue, setBulkTagValue] = useState('');
+  const [dragUrl, setDragUrl] = useState<string | null>(null);
+  const [dropTargetUrl, setDropTargetUrl] = useState<string | null>(null);
+
+  // Auto-fetch fresh images + colour tagging from DB on edit
   useEffect(() => {
     if (!product?.id) return;
     let ignore = false;
@@ -484,16 +522,52 @@ function ProductFormPage({
         if (data.product.image && !fetchedList.includes(data.product.image)) {
           fetchedList.unshift(data.product.image);
         }
+
+        // Colour palette + per-image tags stored on the product's colours.
+        const colorRows: Array<{ name?: string; hex?: string; images?: string[] }> =
+          Array.isArray(data.product.colors) ? data.product.colors : [];
+        const tags: Record<string, string> = {};
+
+        if (colorRows.length > 0) {
+          setEnabledColors(
+            colorRows
+              .map((row) => row.name)
+              .filter((name): name is string => Boolean(name)),
+          );
+          for (const row of colorRows) {
+            if (!row.name || !Array.isArray(row.images)) continue;
+            for (const url of row.images) {
+              if (typeof url === 'string') tags[url] = row.name;
+            }
+          }
+        } else {
+          // Products created before colour support: start from the static catalogue.
+          const staticProduct = getProductBySlug(product.slug);
+          if (staticProduct) {
+            setEnabledColors(staticProduct.colors.map((color) => color.name));
+            for (const [name, urls] of Object.entries(staticProduct.colorImages || {})) {
+              for (const url of urls) tags[url] = name;
+            }
+          }
+        }
+
+        // A colour-tagged URL should always be reachable from the gallery list.
+        for (const url of Object.keys(tags)) {
+          if (!fetchedList.includes(url)) fetchedList.push(url);
+        }
+
         if (fetchedList.length > 0) {
           setImages(fetchedList);
           if (data.product.image) setImage(data.product.image);
         }
+        setImageTags(tags);
+        setSelectedUrls(new Set());
       })
       .catch(() => {});
     return () => {
       ignore = true;
     };
-  }, [product?.id]);
+  }, [product?.id, product?.slug]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -548,6 +622,22 @@ function ProductFormPage({
           return next;
         });
 
+        // Uploading while a colour filter is active tags the new images to
+        // that colour (unless the "Untagged" filter is showing).
+        const tagForUploads =
+          colorFilter !== 'ALL' &&
+          colorFilter !== UNTAGGED_FILTER &&
+          enabledColors.includes(colorFilter)
+            ? colorFilter
+            : '';
+        if (tagForUploads) {
+          setImageTags((prev) => {
+            const updated = { ...prev };
+            for (const url of uploadedUrls) updated[url] = tagForUploads;
+            return updated;
+          });
+        }
+
         setImage((prev) => {
           if (!prev || prev.includes('/Forte-Naval-1.webp') || images.length === 0) {
             return uploadedUrls[0];
@@ -570,26 +660,196 @@ function ProductFormPage({
     setImages((prev) => [url, ...prev.filter((u) => u !== url)]);
   }
 
-  function handleMoveImage(index: number, direction: 'left' | 'right') {
-    const targetIndex = direction === 'left' ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= images.length) return;
+  // --- Colour filter, multi-select & ordering helpers ---
 
-    const next = [...images];
-    const temp = next[index];
-    next[index] = next[targetIndex];
-    next[targetIndex] = temp;
+  const isVisibleImage = useCallback(
+    (url: string) => {
+      if (colorFilter === 'ALL') return true;
+      const tag = imageTags[url];
+      const validTag = tag && enabledColors.includes(tag) ? tag : '';
+      if (colorFilter === UNTAGGED_FILTER) return validTag === '';
+      return validTag === colorFilter;
+    },
+    [colorFilter, imageTags, enabledColors],
+  );
 
+  const visibleImages = useMemo(
+    () => images.filter((url) => isVisibleImage(url)),
+    [images, isVisibleImage],
+  );
+
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    let untagged = 0;
+    for (const url of images) {
+      const tag = imageTags[url];
+      if (tag && enabledColors.includes(tag)) {
+        counts[tag] = (counts[tag] || 0) + 1;
+      } else {
+        untagged += 1;
+      }
+    }
+    return { counts, untagged };
+  }, [images, imageTags, enabledColors]);
+
+  const allVisibleSelected =
+    visibleImages.length > 0 && visibleImages.every((url) => selectedUrls.has(url));
+
+  /**
+   * Writes a reordered visible subset back into the full gallery, so images
+   * outside the current colour filter keep their positions (Shopify-style
+   * ordering that works both globally and per colour view).
+   */
+  function commitVisibleOrder(nextVisible: string[]) {
+    const visibleSet = new Set(nextVisible);
+    let cursor = 0;
+    const next = images.map((url) => (visibleSet.has(url) ? nextVisible[cursor++] : url));
     setImages(next);
-    // Position 0 is always the main upfront cover image (Shopify behavior)
-    setImage(next[0]);
+    // Position 0 is always the main upfront cover image (Shopify behaviour)
+    if (next.length > 0) {
+      setImage(next[0]);
+    }
   }
 
-  function handleRemoveImage(index: number) {
-    const removedUrl = images[index];
-    const next = images.filter((_, idx) => idx !== index);
+  function handleMoveImage(url: string, direction: 'left' | 'right') {
+    const currentIndex = visibleImages.indexOf(url);
+    const targetIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= visibleImages.length) return;
+
+    const nextVisible = [...visibleImages];
+    const temp = nextVisible[currentIndex];
+    nextVisible[currentIndex] = nextVisible[targetIndex];
+    nextVisible[targetIndex] = temp;
+    commitVisibleOrder(nextVisible);
+  }
+
+  function handleDropImage(sourceUrl: string | null, targetUrl: string) {
+    setDragUrl(null);
+    setDropTargetUrl(null);
+    if (!sourceUrl || sourceUrl === targetUrl) return;
+
+    const from = visibleImages.indexOf(sourceUrl);
+    const to = visibleImages.indexOf(targetUrl);
+    if (from < 0 || to < 0) return;
+
+    const nextVisible = [...visibleImages];
+    nextVisible.splice(from, 1);
+    nextVisible.splice(to, 0, sourceUrl);
+    commitVisibleOrder(nextVisible);
+  }
+
+  function handleRemoveImage(url: string) {
+    const next = images.filter((item) => item !== url);
     setImages(next);
 
-    if (image === removedUrl) {
+    setSelectedUrls((prev) => {
+      if (!prev.has(url)) return prev;
+      const updated = new Set(prev);
+      updated.delete(url);
+      return updated;
+    });
+    setImageTags((prev) => {
+      if (!(url in prev)) return prev;
+      const updated = { ...prev };
+      delete updated[url];
+      return updated;
+    });
+
+    if (image === url) {
+      setImage(next[0] || '');
+    }
+  }
+
+  function handleTagChange(url: string, colorName: string) {
+    setImageTags((prev) => {
+      const updated = { ...prev };
+      if (!colorName) {
+        delete updated[url];
+      } else {
+        updated[url] = colorName;
+      }
+      return updated;
+    });
+  }
+
+  function toggleSelect(url: string) {
+    setSelectedUrls((prev) => {
+      const updated = new Set(prev);
+      if (updated.has(url)) updated.delete(url);
+      else updated.add(url);
+      return updated;
+    });
+  }
+
+  function toggleSelectAllVisible() {
+    setSelectedUrls((prev) => {
+      const updated = new Set(prev);
+      if (allVisibleSelected) {
+        for (const url of visibleImages) updated.delete(url);
+      } else {
+        for (const url of visibleImages) updated.add(url);
+      }
+      return updated;
+    });
+  }
+
+  function changeColorFilter(key: string) {
+    setColorFilter(key);
+    setSelectedUrls(new Set());
+  }
+
+  function toggleColor(name: string) {
+    const isActive = enabledColors.includes(name);
+    if (isActive) {
+      // Always keep at least one colour available on the product.
+      if (enabledColors.length <= 1) return;
+      setEnabledColors(enabledColors.filter((color) => color !== name));
+      // Images tagged to the removed colour become untagged again.
+      setImageTags((prev) => {
+        const updated: Record<string, string> = {};
+        for (const [url, tag] of Object.entries(prev)) {
+          if (tag !== name) updated[url] = tag;
+        }
+        return updated;
+      });
+      setColorFilter((prev) => (prev === name ? 'ALL' : prev));
+    } else {
+      setEnabledColors([...enabledColors, name]);
+    }
+  }
+
+  function handleBulkTag(colorName: string) {
+    setBulkTagValue('');
+    if (!colorName || selectedUrls.size === 0) return;
+    setImageTags((prev) => {
+      const updated = { ...prev };
+      for (const url of selectedUrls) updated[url] = colorName;
+      return updated;
+    });
+  }
+
+  function bulkClearTags() {
+    if (selectedUrls.size === 0) return;
+    setImageTags((prev) => {
+      const updated = { ...prev };
+      for (const url of selectedUrls) delete updated[url];
+      return updated;
+    });
+  }
+
+  function bulkDeleteImages() {
+    if (selectedUrls.size === 0) return;
+    const next = images.filter((url) => !selectedUrls.has(url));
+    setImages(next);
+    setSelectedUrls(new Set());
+    setImageTags((prev) => {
+      const updated: Record<string, string> = {};
+      for (const [url, tag] of Object.entries(prev)) {
+        if (!selectedUrls.has(url)) updated[url] = tag;
+      }
+      return updated;
+    });
+    if (image && !next.includes(image)) {
       setImage(next[0] || '');
     }
   }
@@ -642,6 +902,12 @@ function ProductFormPage({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (enabledColors.length === 0) {
+      setError('Select at least one colour for this product.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -665,6 +931,18 @@ function ProductFormPage({
           badge: badge || null,
           image: image || images[0] || '',
           images,
+          // Colours the product is offered in, in display order…
+          colors: enabledColors.map((name) => ({
+            name,
+            hex: getStandardColorHex(name),
+          })),
+          // …and the ordered image URLs tagged to each of them.
+          colorImages: Object.fromEntries(
+            enabledColors.map((name) => [
+              name,
+              images.filter((url) => imageTags[url] === name),
+            ]),
+          ),
         }),
       });
 
@@ -823,6 +1101,59 @@ function ProductFormPage({
             />
           </div>
 
+          {/* Colours the product is offered in */}
+          <div className="rounded-2xl border border-[#dde5ec] bg-white p-4 sm:p-5 space-y-3.5">
+            <div className="border-b border-[#edf1f5] pb-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <label className="text-sm font-bold text-[#131b2e]">Product Colours</label>
+                <span className="rounded-full bg-[#052263]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#052263]">
+                  {enabledColors.length} of {STANDARD_COLORS.length}
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs text-[#637282]">
+                Pick the colours this product is sold in. Then tag gallery images to a colour
+                below — shoppers only see the photos of the colour they select.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {STANDARD_COLORS.map((color) => {
+                const isActive = enabledColors.includes(color.name);
+                const isLastActive = isActive && enabledColors.length === 1;
+                return (
+                  <button
+                    key={color.name}
+                    type="button"
+                    onClick={() => toggleColor(color.name)}
+                    disabled={isLastActive}
+                    aria-pressed={isActive}
+                    title={
+                      isLastActive
+                        ? 'A product needs at least one colour'
+                        : isActive
+                          ? `Remove ${color.name} from this product`
+                          : `Offer this product in ${color.name}`
+                    }
+                    className={cn(
+                      'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition',
+                      isActive
+                        ? 'border-[#052263] bg-[#052263] text-white shadow-sm'
+                        : 'border-[#dbe4eb] bg-[#f9fafc] text-[#556371] hover:border-[#b4c3d4] hover:bg-white',
+                      isLastActive && 'cursor-not-allowed opacity-60',
+                    )}
+                  >
+                    <span
+                      className="size-3 rounded-full border border-black/20"
+                      style={{ backgroundColor: color.value }}
+                    />
+                    {color.name}
+                    {isActive && <Check size={12} className="text-white" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Media / Product Media & Gallery Section (Shopify-Style) */}
           <div className="rounded-2xl border border-[#dde5ec] bg-[#f8fafc] p-4 sm:p-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#edf1f5] pb-3">
@@ -834,7 +1165,9 @@ function ProductFormPage({
                   </span>
                 </div>
                 <p className="mt-0.5 text-xs text-[#637282]">
-                  The first image is the <strong>Main Cover image</strong> displayed upfront on all collection grids and storefront listings.
+                  The first image is the <strong>Main Cover image</strong> displayed upfront on all
+                  collection grids. Drag or use the arrows to reorder, tag each image to a colour,
+                  and multi-select for bulk actions.
                 </p>
               </div>
 
@@ -930,6 +1263,118 @@ function ProductFormPage({
               </div>
             )}
 
+            {/* Colour filter tabs + multi-select controls */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {[
+                  { key: 'ALL', label: 'All', count: images.length },
+                  ...(tagCounts.untagged > 0
+                    ? [{ key: UNTAGGED_FILTER, label: 'Untagged', count: tagCounts.untagged }]
+                    : []),
+                  ...enabledColors.map((name) => ({
+                    key: name,
+                    label: name,
+                    count: tagCounts.counts[name] || 0,
+                    hex: getStandardColorHex(name),
+                  })),
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => changeColorFilter(tab.key)}
+                    className={cn(
+                      'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition',
+                      colorFilter === tab.key
+                        ? 'bg-[#052263] text-white shadow-sm'
+                        : 'border border-[#dde5ec] bg-white text-[#556371] hover:bg-[#f1f4f8]',
+                    )}
+                  >
+                    {'hex' in tab && tab.hex ? (
+                      <span
+                        className="size-2.5 rounded-full border border-black/20"
+                        style={{ backgroundColor: tab.hex }}
+                      />
+                    ) : null}
+                    {tab.label}
+                    <span
+                      className={cn(
+                        'rounded-full px-1.5 py-px text-[10px]',
+                        colorFilter === tab.key ? 'bg-white/20' : 'bg-[#eef2f6] text-[#7e8a96]',
+                      )}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {visibleImages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={toggleSelectAllVisible}
+                  className="text-[11px] font-semibold text-[#052263] hover:underline"
+                >
+                  {allVisibleSelected
+                    ? 'Clear selection'
+                    : `Select all visible (${visibleImages.length})`}
+                </button>
+              )}
+            </div>
+
+            {/* Bulk actions for multi-selected images */}
+            {selectedUrls.size > 0 && (
+              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#052263]/25 bg-[#052263]/5 px-3 py-2">
+                <span className="text-xs font-bold text-[#052263]">
+                  {selectedUrls.size} selected
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor="bulk-tag-select"
+                    className="text-[11px] font-medium text-[#637282]"
+                  >
+                    Tag as
+                  </label>
+                  <select
+                    id="bulk-tag-select"
+                    value={bulkTagValue}
+                    onChange={(e) => handleBulkTag(e.target.value)}
+                    className="h-7 rounded-lg border border-[#dbe4eb] bg-white px-2 text-[11px] font-semibold text-[#293447] outline-none focus:border-[#052263]"
+                  >
+                    <option value="">Choose colour…</option>
+                    {enabledColors.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={bulkClearTags}
+                  className="rounded-lg border border-[#dde5ec] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#556371] hover:bg-[#f1f4f8]"
+                >
+                  Remove tags
+                </button>
+                <button
+                  type="button"
+                  onClick={bulkDeleteImages}
+                  className="rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 hover:bg-rose-50"
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUrls(new Set())}
+                  className="ml-auto rounded-lg p-1 text-[#71808f] hover:bg-[#e9eef4]"
+                  title="Clear selection"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+
             {/* Drag & Drop Area / Grid */}
             <div
               onDragOver={(e) => {
@@ -969,18 +1414,65 @@ function ProductFormPage({
                     Supports JPG, PNG, WEBP, AVIF (select multiple files to bulk upload)
                   </p>
                 </div>
+              ) : visibleImages.length === 0 ? (
+                <div className="py-9 text-center text-xs text-[#71808f]">
+                  No images tagged{' '}
+                  <strong className="text-[#293447]">
+                    {colorFilter === UNTAGGED_FILTER ? 'Untagged' : colorFilter}
+                  </strong>{' '}
+                  yet. Switch to <strong className="text-[#293447]">All</strong>, select images
+                  and use the tag dropdown on each image to assign them.
+                </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {images.map((imgUrl, idx) => {
+                  {visibleImages.map((imgUrl) => {
+                    const idx = images.indexOf(imgUrl);
+                    const visibleIndex = visibleImages.indexOf(imgUrl);
                     const isCover = idx === 0 || imgUrl === image;
+                    const rawTag = imageTags[imgUrl];
+                    const tag = rawTag && enabledColors.includes(rawTag) ? rawTag : '';
+                    const isSelected = selectedUrls.has(imgUrl);
+                    const isDropTarget = Boolean(
+                      dropTargetUrl === imgUrl && dragUrl && dragUrl !== imgUrl,
+                    );
                     return (
                       <div
-                        key={`${imgUrl}-${idx}`}
+                        key={imgUrl}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('text/plain', imgUrl);
+                          e.dataTransfer.effectAllowed = 'move';
+                          setDragUrl(imgUrl);
+                        }}
+                        onDragOver={(e) => {
+                          // External/file drags keep bubbling to the container.
+                          if (!dragUrl || dragUrl === imgUrl) return;
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.dataTransfer.dropEffect = 'move';
+                          setDropTargetUrl(imgUrl);
+                        }}
+                        onDragLeave={() => {
+                          setDropTargetUrl((current) => (current === imgUrl ? null : current));
+                        }}
+                        onDrop={(e) => {
+                          // File drops belong to the container's upload handler.
+                          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) return;
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDropImage(e.dataTransfer.getData('text/plain') || dragUrl, imgUrl);
+                        }}
+                        onDragEnd={() => {
+                          setDragUrl(null);
+                          setDropTargetUrl(null);
+                        }}
                         className={cn(
                           'group relative flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition',
                           isCover
                             ? 'border-2 border-[#052263] ring-2 ring-[#052263]/15'
-                            : 'border-[#dde5ec] hover:border-[#b4c3d4]'
+                            : isDropTarget
+                              ? 'border-2 border-dashed border-[#052263] bg-[#052263]/5'
+                              : 'border-[#dde5ec] hover:border-[#b4c3d4]',
                         )}
                       >
                         {/* Image Preview Container */}
@@ -1022,13 +1514,54 @@ function ProductFormPage({
                             )}
                             <button
                               type="button"
-                              onClick={() => handleRemoveImage(idx)}
+                              onClick={() => handleRemoveImage(imgUrl)}
                               title="Delete from product"
                               className="rounded-lg bg-white p-1 text-rose-600 shadow hover:bg-rose-50"
                             >
                               <Trash2 size={13} />
                             </button>
                           </div>
+
+                          {/* Multi-select checkbox (above the hover overlay) */}
+                          <label
+                            className="absolute top-2 right-2 z-10 flex size-5 cursor-pointer items-center justify-center rounded-md border border-black/10 bg-white/95 shadow"
+                            title="Select image"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelect(imgUrl)}
+                              className="size-3.5 cursor-pointer accent-[#052263]"
+                              aria-label={`Select image ${idx + 1}`}
+                            />
+                          </label>
+                        </div>
+
+                        {/* Colour tag for this image */}
+                        <div className="flex items-center gap-1.5 border-t border-[#edf1f5] bg-[#fafcfd] px-2 py-1">
+                          <span
+                            className="size-2.5 shrink-0 rounded-full border border-black/15"
+                            style={{
+                              backgroundColor: tag ? getStandardColorHex(tag) : '#cbd5e1',
+                            }}
+                          />
+                          <select
+                            value={tag}
+                            onChange={(e) => handleTagChange(imgUrl, e.target.value)}
+                            aria-label={`Colour tag for image ${idx + 1}`}
+                            title={
+                              tag ? `Tagged as ${tag} — click to change` : 'Tag this image to a colour'
+                            }
+                            className="h-6 min-w-0 flex-1 cursor-pointer rounded-md border border-[#dde5ec] bg-white px-1 text-[10px] font-semibold text-[#41505f] outline-none transition focus:border-[#052263]"
+                          >
+                            <option value="">All colours</option>
+                            {enabledColors.map((name) => (
+                              <option key={name} value={name}>
+                                {name}
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
                         {/* Bottom reorder toolbar */}
@@ -1036,8 +1569,8 @@ function ProductFormPage({
                           <div className="flex items-center gap-1">
                             <button
                               type="button"
-                              disabled={idx === 0}
-                              onClick={() => handleMoveImage(idx, 'left')}
+                              disabled={visibleIndex === 0}
+                              onClick={() => handleMoveImage(imgUrl, 'left')}
                               title="Move earlier"
                               className="rounded p-0.5 text-[#627383] hover:bg-[#edf2f7] disabled:opacity-30 disabled:hover:bg-transparent"
                             >
@@ -1045,13 +1578,19 @@ function ProductFormPage({
                             </button>
                             <button
                               type="button"
-                              disabled={idx === images.length - 1}
-                              onClick={() => handleMoveImage(idx, 'right')}
+                              disabled={visibleIndex === visibleImages.length - 1}
+                              onClick={() => handleMoveImage(imgUrl, 'right')}
                               title="Move later"
                               className="rounded p-0.5 text-[#627383] hover:bg-[#edf2f7] disabled:opacity-30 disabled:hover:bg-transparent"
                             >
                               <ArrowRight size={12} />
                             </button>
+                            <span
+                              className="ml-0.5 cursor-grab text-[#9aa7b4]"
+                              title="Drag to reorder"
+                            >
+                              <GripVertical size={12} />
+                            </span>
                           </div>
 
                           {!isCover ? (
