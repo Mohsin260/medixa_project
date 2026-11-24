@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useWishlist } from '@/lib/wishlist';
 import { useCartStore } from '@/lib/cart';
 import { useUiStore } from '@/lib/store/ui';
-import { getProductBySlug } from '@/lib/products';
 
 interface ProductCardActionsProps {
   slug: string;
@@ -44,13 +43,12 @@ export default function ProductCardActions({
     e.preventDefault();
     e.stopPropagation();
 
-    const product = getProductBySlug(slug);
-    const title = product?.title || defaultTitle || 'Medical Scrub Suit';
-    const price = product?.price || defaultPrice || 3450;
-    const compareAt = product?.compareAt || price;
-    const image = product?.image || defaultImage || '/img/real-product-images/regal/regal-thumbnail.webp';
-    const color = product?.colors?.[0]?.name || 'Standard';
-    const size = product?.sizes?.[2] || product?.sizes?.[0] || 'M';
+    const title = defaultTitle || 'Medical Scrub Suit';
+    const price = defaultPrice || 0;
+    const compareAt = price;
+    const image = defaultImage || '';
+    const color = 'Standard';
+    const size = 'M';
 
     addItem({
       slug,

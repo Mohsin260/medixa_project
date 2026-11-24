@@ -1,4 +1,4 @@
-import { products as localProducts, type Product } from '@/lib/products';
+import type { Product } from '@/lib/products';
 import type { ProductListFilters } from '@/lib/query/query-keys';
 
 export async function fetchProducts(filters: ProductListFilters = {}): Promise<Product[]> {
@@ -22,54 +22,7 @@ export async function fetchProducts(filters: ProductListFilters = {}): Promise<P
     // Fallback below
   }
 
-  // Fallback to local items if offline
-  let result = [...localProducts];
-  if (filters.category) {
-    result = result.filter((product) => product.category === filters.category);
-  }
-  if (filters.collection) {
-    result = result.filter((product) => product.collection === filters.collection);
-  }
-  if (filters.search) {
-    const query = filters.search.toLowerCase();
-    result = result.filter(
-      (product) =>
-        product.title.toLowerCase().includes(query) ||
-        product.subtitle.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
-        product.sku.toLowerCase().includes(query),
-    );
-  }
-  if (typeof filters.minPrice === 'number') {
-    result = result.filter((product) => product.price >= filters.minPrice!);
-  }
-  if (typeof filters.maxPrice === 'number') {
-    result = result.filter((product) => product.price <= filters.maxPrice!);
-  }
-
-  switch (filters.sort) {
-    case 'price-asc':
-      result.sort((a, b) => a.price - b.price);
-      break;
-    case 'price-desc':
-      result.sort((a, b) => b.price - a.price);
-      break;
-    case 'rating':
-      result.sort((a, b) => b.rating - a.rating);
-      break;
-    case 'popular':
-      result.sort((a, b) => b.reviews - a.reviews);
-      break;
-    default:
-      break;
-  }
-
-  if (filters.page && filters.limit) {
-    const start = (filters.page - 1) * filters.limit;
-    result = result.slice(start, start + filters.limit);
-  }
-
-  return result;
+  return [];
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
@@ -82,7 +35,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | undefi
   } catch {
     // Fallback below
   }
-  return localProducts.find((product) => product.slug === slug);
+  return undefined;
 }
 
 export async function fetchRelatedProducts(product: Product, limit = 4): Promise<Product[]> {

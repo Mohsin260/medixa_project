@@ -118,6 +118,78 @@ async function seed() {
     },
   });
 
+  // --- Blog articles ---
+  const adminAuthor = await db.user.findUnique({ where: { email: 'admin@medixa.pk' } });
+  if (adminAuthor) {
+    const blogPosts = [
+      {
+        slug: 'the-medixa-standard-why-fabric-matters',
+        title: 'The Medixa Standard: Why Fabric Engineering Matters in Healthcare',
+        excerpt: 'Discover why breathable, 4-way stretch antimicrobial fabric makes all the difference during 14-hour hospital shifts.',
+        body: 'Medixa scrubs are designed around healthcare movement, repeated laundering, and everyday durability. Breathable fabric, ergonomic cuts, and color-fast construction help professionals stay comfortable through demanding shifts.',
+        tags: ['Guides', 'Fabric'],
+        imageUrl: '/img/feature-post/feature1.jpg',
+        imageAlt: 'Medixa medical scrubs fabric and healthcare apparel',
+      },
+      {
+        slug: 'how-to-choose-your-perfect-scrub-fit',
+        title: 'How to Choose Your Perfect Scrub Fit: Size & Silhouette Guide',
+        excerpt: 'A practical guide to choosing between tailored V-neck, round-neck, and collar-neck scrub suits.',
+        body: 'Choose a scrub silhouette that matches your work environment and preferred fit. V-neck styles provide a streamlined modern profile, while round-neck and collar-neck styles offer distinct professional looks.',
+        tags: ['Tips', 'Style'],
+        imageUrl: '/img/feature-post/feature2.jpg',
+        imageAlt: 'Healthcare professional choosing a Medixa scrub fit',
+      },
+      {
+        slug: 'inside-our-karachi-medical-apparel-studio',
+        title: 'Inside Our Design Studio: Tailoring for Pakistan Healthcare Heroes',
+        excerpt: 'A behind-the-scenes look at how Medixa designs, crafts, and tests medical uniforms for Pakistani professionals.',
+        body: 'Our design process focuses on practical movement, durable construction, easy care, and professional appearance for doctors, nurses, students, and hospital teams across Pakistan.',
+        tags: ['Behind The Scenes'],
+        imageUrl: '/img/feature-post/feature1.jpg',
+        imageAlt: 'Medixa Karachi medical apparel design studio',
+      },
+    ];
+
+    for (const post of blogPosts) {
+      const media = await db.media.upsert({
+        where: { key: `blog/${post.slug}` },
+        update: { url: post.imageUrl, altText: post.imageAlt },
+        create: {
+          key: `blog/${post.slug}`,
+          url: post.imageUrl,
+          filename: `${post.slug}.jpg`,
+          mimeType: 'image/jpeg',
+          altText: post.imageAlt,
+        },
+      });
+
+      await db.post.upsert({
+        where: { slug: post.slug },
+        update: {
+          title: post.title,
+          excerpt: post.excerpt,
+          body: post.body,
+          tags: post.tags,
+          status: 'PUBLISHED',
+          publishedAt: new Date(),
+          featuredMediaId: media.id,
+        },
+        create: {
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          body: post.body,
+          tags: post.tags,
+          status: 'PUBLISHED',
+          publishedAt: new Date(),
+          authorId: adminAuthor.id,
+          featuredMediaId: media.id,
+        },
+      });
+    }
+  }
+
   // --- Shipping methods ---
   const shippingMethods = [
     {

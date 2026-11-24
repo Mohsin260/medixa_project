@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useState } from 'react';
-import { formatPrice, getProductBySlug, getStandardColorHex, type Product } from '@/lib/products';
+import { formatPrice, getStandardColorHex, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
 
 export default function FeaturedItems() {
@@ -27,7 +27,7 @@ export default function FeaturedItems() {
     };
   }, []);
 
-  const getProd = (slug: string) => productMap[slug] || getProductBySlug(slug);
+  const getProd = (slug: string) => productMap[slug];
   const priceFor = (slug: string) => formatPrice(getProd(slug)?.price ?? 0);
   const imageFor = (slug: string, fallback: string) => getProd(slug)?.image || fallback;
   const titleFor = (slug: string, fallback: string) => getProd(slug)?.title || fallback;

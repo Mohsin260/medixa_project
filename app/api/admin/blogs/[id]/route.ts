@@ -18,7 +18,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid body' }, { status: 400 });
   }
 
-  const { title, excerpt, body: content, tags, status } = body;
+  const { title, excerpt, body: content, tags, status, image, imageAlt } = body;
 
   try {
     const updateData: Record<string, unknown> = {};
@@ -31,6 +31,29 @@ export async function PUT(
     if (status !== undefined) {
       updateData.status = status as ProductStatus;
       if (status === 'PUBLISHED') updateData.publishedAt = new Date();
+    }
+
+    if (image !== undefined) {
+      if (typeof image === 'string' && image.trim()) {
+        const mediaUrl = image.trim();
+        let media = await db.media.findFirst({ where: { url: mediaUrl } });
+        if (!media) {
+          media = await db.media.create({
+            data: {
+              key: `blog/${Date.now()}-${id}`,
+              url: mediaUrl,
+              filename: `${title || 'article'}.jpg`,
+              mimeType: 'image/jpeg',
+              altText: imageAlt || title || '',
+            },
+          });
+        } else if (imageAlt) {
+          await db.media.update({ where: { id: media.id }, data: { altText: imageAlt } });
+        }
+        updateData.featuredMediaId = media.id;
+      } else {
+        updateData.featuredMediaId = null;
+      }
     }
 
     const updated = await db.post.update({

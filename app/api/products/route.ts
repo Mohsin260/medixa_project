@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { products as fallbackProducts } from '@/lib/products';
 import { buildColorImages } from '@/lib/server/products';
 
 export async function GET(request: NextRequest) {
@@ -57,9 +56,8 @@ export async function GET(request: NextRequest) {
 
     if (dbProducts.length > 0) {
       const formatted = dbProducts.map((p) => {
-        const fallback = fallbackProducts.find((f) => f.slug === p.slug);
-        const imageList = p.images.length > 0 ? p.images.map((img) => img.url) : (p.image ? [p.image] : (fallback?.images || []));
-        const featuredImage = p.image || imageList[0] || fallback?.image || '';
+        const imageList = p.images.length > 0 ? p.images.map((img) => img.url) : (p.image ? [p.image] : []);
+        const featuredImage = p.image || imageList[0] || '';
         const finalImages = imageList.includes(featuredImage)
           ? [featuredImage, ...imageList.filter((url) => url !== featuredImage)]
           : [featuredImage, ...imageList].filter(Boolean);
@@ -69,31 +67,29 @@ export async function GET(request: NextRequest) {
           title: p.title,
           subtitle: p.subtitle,
           category: (p.category?.name?.includes('Women') ? 'Women' : p.category?.name?.includes('Men') ? 'Men' : 'Unisex') as 'Men' | 'Women' | 'Unisex',
-          collection: p.collection?.name || fallback?.collection || 'Standard',
+          collection: p.collection?.name || 'Standard',
           price: Number(p.price),
-          compareAt: p.compareAt ? Number(p.compareAt) : (fallback?.compareAt || Number(p.price) + 1000),
-          rating: p.rating || fallback?.rating || 5,
-          reviews: p.reviewCount || fallback?.reviews || 0,
-          badge: p.badge || fallback?.badge,
+          compareAt: p.compareAt ? Number(p.compareAt) : Number(p.price),
+          rating: p.rating || 0,
+          reviews: p.reviewCount || 0,
+          badge: p.badge,
           sku: `${p.slug.toUpperCase()}-STD`,
           image: featuredImage,
           images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
-          colorImages: buildColorImages(p.colors, fallback),
-          colors: p.colors.length > 0 ? p.colors.map((c) => ({ name: c.name, value: c.hex })) : (fallback?.colors || [{ name: 'Navy', value: '#1e3a5f' }]),
-          sizes: p.sizes.length > 0 ? p.sizes.map((s) => s.name) : (fallback?.sizes || ['XS', 'S', 'M', 'L', 'XL']),
-          description: p.description || fallback?.description || '',
-          features: p.features.length > 0 ? p.features : (fallback?.features || []),
-          care: p.care || fallback?.care || 'Machine wash cold with like colors.',
-          shipping: p.shipping || fallback?.shipping || 'Nationwide delivery in 3-5 working days.',
+          colorImages: buildColorImages(p.colors),
+          colors: p.colors.map((c) => ({ name: c.name, value: c.hex })),
+          sizes: p.sizes.map((s) => s.name),
+          description: p.description || '',
+          features: p.features || [],
+          care: p.care || '',
+          shipping: p.shipping || '',
         };
       });
       return NextResponse.json(formatted);
     }
-
-    // Fallback to static seed array if DB had 0 matching products
-    return NextResponse.json(fallbackProducts);
+    return NextResponse.json([]);
   } catch (err) {
     console.error('Error fetching public products:', err);
-    return NextResponse.json(fallbackProducts);
+    return NextResponse.json([]);
   }
 }

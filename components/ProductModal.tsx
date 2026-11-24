@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUiStore } from '@/lib/store/ui';
 import { useCartStore } from '@/lib/cart';
-import { getProductBySlug, formatPrice, products, type Product } from '@/lib/products';
+import { formatPrice, type Product } from '@/lib/products';
 
 interface ProductModalContentProps {
   product: Product;
@@ -456,17 +456,10 @@ export default function ProductModal() {
   const quickViewSlug = useUiStore((state) => state.quickViewSlug);
   const closeQuickView = useUiStore((state) => state.closeQuickView);
 
-  const fallback = quickViewSlug
-    ? getProductBySlug(quickViewSlug) || products[0]
-    : products[0];
-
   const [liveProduct, setLiveProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    if (!quickViewSlug) {
-      setLiveProduct(null);
-      return;
-    }
+    if (!quickViewSlug) return;
     let ignore = false;
     fetch(`/api/products/${quickViewSlug}`)
       .then((res) => (res.ok ? res.json() : null))
@@ -481,7 +474,7 @@ export default function ProductModal() {
     };
   }, [quickViewSlug]);
 
-  const product = (liveProduct && liveProduct.slug === quickViewSlug) ? liveProduct : fallback;
+  const product = liveProduct && liveProduct.slug === quickViewSlug ? liveProduct : null;
 
   const handleClose = useCallback(() => {
     closeQuickView();
@@ -511,6 +504,8 @@ export default function ProductModal() {
       document.body.style.overflow = '';
     }
   }, [isOpen, handleClose]);
+
+  if (!isOpen || !product) return null;
 
   return (
     <>

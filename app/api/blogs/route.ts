@@ -9,45 +9,19 @@ export async function GET() {
       take: 6,
       include: {
         author: { select: { name: true } },
+        featuredMedia: { select: { url: true, altText: true } },
       },
     });
 
     if (posts.length > 0) {
-      return NextResponse.json(posts);
+      return NextResponse.json(posts.map((post) => ({
+        ...post,
+        image: post.featuredMedia?.url || null,
+        imageAlt: post.featuredMedia?.altText || post.title,
+      })));
     }
 
-    // Default sample blogs if database has 0 posts yet
-    const fallback = [
-      {
-        id: 'post-1',
-        slug: 'the-medixa-standard-why-fabric-matters',
-        title: 'The Medixa Standard: Why Fabric Engineering Matters in Healthcare',
-        excerpt: 'Discover why breathable, 4-way stretch antimicrobial fabric makes all the difference during 14-hour hospital shifts.',
-        tags: ['Guides', 'Fabric'],
-        author: { name: 'Dr. Tariq Mahmood' },
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'post-2',
-        slug: 'how-to-choose-your-perfect-scrub-fit',
-        title: 'How to Choose Your Perfect Scrub Fit: Size & Silhouette Guide',
-        excerpt: 'A comprehensive guide for doctors and nurses on selecting between our tailored V-neck and collar-neck scrub suits.',
-        tags: ['Tips', 'Style'],
-        author: { name: 'Ayesha Malik' },
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 'post-3',
-        slug: 'inside-our-karachi-medical-apparel-studio',
-        title: 'Inside Our Design Studio: Tailoring for Pakistan Healthcare Heroes',
-        excerpt: 'A behind-the-scenes look at how Medixa designs, crafts, and stress-tests medical uniforms for Pakistani professionals.',
-        tags: ['Behind The Scenes'],
-        author: { name: 'Medixa Editorial' },
-        createdAt: new Date().toISOString(),
-      },
-    ];
-
-    return NextResponse.json(fallback);
+    return NextResponse.json([]);
   } catch (err) {
     console.error('Failed to get public blogs:', err);
     return NextResponse.json([]);

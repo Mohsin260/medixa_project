@@ -1,4 +1,21 @@
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import { useEffect, useState } from 'react';
+import type { Product } from '@/lib/products';
+
 export default function SpecialOffer() {
+  const [product, setProduct] = useState<Product | null>(null);
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/products')
+      .then((res) => res.ok ? res.json() : [])
+      .then((data: Product[]) => {
+        if (!ignore && Array.isArray(data) && data.length) setProduct(data[0]);
+      })
+      .catch(() => {});
+    return () => { ignore = true; };
+  }, []);
   return (
     <div
       className="special-offer-area"
@@ -40,13 +57,11 @@ export default function SpecialOffer() {
           >
             <div className="so-title" style={{ marginBottom: 30 }}>
               <span>Healthcare Privilege</span>
-              <h2>Zero Fading Guaranteed</h2>
+              <h2>{product?.title || 'Premium Medical Scrubs'}</h2>
             </div>
 
             <p className="so-text">
-              Precision-engineered medical apparel with 4-way stretch fabric and international vat
-              dyeing. Designed for demanding 12-to-24-hour shifts with nationwide cash on delivery
-              across Pakistan.
+              {product?.description || 'Precision-engineered medical apparel for demanding hospital shifts.'}
             </p>
 
             <h2 className="so-off-percent">Free Shipping Over Rs 10,000</h2>
@@ -67,7 +82,7 @@ export default function SpecialOffer() {
             flex: '1 1 50%',
             minWidth: 320,
             minHeight: 460,
-            backgroundImage: 'url(/img/bg/offer-right-full.jpg)',
+            ...(product?.image ? { backgroundImage: `url(${product.image})` } : {}),
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
             backgroundSize: 'cover',

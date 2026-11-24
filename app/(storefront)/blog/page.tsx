@@ -12,42 +12,11 @@ interface Post {
   excerpt?: string;
   tags?: string[];
   createdAt: string;
+  image?: string | null;
+  imageAlt?: string;
 }
 
-const FALLBACK_POSTS: Post[] = [
-  {
-    id: '1',
-    slug: 'the-medixa-standard-why-fabric-matters',
-    title: 'The Medixa Standard: Why Fabric Engineering Matters in Healthcare',
-    excerpt: 'Behind the scenes look into our 4-way stretch poly-rayon-spandex textile blend engineered for high-mobility medical environments.',
-    tags: ['Fabric Tech', 'Comfort'],
-    createdAt: '2026-10-25',
-  },
-  {
-    id: '2',
-    slug: 'how-to-choose-your-perfect-scrub-fit',
-    title: 'How to Choose Your Perfect Scrub Fit: Size & Silhouette Guide',
-    excerpt: 'From active V-necks to classic round collars, discover which cut complements your body type and hospital duty demands.',
-    tags: ['Fit & Sizing', 'Guides'],
-    createdAt: '2026-10-28',
-  },
-  {
-    id: '3',
-    slug: 'inside-our-karachi-medical-apparel-studio',
-    title: 'Inside Our Studio: Tailoring for Pakistan Healthcare Heroes',
-    excerpt: 'How we combine international dyeing precision with local craftsmanship to guarantee zero color fading on hospital scrubs.',
-    tags: ['Behind The Scenes'],
-    createdAt: '2026-11-01',
-  },
-  {
-    id: '4',
-    slug: 'maintaining-scrub-color-fastness-laundry-guide',
-    title: 'Autoclave & Laundry Tips: Keeping Your Scrubs Vibrant For Years',
-    excerpt: 'Key tips on temperature, detergents, and washing rotations to ensure your scrubs stay crisp and bacteria-free.',
-    tags: ['Care & Longevity'],
-    createdAt: '2026-11-02',
-  },
-];
+const FALLBACK_POSTS: Post[] = [];
 
 export default function BlogDirectoryPage() {
   const [posts, setPosts] = useState<Post[]>(FALLBACK_POSTS);
@@ -94,7 +63,7 @@ export default function BlogDirectoryPage() {
       <div style={{ padding: '60px 0 90px', background: '#fafcfd' }}>
         <div className="container">
           <div className="row">
-            {posts.map((post, idx) => (
+            {posts.map((post) => (
               <div key={post.id} className="col-md-6 col-xs-12" style={{ marginBottom: 30 }}>
                 <div
                   style={{
@@ -112,8 +81,8 @@ export default function BlogDirectoryPage() {
                     <Link href={`/blog/${post.slug}`} style={{ display: 'block', height: '100%' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/img/feature-post/feature${(idx % 2) + 1}.jpg`}
-                        alt={post.title}
+                        src={post.image || ''}
+                        alt={post.imageAlt || post.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </Link>

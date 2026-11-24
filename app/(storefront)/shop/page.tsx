@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { formatPrice, products as defaultProducts, type Product } from '@/lib/products';
+import { formatPrice, type Product } from '@/lib/products';
 import { useCart } from '@/lib/cart';
 
 function ShopContent() {
@@ -13,7 +13,7 @@ function ShopContent() {
   const paramCategory = searchParams.get('category');
   const paramSearch = searchParams.get('search');
 
-  const [products, setProducts] = useState<Product[]>(defaultProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [localCategory, setLocalCategory] = useState<string | null>(null);
   const [localSearch, setLocalSearch] = useState<string | null>(null);

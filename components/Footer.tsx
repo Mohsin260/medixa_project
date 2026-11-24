@@ -32,26 +32,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   facebookUrl: 'https://facebook.com/medixa.pk',
 };
 
-const DEFAULT_BLOGS: BlogPost[] = [
-  {
-    slug: 'the-medixa-standard-why-fabric-matters',
-    title: 'Why Fabric Engineering Matters in Healthcare',
-    createdAt: '2026-10-25T10:00:00.000Z',
-    image: '/img/footer-post/fpost1.jpg',
-  },
-  {
-    slug: 'how-to-choose-your-perfect-scrub-fit',
-    title: 'How to Choose Your Perfect Scrub Silhouette',
-    createdAt: '2026-10-28T10:00:00.000Z',
-    image: '/img/footer-post/fpost2.jpg',
-  },
-  {
-    slug: 'inside-our-karachi-medical-apparel-studio',
-    title: 'Tailoring for Pakistan Healthcare Heroes',
-    createdAt: '2026-11-01T10:00:00.000Z',
-    image: '/img/footer-post/fpost3.jpg',
-  },
-];
+const DEFAULT_BLOGS: BlogPost[] = [];
 
 export default function Footer() {
   const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS);
@@ -76,11 +57,11 @@ export default function Footer() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.slice(0, 3).map((item, idx) => ({
+          const mapped = data.slice(0, 3).map((item) => ({
             slug: item.slug || '',
             title: item.title || '',
             createdAt: item.createdAt || '',
-            image: item.image || `/img/footer-post/fpost${(idx % 3) + 1}.jpg`,
+            image: item.image || '',
           }));
           setBlogs(mapped);
         }
@@ -197,20 +178,20 @@ export default function Footer() {
                 <div className="footer-post-area">
                   <h4 className="footer-title">Clinical Journal</h4>
                   <div className="footer-posts">
-                    {blogs.map((b, idx) => {
+                    {blogs.map((b) => {
                       const dateObj = new Date(b.createdAt);
                       const formattedDate = isNaN(dateObj.getTime())
                         ? 'Nov 2026'
                         : dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
                       return (
-                        <div key={b.slug || idx} className="single-footer-post">
+                        <div key={b.slug} className="single-footer-post">
                           <div className="clearfix">
                             <div className="footer-post-img">
                               <a href={`/blog/${b.slug}`}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                  src={b.image || `/img/footer-post/fpost${(idx % 3) + 1}.jpg`}
+                                  src={b.image || ''}
                                   alt={b.title}
                                   style={{ width: 68, height: 50, objectFit: 'cover' }}
                                 />

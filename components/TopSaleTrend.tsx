@@ -2,48 +2,27 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
-import { formatPrice, getProductBySlug, type Product } from '@/lib/products';
+import { formatPrice, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
 
 interface TrendItem {
   slug: string;
-  customImage?: string;
-  customTitle?: string;
+  color?: string;
 }
 
 const topRated: TrendItem[] = [
-  {
-    slug: 'regal-round-neck-male-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/regal/regal-thumbnail.webp',
-  },
-  {
-    slug: 'muse-v-neck-female-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/muse/muse-thumbnail.webp',
-  },
+  { slug: 'regal-round-neck-male-medical-scrubs-pakistan' },
+  { slug: 'muse-v-neck-female-medical-scrubs-pakistan' },
 ];
 
 const onSale: TrendItem[] = [
-  {
-    slug: 'forte-v-neck-male-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/Forte/Forte-thumbnail.webp',
-  },
-  {
-    slug: 'rebel-collar-neck-female-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/rebel/Rebel-thumbnail.webp',
-  },
+  { slug: 'forte-v-neck-male-medical-scrubs-pakistan' },
+  { slug: 'rebel-collar-neck-female-medical-scrubs-pakistan' },
 ];
 
 const trending: TrendItem[] = [
-  {
-    slug: 'forte-v-neck-male-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/Forte/Forte-Naval-1.webp',
-    customTitle: 'Forte Scrub Suits (Naval)',
-  },
-  {
-    slug: 'muse-v-neck-female-medical-scrubs-pakistan',
-    customImage: '/img/real-product-images/muse/muse-Maroon-1.webp',
-    customTitle: 'Muse Scrub Suits (Maroon)',
-  },
+  { slug: 'forte-v-neck-male-medical-scrubs-pakistan', color: 'Naval Light' },
+  { slug: 'muse-v-neck-female-medical-scrubs-pakistan', color: 'Maroon' },
 ];
 
 function TrendCard({
@@ -55,13 +34,14 @@ function TrendCard({
   showOldPrice?: boolean;
   liveProduct?: Product;
 }) {
-  const product = liveProduct || getProductBySlug(item.slug);
-  const title = item.customTitle || product?.title || 'Medixa Scrub Suits';
+  const product = liveProduct;
+  const title = item.color
+    ? `${product?.title || 'Medixa Scrub Suits'} (${item.color})`
+    : product?.title || 'Medixa Scrub Suits';
   const image =
-    item.customImage ||
-    liveProduct?.image ||
+    (item.color ? product?.colorImages?.[item.color]?.[0] : undefined) ||
     product?.image ||
-    '/img/real-product-images/regal/regal-thumbnail.webp';
+    '';
   const price = product?.price ? formatPrice(product.price) : 'Rs 5,391';
   const compareAt = product?.compareAt ? formatPrice(product.compareAt) : null;
 

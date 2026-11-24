@@ -9,6 +9,8 @@ interface BlogPost {
   excerpt?: string;
   tags?: string[];
   createdAt: string;
+  image?: string | null;
+  imageAlt?: string;
 }
 
 export default function FeaturePost() {
@@ -29,32 +31,7 @@ export default function FeaturePost() {
     };
   }, []);
 
-  const displayPosts =
-    posts.length > 0
-      ? posts
-      : [
-          {
-            id: '1',
-            slug: 'the-medixa-standard-why-fabric-matters',
-            title: 'The Medixa Standard: Why Fabric Engineering Matters in Healthcare',
-            tags: ['Fabric Technology'],
-            createdAt: '2026-10-25',
-          },
-          {
-            id: '2',
-            slug: 'how-to-choose-your-perfect-scrub-fit',
-            title: 'How to Choose Your Perfect Scrub Fit: Size & Silhouette Guide',
-            tags: ['Size Guide'],
-            createdAt: '2026-10-28',
-          },
-          {
-            id: '3',
-            slug: 'inside-our-karachi-medical-apparel-studio',
-            title: 'Inside Our Design Studio: Tailoring for Pakistan Healthcare Heroes',
-            tags: ['Behind The Scenes'],
-            createdAt: '2026-11-01',
-          },
-        ];
+  const displayPosts = posts.slice(0, 3);
 
   return (
     <div className="feature-post-area">
@@ -71,15 +48,15 @@ export default function FeaturePost() {
         </div>
         <div className="row">
           <div className="feature-post-grid">
-            {displayPosts.map((post, idx) => (
+            {displayPosts.map((post) => (
               <div key={post.id} className="col-md-4 col-sm-6 col-xs-12" style={{ marginBottom: 30 }}>
                 <div className="single-feature-post">
                   <div className="feature-post-img">
-                    <a href={`#${post.slug}`}>
+                    <a href={`/blog/${post.slug}`}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/img/feature-post/feature${(idx % 2) + 1}.jpg`}
-                        alt={post.title}
+                        src={post.image || ''}
+                        alt={post.imageAlt || post.title}
                         style={{ width: '100%', height: 'auto', display: 'block' }}
                       />
                     </a>

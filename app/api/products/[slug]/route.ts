@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getProductBySlug as fallbackGetProduct } from '@/lib/products';
 import { mapStorefrontProduct } from '@/lib/server/products';
 
 export async function GET(
@@ -22,18 +21,14 @@ export async function GET(
     });
 
     if (!p) {
-      const fallback = fallbackGetProduct(slug);
-      if (fallback) return NextResponse.json(fallback);
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    const formatted = mapStorefrontProduct(p, fallbackGetProduct(slug));
+    const formatted = mapStorefrontProduct(p, undefined);
 
     return NextResponse.json(formatted);
   } catch (err) {
     console.error('Error fetching product by slug:', err);
-    const fallback = fallbackGetProduct(slug);
-    if (fallback) return NextResponse.json(fallback);
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }

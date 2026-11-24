@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
       where: whereClause,
       include: {
         author: { select: { id: true, name: true, email: true } },
+        featuredMedia: { select: { id: true, url: true, altText: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -42,6 +43,8 @@ export async function GET(request: NextRequest) {
       status: p.status,
       publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
       createdAt: p.createdAt.toISOString(),
+      image: p.featuredMedia?.url || null,
+      imageAlt: p.featuredMedia?.altText || p.title,
     }));
 
     return NextResponse.json({ posts: formatted });
@@ -69,6 +72,8 @@ export async function POST(request: NextRequest) {
     body: content = '',
     tags = ['Medical', 'Scrubs'],
     status = 'PUBLISHED',
+    image,
+    imageAlt = '',
   } = body;
 
   if (!title || !content) {
@@ -99,6 +104,30 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    let featuredMediaId: string | undefined;
+    if (typeof image === 'string' && image.trim()) {
+      const mediaUrl = image.trim();
+      const media = await db.media.findFirst({ where: { url: mediaUrl } });
+      if (media) {
+        featuredMediaId = media.id;
+        if (imageAlt) {
+          await db.media.update({ where: { id: media.id }, data: { altText: imageAlt } });
+        }
+      } else {
+        const key = `blog/${Date.now()}-${slug}`;
+        const createdMedia = await db.media.create({
+          data: {
+            key,
+            url: mediaUrl,
+            filename: `${slug}.jpg`,
+            mimeType: 'image/jpeg',
+            altText: imageAlt || title,
+          },
+        });
+        featuredMediaId = createdMedia.id;
+      }
+    }
+
     const post = await db.post.create({
       data: {
         title,
@@ -109,6 +138,7 @@ export async function POST(request: NextRequest) {
         tags: Array.isArray(tags) ? tags : [tags].filter(Boolean),
         status: status as ProductStatus,
         publishedAt: status === 'PUBLISHED' ? new Date() : null,
+        featuredMediaId,
       },
       include: {
         author: true,

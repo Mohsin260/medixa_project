@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AdminFullPage } from '@/components/admin/admin-full-page';
 import { BundleOfferManager } from '@/components/admin/bundle-offer-form';
-import { getProductBySlug, getStandardColorHex, STANDARD_COLORS } from '@/lib/products';
+import { getStandardColorHex, STANDARD_COLORS } from '@/lib/products';
 
 export interface AdminProductImage {
   id?: string;
@@ -68,16 +68,8 @@ const UNTAGGED_FILTER = '__UNTAGGED';
  * Seeds colour tags from the static catalogue when a product has no DB
  * colours yet, so editors see the existing tagging as a starting point.
  */
-function buildInitialImageTags(product: AdminProduct | null): Record<string, string> {
+function buildInitialImageTags(_product: AdminProduct | null): Record<string, string> {
   const tags: Record<string, string> = {};
-  const staticProduct = product?.slug ? getProductBySlug(product.slug) : undefined;
-  if (staticProduct?.colorImages) {
-    for (const [name, urls] of Object.entries(staticProduct.colorImages)) {
-      for (const url of urls) {
-        tags[url] = name;
-      }
-    }
-  }
   return tags;
 }
 
@@ -468,14 +460,6 @@ function ProductFormPage({
         if (url && !list.includes(url)) list.push(url);
       }
     }
-    if (list.length === 0 && product?.slug) {
-      const fallback = getProductBySlug(product.slug);
-      if (fallback?.images && Array.isArray(fallback.images)) {
-        for (const url of fallback.images) {
-          if (url && !list.includes(url)) list.push(url);
-        }
-      }
-    }
     if (product?.image && !list.includes(product.image)) {
       list.unshift(product.image);
     }
@@ -484,7 +468,7 @@ function ProductFormPage({
 
   const [images, setImages] = useState<string[]>(initialImages);
   const [image, setImage] = useState<string>(
-    product?.image || initialImages[0] || '/img/real-product-images/Forte/Forte-Naval-1.webp'
+    product?.image || initialImages[0] || ''
   );
   const [directUrlInput, setDirectUrlInput] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -545,16 +529,6 @@ function ProductFormPage({
               if (typeof url === 'string') tags[url] = row.name;
             }
           }
-        } else {
-          // Products created before colour support: start from the static catalogue.
-          const staticProduct = getProductBySlug(product.slug);
-          if (staticProduct) {
-            enabledNames = staticProduct.colors.map((color) => color.name);
-            setEnabledColors(enabledNames);
-            for (const [name, urls] of Object.entries(staticProduct.colorImages || {})) {
-              for (const url of urls) tags[url] = name;
-            }
-          }
         }
 
         // A colour-tagged URL should always be reachable from the gallery list.
@@ -593,14 +567,7 @@ function ProductFormPage({
   const [loadingMedia, setLoadingMedia] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const catalogPresets = [
-    { label: 'Forte Naval', url: '/img/real-product-images/Forte/Forte-Naval-1.webp' },
-    { label: 'Forte Royal', url: '/img/real-product-images/Forte/Forte-Royal-1.webp' },
-    { label: 'Regal Scrub', url: '/img/real-product-images/regal/regal-thumbnail.webp' },
-    { label: 'Muse Scrub', url: '/img/real-product-images/muse/muse-thumbnail.webp' },
-    { label: 'Rebel Scrub', url: '/img/real-product-images/rebel/rebel-thumbnail.webp' },
-    { label: 'Standard Scrub', url: '/img/real-product-images/standard/standard-thumbnail.webp' },
-  ];
+  const catalogPresets: Array<{ label: string; url: string }> = [];
 
   async function handleFileUpload(files: FileList | File[] | null) {
     if (!files || files.length === 0) return;
@@ -1670,7 +1637,7 @@ function ProductFormPage({
                             alt={`Product image ${idx + 1}`}
                             className="h-full w-full object-cover transition group-hover:scale-[1.02]"
                             onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = '/img/real-product-images/Forte/Forte-Naval-1.webp';
+                              e.currentTarget.style.display = 'none';
                             }}
                           />
 

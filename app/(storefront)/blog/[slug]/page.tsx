@@ -19,6 +19,7 @@ export default async function SingleBlogPage({ params }: Props) {
         slug,
         status: 'PUBLISHED',
       },
+      include: { featuredMedia: true },
     });
   } catch {
     // Fallback if DB is unreachable
@@ -29,6 +30,7 @@ export default async function SingleBlogPage({ params }: Props) {
   const body = post?.body || 'Medical uniforms must balance strict sterilization requirements with ergonomic mobility. Medixa scrubs utilize a specialized poly-rayon-spandex blend that delivers lasting color fastness and breathable comfort throughout extended hospital rotations.';
   const excerpt = post?.excerpt || 'Discover why fabric engineering matters for Pakistan healthcare professionals.';
   const dateStr = post?.createdAt ? new Date(post.createdAt).toLocaleDateString('en-PK', { month: 'long', day: 'numeric', year: 'numeric' }) : 'November 2026';
+  const featuredImage = post?.featuredMedia?.url || '';
 
   return (
     <>
@@ -70,11 +72,13 @@ export default async function SingleBlogPage({ params }: Props) {
                 {/* Featured Photo */}
                 <div style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 30 }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/img/feature-post/feature1.jpg"
-                    alt={title}
-                    style={{ width: '100%', height: 'auto', display: 'block' }}
-                  />
+                  {featuredImage ? (
+                    <img
+                      src={featuredImage}
+                      alt={post?.featuredMedia?.altText || title}
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                    />
+                  ) : null}
                 </div>
 
                 <div style={{ fontSize: 16, color: '#303c4d', lineHeight: 1.8, marginBottom: 24, fontWeight: 500 }}>

@@ -27,6 +27,8 @@ export interface AdminPost {
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   publishedAt: string | null;
   createdAt: string;
+  image?: string | null;
+  imageAlt?: string;
 }
 
 export function BlogsManager({
@@ -357,6 +359,8 @@ function BlogFormPage({
   const [excerpt, setExcerpt] = useState(post?.excerpt || '');
   const [body, setBody] = useState(post?.body || '');
   const [tags, setTags] = useState(post ? post.tags.join(', ') : 'Medical, Scrubs, Karachi');
+  const [image, setImage] = useState(post?.image || '');
+  const [imageAlt, setImageAlt] = useState(post?.imageAlt || '');
   const [status, setStatus] = useState<'PUBLISHED' | 'DRAFT'>(
     post?.status === 'DRAFT' ? 'DRAFT' : 'PUBLISHED',
   );
@@ -383,6 +387,8 @@ function BlogFormPage({
           body,
           tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
           status,
+          image,
+          imageAlt,
         }),
       });
 
@@ -473,6 +479,40 @@ function BlogFormPage({
               className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-xs text-[#1d2739] outline-none"
             />
           </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-semibold text-[#293447] mb-1.5">Featured Image URL</label>
+              <input
+                type="text"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="https://... or /uploads/article.jpg"
+                className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-xs text-[#1d2739] outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#293447] mb-1.5">Image Alt Text</label>
+              <input
+                type="text"
+                value={imageAlt}
+                onChange={(e) => setImageAlt(e.target.value)}
+                placeholder="Describe the featured image"
+                className="h-10 w-full rounded-xl border border-[#dbe4eb] bg-[#fafcfd] px-3 text-xs text-[#1d2739] outline-none"
+              />
+            </div>
+          </div>
+
+          {image ? (
+            <div className="overflow-hidden rounded-xl border border-[#dde5ec] bg-[#f8fafc]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image}
+                alt={imageAlt || title || 'Article featured image'}
+                className="h-48 w-full object-cover"
+              />
+            </div>
+          ) : null}
 
           <div>
             <label className="block text-xs font-semibold text-[#293447] mb-1.5">Summary / Excerpt</label>

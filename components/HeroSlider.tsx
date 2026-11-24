@@ -1,12 +1,36 @@
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import { useEffect, useState } from 'react';
+import type { Product } from '@/lib/products';
+
 export default function HeroSlider() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/products')
+      .then((res) => res.ok ? res.json() : [])
+      .then((data: Product[]) => {
+        if (!ignore && Array.isArray(data)) setProducts(data.slice(0, 2));
+      })
+      .catch(() => {});
+    return () => { ignore = true; };
+  }, []);
+
+  const first = products[0];
+  const second = products[1] || products[0];
+  const firstImage = first?.image;
+  const secondImage = second?.image;
+
   return (
     <div className="home1-slider-container">
       <div id="home1_slider" className="nivoSlider slider-image">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/slider/slider1.jpg" alt="Medical Scrubs Pakistan" title="#htmlcaption1" />
+        {firstImage ? <img src={firstImage} alt={first?.title || 'Medical Scrubs'} title="#htmlcaption1" /> : null}
         {' '}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/slider/slider2.jpg" alt="Premium Medical Apparel" title="#htmlcaption2" />
+        {secondImage ? <img src={secondImage} alt={second?.title || 'Premium Medical Apparel'} title="#htmlcaption2" /> : null}
       </div>
       {' '}
       <div id="htmlcaption1" className="nivo-html-caption slider-caption-1">
@@ -17,17 +41,15 @@ export default function HeroSlider() {
               <div className="slide1-text">
                 <div className="middle-text">
                   <div className="cap-dec animated bounceIn">
-                    <h3>Medical Scrubs</h3>
+                    <h3>{first?.collection || 'Medical Scrubs'}</h3>
                   </div>
                   <div className="cap-title animated zoomIn">
                     <h2>
-                      for WOMEN & MEN
-                      {' '}
-                      <span>2026</span>
+                      {first?.title || 'Medical Scrubs'}
                     </h2>
                   </div>
                   <div className="cap-details animated bounceInRight">
-                    <p>Shop export-quality scrubs for doctors, students, and hospital heroes. Long-lasting colors and full-day comfort with nationwide delivery across Pakistan.</p>
+                    <p>{first?.description || ''}</p>
                   </div>
                   <div className="cap-readmore animated bounceInUp">
                     <a className="hvr-bs" href="/shop">View Collection</a>
@@ -54,17 +76,15 @@ export default function HeroSlider() {
               <div className="slide1-text">
                 <div className="middle-text">
                   <div className="cap-dec animated bounceIn">
-                    <h3>Zero Fading Guarantee</h3>
+                    <h3>{second?.collection || 'Premium Medical Apparel'}</h3>
                   </div>
                   <div className="cap-title animated zoomIn">
                     <h2>
-                      Regal & Muse
-                      {' '}
-                      <span>Series</span>
+                      {second?.title || 'Premium Medical Apparel'}
                     </h2>
                   </div>
                   <div className="cap-details animated bounceInRight">
-                    <p>Precision-engineered with 4-way stretch fabric and international vat dyeing. Designed to endure tough hospital shifts and repeated autoclaves.</p>
+                    <p>{second?.description || ''}</p>
                   </div>
                   <div className="cap-readmore animated bounceInUp">
                     <a className="hvr-bs" href="/shop?category=Women">Shop Women&apos;s Scrubs</a>
