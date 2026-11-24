@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import Banner2 from '@/components/Banner2';
 import Brands from '@/components/Brands';

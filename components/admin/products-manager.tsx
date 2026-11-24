@@ -2,12 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowDown,
+  ArrowDownToLine,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
+  ArrowUpToLine,
   Check,
   CircleAlert,
   Edit3,
-  ExternalLink,
   GripVertical,
   Image as ImageIcon,
   Loader2,
@@ -500,7 +503,9 @@ function ProductFormPage({
   );
   const [selectedUrls, setSelectedUrls] = useState<Set<string>>(() => new Set());
   const [colorFilter, setColorFilter] = useState<string>('ALL');
-  const [bulkTagValue, setBulkTagValue] = useState('');
+  // Once the admin picks a colour tab manually, auto-defaulting must not
+  // override their choice when the fresh DB payload lands.
+  const filterTouchedRef = useRef(false);
   const [dragUrl, setDragUrl] = useState<string | null>(null);
   const [dropTargetUrl, setDropTargetUrl] = useState<string | null>(null);
 
@@ -527,13 +532,13 @@ function ProductFormPage({
         const colorRows: Array<{ name?: string; hex?: string; images?: string[] }> =
           Array.isArray(data.product.colors) ? data.product.colors : [];
         const tags: Record<string, string> = {};
+        let enabledNames: string[] = [];
 
         if (colorRows.length > 0) {
-          setEnabledColors(
-            colorRows
-              .map((row) => row.name)
-              .filter((name): name is string => Boolean(name)),
-          );
+          enabledNames = colorRows
+            .map((row) => row.name)
+            .filter((name): name is string => Boolean(name));
+          setEnabledColors(enabledNames);
           for (const row of colorRows) {
             if (!row.name || !Array.isArray(row.images)) continue;
             for (const url of row.images) {
@@ -544,7 +549,8 @@ function ProductFormPage({
           // Products created before colour support: start from the static catalogue.
           const staticProduct = getProductBySlug(product.slug);
           if (staticProduct) {
-            setEnabledColors(staticProduct.colors.map((color) => color.name));
+            enabledNames = staticProduct.colors.map((color) => color.name);
+            setEnabledColors(enabledNames);
             for (const [name, urls] of Object.entries(staticProduct.colorImages || {})) {
               for (const url of urls) tags[url] = name;
             }
@@ -562,6 +568,17 @@ function ProductFormPage({
         }
         setImageTags(tags);
         setSelectedUrls(new Set());
+
+        // Open the media grid on a single colour variant (the first one that
+        // actually has photos) so images are tagged one colour at a time.
+        // Falls back to "All" when nothing is tagged yet, and never overrides
+        // a tab the admin already clicked.
+        if (!filterTouchedRef.current && fetchedList.length > 0) {
+          const firstColorWithImages = enabledNames.find((name) =>
+            fetchedList.some((url) => tags[url] === name),
+          );
+          setColorFilter(firstColorWithImages ?? 'ALL');
+        }
       })
       .catch(() => {});
     return () => {
@@ -696,6 +713,53 @@ function ProductFormPage({
     visibleImages.length > 0 && visibleImages.every((url) => selectedUrls.has(url));
 
   /**
+   * Moves every ticked image as one batch inside the currently visible
+   * (colour-filtered) list: `up`/`down` shift each image one slot past its
+   * neighbour, `top`/`bottom` lift the whole block to the ends.
+   */
+  function moveSelectedImages(target: 'up' | 'down' | 'top' | 'bottom') {
+    const list = visibleImages;
+    const group = list.filter((url) => selectedUrls.has(url));
+    if (group.length === 0) return;
+    const groupSet = new Set(group);
+
+    if (target === 'up' || target === 'down') {
+      // Shift each ticked image one slot past its neighbour, skipping over
+      // other ticked images so a contiguous block travels together.
+      const visible = [...list];
+      if (target === 'up') {
+        for (let i = 0; i < visible.length; i += 1) {
+          if (groupSet.has(visible[i]) && i > 0 && !groupSet.has(visible[i - 1])) {
+            const temp = visible[i - 1];
+            visible[i - 1] = visible[i];
+            visible[i] = temp;
+          }
+        }
+      } else {
+        for (let i = visible.length - 1; i >= 0; i -= 1) {
+          if (
+            groupSet.has(visible[i]) &&
+            i < visible.length - 1 &&
+            !groupSet.has(visible[i + 1])
+          ) {
+            const temp = visible[i + 1];
+            visible[i + 1] = visible[i];
+            visible[i] = temp;
+          }
+        }
+      }
+      commitVisibleOrder(visible);
+      return;
+    }
+
+    // top / bottom — lift the whole ticked block to either end.
+    const next = list.filter((url) => !groupSet.has(url));
+    if (target === 'top') next.splice(0, 0, ...group);
+    else next.push(...group);
+    commitVisibleOrder(next);
+  }
+
+  /**
    * Writes a reordered visible subset back into the full gallery, so images
    * outside the current colour filter keep their positions (Shopify-style
    * ordering that works both globally and per colour view).
@@ -732,10 +796,35 @@ function ProductFormPage({
     const to = visibleImages.indexOf(targetUrl);
     if (from < 0 || to < 0) return;
 
-    const nextVisible = [...visibleImages];
-    nextVisible.splice(from, 1);
-    nextVisible.splice(to, 0, sourceUrl);
-    commitVisibleOrder(nextVisible);
+    // Dragging a ticked image grabs the whole ticked batch, so multiple
+    // variant photos can be reordered in one go.
+    const group =
+      selectedUrls.has(sourceUrl) && selectedUrls.size > 1
+        ? visibleImages.filter((url) => selectedUrls.has(url))
+        : [sourceUrl];
+    const groupSet = new Set(group);
+
+    // Where the batch lands in the original list: dropping onto one of its
+    // own members settles it just past that member; otherwise keep the usual
+    // direction feel (rightward drops land after the target, leftward before).
+    let insertIdx = to;
+    if (groupSet.has(targetUrl)) {
+      while (insertIdx < visibleImages.length && groupSet.has(visibleImages[insertIdx])) {
+        insertIdx += 1;
+      }
+    } else if (from < to) {
+      insertIdx = to + 1;
+    }
+
+    // Convert to an index inside the list with the batch removed.
+    let insertAt = 0;
+    for (let i = 0; i < insertIdx; i += 1) {
+      if (!groupSet.has(visibleImages[i])) insertAt += 1;
+    }
+
+    const next = visibleImages.filter((url) => !groupSet.has(url));
+    next.splice(insertAt, 0, ...group);
+    commitVisibleOrder(next);
   }
 
   function handleRemoveImage(url: string) {
@@ -794,6 +883,7 @@ function ProductFormPage({
   }
 
   function changeColorFilter(key: string) {
+    filterTouchedRef.current = true;
     setColorFilter(key);
     setSelectedUrls(new Set());
   }
@@ -819,22 +909,29 @@ function ProductFormPage({
   }
 
   function handleBulkTag(colorName: string) {
-    setBulkTagValue('');
     if (!colorName || selectedUrls.size === 0) return;
+    const batch = new Set(selectedUrls);
     setImageTags((prev) => {
       const updated = { ...prev };
-      for (const url of selectedUrls) updated[url] = colorName;
+      for (const url of batch) updated[url] = colorName;
       return updated;
     });
+    // The batch is done — clear the ticks so the next selection starts
+    // fresh instead of piling onto the same colour variant.
+    setSelectedUrls(new Set());
   }
 
   function bulkClearTags() {
     if (selectedUrls.size === 0) return;
+    const batch = new Set(selectedUrls);
     setImageTags((prev) => {
-      const updated = { ...prev };
-      for (const url of selectedUrls) delete updated[url];
+      const updated: Record<string, string> = {};
+      for (const [url, tag] of Object.entries(prev)) {
+        if (!batch.has(url)) updated[url] = tag;
+      }
       return updated;
     });
+    setSelectedUrls(new Set());
   }
 
   function bulkDeleteImages() {
@@ -960,6 +1057,18 @@ function ProductFormPage({
       setLoading(false);
     }
   }
+
+  // --- Bulk bar helpers: how far the ticked batch can travel, and whether
+  // a drag is carrying the whole batch instead of a single photo ---
+  const selectedVisible = visibleImages.filter((url) => selectedUrls.has(url));
+  const canMoveUp =
+    selectedVisible.length > 0 && visibleImages.indexOf(selectedVisible[0]) > 0;
+  const canMoveDown =
+    selectedVisible.length > 0 &&
+    visibleImages.indexOf(selectedVisible[selectedVisible.length - 1]) <
+      visibleImages.length - 1;
+  const dragGroupSize =
+    dragUrl && selectedUrls.has(dragUrl) && selectedUrls.size > 1 ? selectedUrls.size : 0;
 
   return (
     <AdminFullPage
@@ -1105,14 +1214,17 @@ function ProductFormPage({
           <div className="rounded-2xl border border-[#dde5ec] bg-white p-4 sm:p-5 space-y-3.5">
             <div className="border-b border-[#edf1f5] pb-3">
               <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-[#052263] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                  Step 1
+                </span>
                 <label className="text-sm font-bold text-[#131b2e]">Product Colours</label>
                 <span className="rounded-full bg-[#052263]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#052263]">
                   {enabledColors.length} of {STANDARD_COLORS.length}
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-[#637282]">
-                Pick the colours this product is sold in. Then tag gallery images to a colour
-                below — shoppers only see the photos of the colour they select.
+                Pick the colours this product is sold in. Each colour gets its own tab in
+                Product Media below — shoppers only see the photos of the colour they select.
               </p>
             </div>
 
@@ -1147,6 +1259,11 @@ function ProductFormPage({
                       style={{ backgroundColor: color.value }}
                     />
                     {color.name}
+                    {isActive && tagCounts.counts[color.name] ? (
+                      <span className="rounded-full bg-white/20 px-1.5 py-px text-[10px] font-bold">
+                        {tagCounts.counts[color.name]}
+                      </span>
+                    ) : null}
                     {isActive && <Check size={12} className="text-white" />}
                   </button>
                 );
@@ -1158,16 +1275,20 @@ function ProductFormPage({
           <div className="rounded-2xl border border-[#dde5ec] bg-[#f8fafc] p-4 sm:p-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#edf1f5] pb-3">
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[#052263] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                    Step 2
+                  </span>
                   <label className="text-sm font-bold text-[#131b2e]">Product Media</label>
                   <span className="rounded-full bg-[#052263]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#052263]">
                     {images.length} {images.length === 1 ? 'image' : 'images'}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-[#637282]">
-                  The first image is the <strong>Main Cover image</strong> displayed upfront on all
-                  collection grids. Drag or use the arrows to reorder, tag each image to a colour,
-                  and multi-select for bulk actions.
+                <p className="mt-0.5 max-w-xl text-xs text-[#637282]">
+                  Work one colour at a time: open its tab, tick the photos, then press{' '}
+                  <strong>Assign to</strong> — the ticks clear so you can start the next colour.
+                  Tick several photos and use <strong>Move</strong> to reorder them as a group.
+                  The first image is the <strong>Main Cover</strong> shown on collection grids.
                 </p>
               </div>
 
@@ -1268,7 +1389,9 @@ function ProductFormPage({
               <div className="flex flex-wrap items-center gap-1.5">
                 {[
                   { key: 'ALL', label: 'All', count: images.length },
-                  ...(tagCounts.untagged > 0
+                  // Keep the tab alive while it is the active view so the
+                  // grid never sits on a filter that has vanished.
+                  ...(tagCounts.untagged > 0 || colorFilter === UNTAGGED_FILTER
                     ? [{ key: UNTAGGED_FILTER, label: 'Untagged', count: tagCounts.untagged }]
                     : []),
                   ...enabledColors.map((name) => ({
@@ -1328,42 +1451,90 @@ function ProductFormPage({
                   {selectedUrls.size} selected
                 </span>
 
-                <div className="flex items-center gap-1.5">
-                  <label
-                    htmlFor="bulk-tag-select"
-                    className="text-[11px] font-medium text-[#637282]"
-                  >
-                    Tag as
-                  </label>
-                  <select
-                    id="bulk-tag-select"
-                    value={bulkTagValue}
-                    onChange={(e) => handleBulkTag(e.target.value)}
-                    className="h-7 rounded-lg border border-[#dbe4eb] bg-white px-2 text-[11px] font-semibold text-[#293447] outline-none focus:border-[#052263]"
-                  >
-                    <option value="">Choose colour…</option>
-                    {enabledColors.map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
+                {/* One click tags the whole batch to a colour, then the ticks reset */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-medium text-[#637282]">Assign to</span>
+                  {enabledColors.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => handleBulkTag(name)}
+                      title={`Tag the ${selectedUrls.size} selected image${
+                        selectedUrls.size === 1 ? '' : 's'
+                      } as ${name}, then clear the selection`}
+                      className={cn(
+                        'inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 text-[11px] font-semibold transition',
+                        colorFilter === name
+                          ? 'border-[#052263] bg-[#052263] text-white shadow-sm'
+                          : 'border-[#dbe4eb] bg-white text-[#41505f] hover:border-[#b4c3d4] hover:bg-[#f7f9fb]',
+                      )}
+                    >
+                      <span
+                        className="size-2.5 rounded-full border border-black/20"
+                        style={{ backgroundColor: getStandardColorHex(name) }}
+                      />
+                      {name}
+                    </button>
+                  ))}
                 </div>
 
-                <button
-                  type="button"
-                  onClick={bulkClearTags}
-                  className="rounded-lg border border-[#dde5ec] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#556371] hover:bg-[#f1f4f8]"
-                >
-                  Remove tags
-                </button>
-                <button
-                  type="button"
-                  onClick={bulkDeleteImages}
-                  className="rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 hover:bg-rose-50"
-                >
-                  Delete
-                </button>
+                {/* Reorder the whole ticked batch in one go */}
+                <div className="flex items-center gap-1 border-l border-[#052263]/15 pl-2">
+                  <span className="mr-0.5 text-[11px] font-medium text-[#637282]">Move</span>
+                  <button
+                    type="button"
+                    disabled={!canMoveUp}
+                    onClick={() => moveSelectedImages('up')}
+                    title="Move selection up"
+                    className="rounded p-1 text-[#41505f] hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowUp size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!canMoveDown}
+                    onClick={() => moveSelectedImages('down')}
+                    title="Move selection down"
+                    className="rounded p-1 text-[#41505f] hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowDown size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!canMoveUp}
+                    onClick={() => moveSelectedImages('top')}
+                    title="Move selection to top"
+                    className="rounded p-1 text-[#41505f] hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowUpToLine size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!canMoveDown}
+                    onClick={() => moveSelectedImages('bottom')}
+                    title="Move selection to bottom"
+                    className="rounded p-1 text-[#41505f] hover:bg-white disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    <ArrowDownToLine size={13} />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={bulkClearTags}
+                    className="rounded-lg border border-[#dde5ec] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#556371] hover:bg-[#f1f4f8]"
+                  >
+                    Remove tags
+                  </button>
+                  <button
+                    type="button"
+                    onClick={bulkDeleteImages}
+                    className="rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 hover:bg-rose-50"
+                  >
+                    Delete
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => setSelectedUrls(new Set())}
@@ -1416,12 +1587,24 @@ function ProductFormPage({
                 </div>
               ) : visibleImages.length === 0 ? (
                 <div className="py-9 text-center text-xs text-[#71808f]">
-                  No images tagged{' '}
+                  No photos in{' '}
                   <strong className="text-[#293447]">
                     {colorFilter === UNTAGGED_FILTER ? 'Untagged' : colorFilter}
                   </strong>{' '}
-                  yet. Switch to <strong className="text-[#293447]">All</strong>, select images
-                  and use the tag dropdown on each image to assign them.
+                  yet.{' '}
+                  {colorFilter === UNTAGGED_FILTER ? (
+                    <>
+                      Every image already has a colour — switch to{' '}
+                      <strong className="text-[#293447]">All</strong> to keep working.
+                    </>
+                  ) : (
+                    <>
+                      Open the <strong className="text-[#293447]">All</strong> or{' '}
+                      <strong className="text-[#293447]">Untagged</strong> tab, tick the photos
+                      you want, then press{' '}
+                      <strong className="text-[#293447]">Assign to</strong>.
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -1473,6 +1656,10 @@ function ProductFormPage({
                             : isDropTarget
                               ? 'border-2 border-dashed border-[#052263] bg-[#052263]/5'
                               : 'border-[#dde5ec] hover:border-[#b4c3d4]',
+                          // Highlight the rest of the batch while it travels together.
+                          dragGroupSize > 1 && isSelected && dragUrl !== imgUrl
+                            ? 'ring-2 ring-[#052263]/45'
+                            : null,
                         )}
                       >
                         {/* Image Preview Container */}
@@ -1496,6 +1683,15 @@ function ProductFormPage({
                           ) : (
                             <span className="absolute top-2 left-2 inline-flex items-center rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
                               #{idx + 1}
+                            </span>
+                          )}
+
+                          {/* Whole-batch drag indicator */}
+                          {dragGroupSize > 1 && dragUrl === imgUrl && (
+                            <span className="absolute inset-0 z-20 flex items-center justify-center bg-[#052263]/45">
+                              <span className="rounded-lg bg-white px-2.5 py-1 text-[11px] font-bold text-[#052263] shadow">
+                                Moving {dragGroupSize} images
+                              </span>
                             </span>
                           )}
 
