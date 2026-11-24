@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { products as fallbackProducts } from '@/lib/products';
+import { buildColorImages } from '@/lib/server/products';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
           sku: `${p.slug.toUpperCase()}-STD`,
           image: featuredImage,
           images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
-          colorImages: fallback?.colorImages,
+          colorImages: buildColorImages(p.colors, fallback),
           colors: p.colors.length > 0 ? p.colors.map((c) => ({ name: c.name, value: c.hex })) : (fallback?.colors || [{ name: 'Navy', value: '#1e3a5f' }]),
           sizes: p.sizes.length > 0 ? p.sizes.map((s) => s.name) : (fallback?.sizes || ['XS', 'S', 'M', 'L', 'XL']),
           description: p.description || fallback?.description || '',

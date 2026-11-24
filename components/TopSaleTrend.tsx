@@ -57,7 +57,11 @@ function TrendCard({
 }) {
   const product = liveProduct || getProductBySlug(item.slug);
   const title = item.customTitle || product?.title || 'Medixa Scrub Suits';
-  const image = liveProduct?.image || product?.image || item.customImage || '/img/real-product-images/regal/regal-thumbnail.webp';
+  const image =
+    item.customImage ||
+    liveProduct?.image ||
+    product?.image ||
+    '/img/real-product-images/regal/regal-thumbnail.webp';
   const price = product?.price ? formatPrice(product.price) : 'Rs 5,391';
   const compareAt = product?.compareAt ? formatPrice(product.compareAt) : null;
 

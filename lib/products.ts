@@ -479,11 +479,18 @@ export function getProductSlugs(): Array<{ slug: string }> {
 }
 
 export function getRelatedProducts(product: Product, limit = 4): Product[] {
-  const sameCollection = products.filter(
-    (item) => item.slug !== product.slug && item.collection === product.collection,
+  const realScrubs = products.filter((item) => item.colorImages);
+  const sameCollection = realScrubs.filter(
+    (item) =>
+      item.slug !== product.slug &&
+      item.collection === product.collection &&
+      item.category === product.category,
   );
-  const others = products.filter(
-    (item) => item.slug !== product.slug && item.collection !== product.collection,
+  const sameCategory = realScrubs.filter(
+    (item) =>
+      item.slug !== product.slug &&
+      item.category === product.category &&
+      !sameCollection.includes(item),
   );
-  return [...sameCollection, ...others].slice(0, limit);
+  return [...sameCollection, ...sameCategory].slice(0, limit);
 }
