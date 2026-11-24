@@ -1,21 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { Product } from '@/lib/products';
+import { useProducts } from '@/lib/hooks/use-products';
 
 export default function SpecialOffer() {
-  const [product, setProduct] = useState<Product | null>(null);
-  useEffect(() => {
-    let ignore = false;
-    fetch('/api/products')
-      .then((res) => res.ok ? res.json() : [])
-      .then((data: Product[]) => {
-        if (!ignore && Array.isArray(data) && data.length) setProduct(data[0]);
-      })
-      .catch(() => {});
-    return () => { ignore = true; };
-  }, []);
+  const { data: products = [] } = useProducts();
+  const product = products[0];
   return (
     <div
       className="special-offer-area"

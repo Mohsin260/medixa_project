@@ -393,7 +393,27 @@ Version      : 1.0
 
 /* Mobile Layout: 320px. */
 
-@media only screen and (max-width: 767px) {}
+@media only screen and (max-width: 767px) {
+    .hero-product-slide,
+    .hero-product-slide > .container,
+    .hero-product-slide > .container > .row {
+        min-height: 0;
+    }
+    .hero-product-slide > .container > .row {
+        display: block;
+    }
+    .hero-product-image {
+        height: 300px;
+        margin-top: 20px;
+    }
+    .hero-product-image img {
+        max-height: 280px;
+    }
+    .hero-product-controls button {
+        height: 36px;
+        width: 36px;
+    }
+}
 
 
 /* Wide Mobile Layout: 480px. */

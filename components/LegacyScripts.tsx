@@ -2,22 +2,6 @@
 
 import { useEffect } from 'react';
 
-interface JQueryNivoInstance {
-  data: (key: string) => unknown;
-  nivoSlider: (options: Record<string, unknown>) => void;
-}
-
-interface JQueryStatic {
-  fn: Record<string, unknown> & { nivoSlider?: unknown };
-  (selector: string): JQueryNivoInstance;
-}
-
-declare global {
-  interface Window {
-    jQuery?: JQueryStatic;
-  }
-}
-
 const SCRIPTS = [
   '/js/jquery-3.2.0.min.js',
   '/js/owl.carousel.min.js',
@@ -36,11 +20,7 @@ const SCRIPTS = [
   '/js/fix-preloader.js',
 ];
 
-interface LegacyScriptsProps {
-  home?: boolean;
-}
-
-export default function LegacyScripts({ home = false }: LegacyScriptsProps) {
+export default function LegacyScripts() {
   useEffect(() => {
     let cancelled = false;
 
@@ -70,30 +50,6 @@ export default function LegacyScripts({ home = false }: LegacyScriptsProps) {
 
       setTimeout(removePreloader, 500);
       setTimeout(removePreloader, 1000);
-
-      if (home) {
-        setTimeout(() => {
-          if (typeof window !== 'undefined' && window.jQuery) {
-            try {
-              const $ = window.jQuery;
-              if ($.fn.nivoSlider && !$('#home1_slider').data('nivo:vars')) {
-                $('#home1_slider').nivoSlider({
-                  directionNav: true,
-                  animSpeed: 2000,
-                  slices: 18,
-                  pauseTime: 5000,
-                  pauseOnHover: false,
-                  controlNav: false,
-                  prevText: '<i class="fa fa-chevron-left nivo-prev-icon"></i>',
-                  nextText: '<i class="fa fa-chevron-right nivo-next-icon"></i>',
-                });
-              }
-            } catch {
-              // Legacy slider init is best-effort.
-            }
-          }
-        }, 1500);
-      }
     };
 
     load();
@@ -101,7 +57,7 @@ export default function LegacyScripts({ home = false }: LegacyScriptsProps) {
     return () => {
       cancelled = true;
     };
-  }, [home]);
+  }, []);
 
   return null;
 }

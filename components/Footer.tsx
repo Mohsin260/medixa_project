@@ -19,6 +19,7 @@ interface BlogPost {
   title: string;
   createdAt: string;
   image?: string;
+  imageAlt?: string;
 }
 
 const DEFAULT_SETTINGS: StoreSettings = {
@@ -56,12 +57,16 @@ export default function Footer() {
     fetch('/api/blogs')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.slice(0, 3).map((item) => ({
+        if (Array.isArray(data)) {
+          const mapped = data
+            .filter((item) => typeof item.image === 'string' && item.image.trim())
+            .slice(0, 3)
+            .map((item) => ({
             slug: item.slug || '',
             title: item.title || '',
             createdAt: item.createdAt || '',
-            image: item.image || '',
+            image: item.image,
+            imageAlt: item.imageAlt || item.title,
           }));
           setBlogs(mapped);
         }
@@ -191,8 +196,8 @@ export default function Footer() {
                               <a href={`/blog/${b.slug}`}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                  src={b.image || ''}
-                                  alt={b.title}
+                                  src={b.image}
+                                  alt={b.imageAlt || b.title}
                                   style={{ width: 68, height: 50, objectFit: 'cover' }}
                                 />
                               </a>

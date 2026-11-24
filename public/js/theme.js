@@ -98,21 +98,6 @@ Version      : 1.0
 
 
     /*-----------------------
-    nivo slider
-    -----------------------*/
-    $('#home1_slider').nivoSlider({
-        directionNav: true,
-        animSpeed: 2000,
-        slices: 18,
-        pauseTime: 5000,
-        pauseOnHover: false,
-        controlNav: false,
-        prevText: '<i class="fa fa-chevron-left nivo-prev-icon"></i>',
-        nextText: '<i class="fa fa-chevron-right nivo-next-icon"></i>'
-    });
-
-
-    /*-----------------------
     nivo slider home 2
     -----------------------*/
     $('#home2_slider').nivoSlider({

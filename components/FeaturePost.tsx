@@ -31,7 +31,12 @@ export default function FeaturePost() {
     };
   }, []);
 
-  const displayPosts = posts.slice(0, 3);
+  const displayPosts = posts
+    .filter(
+      (post): post is BlogPost & { image: string } =>
+        typeof post.image === 'string' && post.image.trim().length > 0,
+    )
+    .slice(0, 3);
 
   return (
     <div className="feature-post-area">
@@ -55,7 +60,7 @@ export default function FeaturePost() {
                     <a href={`/blog/${post.slug}`}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={post.image || ''}
+                        src={post.image}
                         alt={post.imageAlt || post.title}
                         style={{ width: '100%', height: 'auto', display: 'block' }}
                       />
@@ -65,7 +70,7 @@ export default function FeaturePost() {
                     </div>
                   </div>
                   <div className="feature-post-content">
-                    <a className="fp-title" href={`#${post.slug}`}>
+                    <a className="fp-title" href={`/blog/${post.slug}`}>
                       {post.title}
                     </a>
                     <div className="fp-meta">

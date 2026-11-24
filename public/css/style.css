@@ -1041,6 +1041,65 @@ ul.menu-list li .hot::after {
 
 .home1-slider-container {
     box-shadow: none;
+    background: #fff;
+}
+
+.hero-product-slide {
+    min-height: 520px;
+    position: relative;
+}
+
+.hero-product-slide > .container,
+.hero-product-slide > .container > .row {
+    min-height: 520px;
+}
+
+.hero-product-slide > .container > .row {
+    align-items: center;
+    display: flex;
+}
+
+.hero-product-slide .slide1-text {
+    margin: 0;
+}
+
+.hero-product-image {
+    align-items: center;
+    display: flex;
+    height: 520px;
+    justify-content: center;
+}
+
+.hero-product-image img {
+    max-height: 460px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.hero-product-controls button {
+    background: #ff4c6b;
+    border: 2px solid #ff4c6b;
+    color: #fff;
+    cursor: pointer;
+    height: 50px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    z-index: 9;
+}
+
+.hero-product-controls button:hover {
+    background: transparent;
+    color: #ff4c6b;
+}
+
+.hero-product-controls button:first-child {
+    left: 20px;
+}
+
+.hero-product-controls button:last-child {
+    right: 20px;
 }
 
 .home1-slider-container .nivoSlider img {

@@ -19,7 +19,7 @@ import TopSaleTrend from '@/components/TopSaleTrend';
 export default function Home() {
   return (
     <>
-      <LegacyScripts home />
+      <LegacyScripts />
       <Header />
       <HeroSlider />
       <TopBanner />

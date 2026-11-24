@@ -5,6 +5,21 @@ import { products } from '@/lib/products';
 async function seed() {
   console.log('Seeding Medixa database...');
 
+  const canonicalSlugs = [
+    'regal-round-neck-male-medical-scrubs-pakistan',
+    'muse-v-neck-female-medical-scrubs-pakistan',
+    'forte-v-neck-male-medical-scrubs-pakistan',
+    'rebel-collar-neck-female-medical-scrubs-pakistan',
+  ];
+
+  const legacySlugs = products
+    .map((product) => product.slug)
+    .filter((slug) => !canonicalSlugs.includes(slug));
+
+  await db.product.deleteMany({
+    where: { slug: { in: legacySlugs } },
+  });
+
   // --- Categories ---
   const categories = await Promise.all(
     [
@@ -38,7 +53,7 @@ async function seed() {
   const collectionByName = Object.fromEntries(collections.map((c) => [c.name, c]));
 
   // --- Products ---
-  for (const product of products) {
+  for (const product of products.filter((item) => canonicalSlugs.includes(item.slug))) {
     const categorySlug = product.category.toLowerCase();
     const collection = collectionByName[product.collection];
 
@@ -128,8 +143,8 @@ async function seed() {
         excerpt: 'Discover why breathable, 4-way stretch antimicrobial fabric makes all the difference during 14-hour hospital shifts.',
         body: 'Medixa scrubs are designed around healthcare movement, repeated laundering, and everyday durability. Breathable fabric, ergonomic cuts, and color-fast construction help professionals stay comfortable through demanding shifts.',
         tags: ['Guides', 'Fabric'],
-        imageUrl: '/img/feature-post/feature1.jpg',
-        imageAlt: 'Medixa medical scrubs fabric and healthcare apparel',
+        productSlug: 'regal-round-neck-male-medical-scrubs-pakistan',
+        imageAlt: 'Regal Scrub Suits featured in the Medixa fabric engineering guide',
       },
       {
         slug: 'how-to-choose-your-perfect-scrub-fit',
@@ -137,8 +152,8 @@ async function seed() {
         excerpt: 'A practical guide to choosing between tailored V-neck, round-neck, and collar-neck scrub suits.',
         body: 'Choose a scrub silhouette that matches your work environment and preferred fit. V-neck styles provide a streamlined modern profile, while round-neck and collar-neck styles offer distinct professional looks.',
         tags: ['Tips', 'Style'],
-        imageUrl: '/img/feature-post/feature2.jpg',
-        imageAlt: 'Healthcare professional choosing a Medixa scrub fit',
+        productSlug: 'muse-v-neck-female-medical-scrubs-pakistan',
+        imageAlt: 'Muse V-neck Scrub Suits featured in the Medixa fit guide',
       },
       {
         slug: 'inside-our-karachi-medical-apparel-studio',
@@ -146,18 +161,33 @@ async function seed() {
         excerpt: 'A behind-the-scenes look at how Medixa designs, crafts, and tests medical uniforms for Pakistani professionals.',
         body: 'Our design process focuses on practical movement, durable construction, easy care, and professional appearance for doctors, nurses, students, and hospital teams across Pakistan.',
         tags: ['Behind The Scenes'],
-        imageUrl: '/img/feature-post/feature1.jpg',
-        imageAlt: 'Medixa Karachi medical apparel design studio',
+        productSlug: 'rebel-collar-neck-female-medical-scrubs-pakistan',
+        imageAlt: 'Rebel Collar-neck Scrub Suits tailored for healthcare professionals',
       },
     ];
 
     for (const post of blogPosts) {
+      const product = await db.product.findUnique({
+        where: { slug: post.productSlug },
+        select: {
+          image: true,
+          images: {
+            orderBy: { sortOrder: 'asc' },
+            select: { url: true },
+          },
+        },
+      });
+      const imageUrl = product?.image.trim() || product?.images[0]?.url.trim();
+      if (!imageUrl) {
+        throw new Error(`Missing database product image for blog post "${post.slug}"`);
+      }
+
       const media = await db.media.upsert({
         where: { key: `blog/${post.slug}` },
-        update: { url: post.imageUrl, altText: post.imageAlt },
+        update: { url: imageUrl, altText: post.imageAlt },
         create: {
           key: `blog/${post.slug}`,
-          url: post.imageUrl,
+          url: imageUrl,
           filename: `${post.slug}.jpg`,
           mimeType: 'image/jpeg',
           altText: post.imageAlt,

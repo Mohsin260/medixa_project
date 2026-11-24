@@ -1,9 +1,9 @@
 'use client';
 
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from 'react';
 import { formatPrice, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
+import { useProducts } from '@/lib/hooks/use-products';
 
 interface TrendItem {
   slug: string;
@@ -41,8 +41,10 @@ function TrendCard({
   const image =
     (item.color ? product?.colorImages?.[item.color]?.[0] : undefined) ||
     product?.image ||
-    '';
-  const price = product?.price ? formatPrice(product.price) : 'Rs 5,391';
+    product?.images[0];
+  if (!product || !image) return null;
+
+  const price = formatPrice(product.price);
   const compareAt = product?.compareAt ? formatPrice(product.compareAt) : null;
 
   return (
@@ -109,26 +111,8 @@ function TrendCard({
 }
 
 export default function TopSaleTrend() {
-  const [productMap, setProductMap] = useState<Record<string, Product>>({});
-
-  useEffect(() => {
-    let ignore = false;
-    fetch('/api/products')
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: Product[]) => {
-        if (!ignore && Array.isArray(data)) {
-          const map: Record<string, Product> = {};
-          for (const p of data) {
-            map[p.slug] = p;
-          }
-          setProductMap(map);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  const { data: products = [] } = useProducts();
+  const productMap = Object.fromEntries(products.map((product) => [product.slug, product]));
 
   return (
     <div className="top-sale-trend-area">

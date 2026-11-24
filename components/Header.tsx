@@ -6,13 +6,23 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart';
 import { roundCurrency } from '@/lib/bundle-pricing';
 import { useWishlist } from '@/lib/wishlist';
+import { useProducts } from '@/lib/hooks/use-products';
 import { formatPrice } from '@/lib/products';
 import styles from './Header.module.css';
 
 export default function Header() {
   const router = useRouter();
+  const { data: products = [] } = useProducts();
   const { items, count, subtotal, removeFromCart } = useCart();
   const { items: wishlistItems } = useWishlist();
+  const regalProduct = products.find(
+    (product) => product.slug === 'regal-round-neck-male-medical-scrubs-pakistan',
+  );
+  const museProduct = products.find(
+    (product) => product.slug === 'muse-v-neck-female-medical-scrubs-pakistan',
+  );
+  const regalImage = regalProduct?.image || regalProduct?.images[0];
+  const museImage = museProduct?.image || museProduct?.images[0];
   const favCount = wishlistItems.length;
   const [searchQuery, setSearchQuery] = useState('');
   const [cartOpen, setCartOpen] = useState(false);
@@ -631,8 +641,12 @@ export default function Header() {
                               </div>
                               {' '}
                               <div className="mega-menu-img">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src="/img/real-product-images/regal/regal-thumbnail.webp" alt="Men's Scrubs" style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
+                                {regalProduct && regalImage ? (
+                                  <>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={regalImage} alt={regalProduct.title} style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
+                                  </>
+                                ) : null}
                               </div>
                             </div>
                           </div>
@@ -658,8 +672,12 @@ export default function Header() {
                               </div>
                               {' '}
                               <div className="mega-menu-img">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src="/img/real-product-images/muse/muse-thumbnail.webp" alt="Women's Scrubs" style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
+                                {museProduct && museImage ? (
+                                  <>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={museImage} alt={museProduct.title} style={{ maxHeight: 180, width: 'auto', objectFit: 'cover' }} />
+                                  </>
+                                ) : null}
                               </div>
                             </div>
                           </div>

@@ -1,40 +1,93 @@
 'use client';
 
-/* eslint-disable @next/next/no-html-link-for-pages */
-import { useEffect, useState } from 'react';
+/* eslint-disable @next/next/no-img-element */
+import { useMemo } from 'react';
 import { formatPrice, getStandardColorHex, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
+import { useProducts } from '@/lib/hooks/use-products';
+
+const CANONICAL_SLUGS = [
+  'regal-round-neck-male-medical-scrubs-pakistan',
+  'muse-v-neck-female-medical-scrubs-pakistan',
+  'forte-v-neck-male-medical-scrubs-pakistan',
+  'rebel-collar-neck-female-medical-scrubs-pakistan',
+];
 
 export default function FeaturedItems() {
-  const [productMap, setProductMap] = useState<Record<string, Product>>({});
+  const { data: allProducts = [] } = useProducts();
+  const products = CANONICAL_SLUGS
+    .map((slug) => allProducts.find((product) => product.slug === slug))
+    .filter((product): product is Product => Boolean(product));
 
-  useEffect(() => {
-    let ignore = false;
-    fetch('/api/products')
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: Product[]) => {
-        if (!ignore && Array.isArray(data)) {
-          const map: Record<string, Product> = {};
-          for (const p of data) {
-            map[p.slug] = p;
-          }
-          setProductMap(map);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  const women = useMemo(
+    () => products.filter((product) => product.category === 'Women'),
+    [products],
+  );
+  const men = useMemo(
+    () => products.filter((product) => product.category === 'Men'),
+    [products],
+  );
 
-  const getProd = (slug: string) => productMap[slug];
-  const priceFor = (slug: string) => formatPrice(getProd(slug)?.price ?? 0);
-  const imageFor = (slug: string, fallback: string) => getProd(slug)?.image || fallback;
-  const titleFor = (slug: string, fallback: string) => getProd(slug)?.title || fallback;
-  // First photo of a specific colour variant, so a card can showcase one
-  // variant colour of a product (falls back to that colour's local photo).
-  const colorImageFor = (slug: string, color: string, fallback: string) =>
-    getProd(slug)?.colorImages?.[color]?.[0] || fallback;
+  const productCard = (product: Product, colorName?: string) => {
+    const colorImage = colorName ? product.colorImages?.[colorName]?.[0] : undefined;
+    const image = colorImage || product.image || product.images[0];
+    if (!image) return null;
+    const title = colorName ? `${product.title} (${colorName})` : product.title;
+
+    return (
+      <div className="col-md-4 col-sm-6 col-xs-12" key={`${product.slug}-${colorName || 'default'}`}>
+        <div className="single-featured-item">
+          <div className="sfi-img">
+            <a href={`/products/${product.slug}`}>
+              <img src={image} alt={title} />
+            </a>
+            <div className="sfi-img-content">
+              <ProductCardActions
+                slug={product.slug}
+                defaultTitle={title}
+                defaultPrice={product.price}
+                defaultImage={image}
+              />
+            </div>
+          </div>
+          <div className="sfi-content">
+            <div className="sfi-name-cat">
+              <a className="sfi-name" href={`/products/${product.slug}`}>{title}</a>
+              <span className="sfi-cat">
+                {colorName ? (
+                  <>
+                    <span
+                      className="mr-1 inline-block size-2.5 rounded-full border border-black/20 align-middle"
+                      style={{ backgroundColor: getStandardColorHex(colorName) }}
+                    />
+                    {colorName}
+                  </>
+                ) : (
+                  product.collection
+                )}
+              </span>
+            </div>
+            <div className="sfi-price-rating">
+              <p className="sfi-price">
+                Price: <span>{formatPrice(product.price)}</span>
+              </p>
+              <div className="rating">
+                <div className="star star-on" />
+                <div className="star star-on" />
+                <div className="star star-on" />
+                <div className="star star-on" />
+                <div className="star star-half" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const maroonRegal = men.find((product) => product.slug === CANONICAL_SLUGS[0]);
+  const navalMuse = women.find((product) => product.slug === CANONICAL_SLUGS[1]);
+
   return (
     <div className="featured-item-area">
       <div className="container">
@@ -44,753 +97,60 @@ export default function FeaturedItems() {
               <div className="featured-item-left">
                 <div className="section-title">
                   <span>Medixa Apparel</span>
-                  <h2>Featured Scrubs & Uniforms</h2>
+                  <h2>Featured Scrubs &amp; Uniforms</h2>
                 </div>
               </div>
             </div>
-            {" "}
             <div className="col-md-7 col-sm-6 col-xs-12">
               <div className="feature-item-tab-control">
                 <ul className="fi-tab">
-                  <li className="active">
-                    <a data-toggle="tab" href="#all">ALL</a>
-                  </li>
-                  {" "}
-                  <li>
-                    <a data-toggle="tab" href="#women">WOMEN&apos;S</a>
-                  </li>
-                  {" "}
-                  <li>
-                    <a data-toggle="tab" href="#men">MEN&apos;S</a>
-                  </li>
-                  {" "}
-                  <li>
-                    <a data-toggle="tab" href="#shoes">LAB COATS</a>
-                  </li>
-                  {" "}
-                  <li>
-                    <a data-toggle="tab" href="#accessories">COLLECTIONS</a>
-                  </li>
+                  <li className="active"><a data-toggle="tab" href="#all">ALL</a></li>
+                  <li><a data-toggle="tab" href="#women">WOMEN&apos;S</a></li>
+                  <li><a data-toggle="tab" href="#men">MEN&apos;S</a></li>
+                  <li><a data-toggle="tab" href="#shoes">LAB COATS</a></li>
+                  <li><a data-toggle="tab" href="#accessories">COLLECTIONS</a></li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
+
         <div className="featured-items tab-content">
           <div id="all" className="tab-pane fade in active">
             <div className="featured-all">
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">
-                          <img src={imageFor('regal-round-neck-male-medical-scrubs-pakistan', '/img/real-product-images/regal/regal-thumbnail.webp')} alt={titleFor('regal-round-neck-male-medical-scrubs-pakistan', 'Regal Scrub Suits')} />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="regal-round-neck-male-medical-scrubs-pakistan" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">Male Scrubs</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('regal-round-neck-male-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">
-                          <img src={imageFor('muse-v-neck-female-medical-scrubs-pakistan', '/img/real-product-images/muse/muse-thumbnail.webp')} alt={titleFor('muse-v-neck-female-medical-scrubs-pakistan', 'Muse Scrub Suits')} />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="muse-v-neck-female-medical-scrubs-pakistan" />
-                        </div>
-                        {" "}
-                        <div className="sfi-img-banner">
-                          <span>SALE</span>
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">Female Scrubs</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('muse-v-neck-female-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/forte-v-neck-male-medical-scrubs-pakistan">
-                          <img src={imageFor('forte-v-neck-male-medical-scrubs-pakistan', '/img/real-product-images/Forte/Forte-thumbnail.webp')} alt={titleFor('forte-v-neck-male-medical-scrubs-pakistan', 'Forte Scrub Suits')} />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="forte-v-neck-male-medical-scrubs-pakistan" />
-                        </div>
-                        {" "}
-                        <div className="sfi-img-banner new">
-                          <span>SALE</span>
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/forte-v-neck-male-medical-scrubs-pakistan">Forte Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">Male Scrubs</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('forte-v-neck-male-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">
-                          <img src={imageFor('rebel-collar-neck-female-medical-scrubs-pakistan', '/img/real-product-images/rebel/Rebel-thumbnail.webp')} alt={titleFor('rebel-collar-neck-female-medical-scrubs-pakistan', 'Rebel Scrub Suits')} />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rebel-collar-neck-female-medical-scrubs-pakistan" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rebel-collar-neck-female-medical-scrubs-pakistan">Rebel Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">Female Scrubs</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rebel-collar-neck-female-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">
-                          <img
-                            src={colorImageFor(
-                              'regal-round-neck-male-medical-scrubs-pakistan',
-                              'Maroon',
-                              '/img/real-product-images/regal/Regel-Maroon-1.webp',
-                            )}
-                            alt={`${titleFor('regal-round-neck-male-medical-scrubs-pakistan', 'Regal Scrub Suits')} — Maroon`}
-                          />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="regal-round-neck-male-medical-scrubs-pakistan" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">
-                            <span
-                              className="mr-1 inline-block size-2.5 rounded-full border border-black/20 align-middle"
-                              style={{ backgroundColor: getStandardColorHex('Maroon') }}
-                            />
-                            Maroon
-                          </span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('regal-round-neck-male-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-sm-6 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">
-                          <img
-                            src={colorImageFor(
-                              'muse-v-neck-female-medical-scrubs-pakistan',
-                              'Naval Light',
-                              '/img/real-product-images/muse/muse-Naval-1.webp',
-                            )}
-                            alt={`${titleFor('muse-v-neck-female-medical-scrubs-pakistan', 'Muse Scrub Suits')} — Naval Light`}
-                          />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="muse-v-neck-female-medical-scrubs-pakistan" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits</a>
-                          {" "}
-                          <span className="sfi-cat">
-                            <span
-                              className="mr-1 inline-block size-2.5 rounded-full border border-black/20 align-middle"
-                              style={{ backgroundColor: getStandardColorHex('Naval Light') }}
-                            />
-                            Naval Light
-                          </span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('muse-v-neck-female-medical-scrubs-pakistan')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div className="fi-row"><div className="row">
+                {products.slice(0, 3).map((product) => productCard(product))}
+              </div></div>
+              <div className="fi-row"><div className="row">
+                {maroonRegal ? productCard(maroonRegal, 'Maroon') : null}
+                {navalMuse ? productCard(navalMuse, 'Naval Light') : null}
+                {products[3] ? productCard(products[3]) : null}
+              </div></div>
             </div>
           </div>
+
           <div id="women" className="tab-pane fade">
-            <div className="featured-all">
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rolls-dress-ck-2845">
-                          <img src="/img/feature-item/feature2.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rolls-dress-ck-2845" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rolls-dress-ck-2845">Rolls Dress CK 2845</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rolls-dress-ck-2845')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rififi-dress-cy-78795">
-                          <img src="/img/feature-item/feature6.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rififi-dress-cy-78795" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rififi-dress-cy-78795">Rififi Dress CY 78795</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rififi-dress-cy-78795')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="featured-all"><div className="fi-row"><div className="row">
+              {women.map((product) => productCard(product))}
+            </div></div></div>
           </div>
-          {" "}
+
           <div id="men" className="tab-pane fade">
-            <div className="featured-all">
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rolls-dress-ck-2845">
-                          <img src="/img/feature-item/feature5.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rolls-dress-ck-2845" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rolls-dress-ck-2845">Rolls Dress CK 2845</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rolls-dress-ck-2845')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/reine-dress-cj-2145">
-                          <img src="/img/feature-item/feature4.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="reine-dress-cj-2145" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/reine-dress-cj-2145">Reine Dress CJ 2145</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('reine-dress-cj-2145')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rififi-dress-cy-78795">
-                          <img src="/img/feature-item/feature3.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rififi-dress-cy-78795" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rififi-dress-cy-78795">Rififi Dress CY 78795</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rififi-dress-cy-78795')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="featured-all"><div className="fi-row"><div className="row">
+              {men.map((product) => productCard(product))}
+            </div></div></div>
           </div>
-          {" "}
+
           <div id="shoes" className="tab-pane fade">
-            <div className="featured-all">
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rolls-dress-ck-2845">
-                          <img src="/img/feature-item/feature2.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rolls-dress-ck-2845" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rolls-dress-ck-2845">Rolls Dress CK 2845</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rolls-dress-ck-2845')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/reine-dress-cj-2145">
-                          <img src="/img/feature-item/feature1.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="reine-dress-cj-2145" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/reine-dress-cj-2145">Reine Dress CJ 2145</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('reine-dress-cj-2145')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="featured-all"><div className="fi-row"><div className="row">
+              {products.map((product) => productCard(product))}
+            </div></div></div>
           </div>
-          {" "}
+
           <div id="accessories" className="tab-pane fade">
-            <div className="featured-all">
-              <div className="fi-row">
-                <div className="row">
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rolls-dress-ck-2845">
-                          <img src="/img/feature-item/feature5.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rolls-dress-ck-2845" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rolls-dress-ck-2845">Rolls Dress CK 2845</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rolls-dress-ck-2845')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/reine-dress-cj-2145">
-                          <img src="/img/feature-item/feature4.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="reine-dress-cj-2145" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/reine-dress-cj-2145">Reine Dress CJ 2145</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('reine-dress-cj-2145')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {" "}
-                  <div className="col-md-4 col-xs-12">
-                    <div className="single-featured-item">
-                      <div className="sfi-img">
-                        <a href="/products/rolls-dress-ck-2845">
-                          <img src="/img/feature-item/feature3.jpg" alt="" />
-                        </a>
-                        {" "}
-                        <div className="sfi-img-content">
-                          <ProductCardActions slug="rolls-dress-ck-2845" />
-                        </div>
-                      </div>
-                      <div className="sfi-content">
-                        <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rolls-dress-ck-2845">Rolls Dress CK 2845</a>
-                          {" "}
-                          <span className="sfi-cat">T-shirt</span>
-                        </div>
-                        <div className="sfi-price-rating">
-                          <p className="sfi-price">
-                            Price:
-                            {" "}
-                            <span>{priceFor('rolls-dress-ck-2845')}</span>
-                          </p>
-                          {" "}
-                          <div className="rating">
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-on"></div>
-                            {" "}
-                            <div className="star star-half"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="featured-all"><div className="fi-row"><div className="row">
+              {products.map((product) => productCard(product))}
+            </div></div></div>
           </div>
         </div>
       </div>
