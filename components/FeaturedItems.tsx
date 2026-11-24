@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useState } from 'react';
-import { formatPrice, getProductBySlug, type Product } from '@/lib/products';
+import { formatPrice, getProductBySlug, getStandardColorHex, type Product } from '@/lib/products';
 import ProductCardActions from '@/components/ProductCardActions';
 
 export default function FeaturedItems() {
@@ -31,6 +31,10 @@ export default function FeaturedItems() {
   const priceFor = (slug: string) => formatPrice(getProd(slug)?.price ?? 0);
   const imageFor = (slug: string, fallback: string) => getProd(slug)?.image || fallback;
   const titleFor = (slug: string, fallback: string) => getProd(slug)?.title || fallback;
+  // First photo of a specific colour variant, so a card can showcase one
+  // variant colour of a product (falls back to that colour's local photo).
+  const colorImageFor = (slug: string, color: string, fallback: string) =>
+    getProd(slug)?.colorImages?.[color]?.[0] || fallback;
   return (
     <div className="featured-item-area">
       <div className="container">
@@ -251,25 +255,38 @@ export default function FeaturedItems() {
                   <div className="col-md-4 col-sm-6 col-xs-12">
                     <div className="single-featured-item">
                       <div className="sfi-img">
-                        <a href="/products/reine-dress-cj-2145">
-                          <img src="/img/feature-item/feature5.jpg" alt="" />
+                        <a href="/products/regal-round-neck-male-medical-scrubs-pakistan">
+                          <img
+                            src={colorImageFor(
+                              'regal-round-neck-male-medical-scrubs-pakistan',
+                              'Maroon',
+                              '/img/real-product-images/regal/Regel-Maroon-1.webp',
+                            )}
+                            alt={`${titleFor('regal-round-neck-male-medical-scrubs-pakistan', 'Regal Scrub Suits')} — Maroon`}
+                          />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ProductCardActions slug="reine-dress-cj-2145" />
+                          <ProductCardActions slug="regal-round-neck-male-medical-scrubs-pakistan" />
                         </div>
                       </div>
                       <div className="sfi-content">
                         <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/reine-dress-cj-2145">Reine Dress CJ 2145</a>
+                          <a className="sfi-name" href="/products/regal-round-neck-male-medical-scrubs-pakistan">Regal Scrub Suits</a>
                           {" "}
-                          <span className="sfi-cat">T-shirt</span>
+                          <span className="sfi-cat">
+                            <span
+                              className="mr-1 inline-block size-2.5 rounded-full border border-black/20 align-middle"
+                              style={{ backgroundColor: getStandardColorHex('Maroon') }}
+                            />
+                            Maroon
+                          </span>
                         </div>
                         <div className="sfi-price-rating">
                           <p className="sfi-price">
                             Price:
                             {" "}
-                            <span>{priceFor('reine-dress-cj-2145')}</span>
+                            <span>{priceFor('regal-round-neck-male-medical-scrubs-pakistan')}</span>
                           </p>
                           {" "}
                           <div className="rating">
@@ -291,25 +308,38 @@ export default function FeaturedItems() {
                   <div className="col-md-4 col-sm-6 col-xs-12">
                     <div className="single-featured-item">
                       <div className="sfi-img">
-                        <a href="/products/rififi-dress-cy-78795">
-                          <img src="/img/feature-item/feature6.jpg" alt="" />
+                        <a href="/products/muse-v-neck-female-medical-scrubs-pakistan">
+                          <img
+                            src={colorImageFor(
+                              'muse-v-neck-female-medical-scrubs-pakistan',
+                              'Naval Light',
+                              '/img/real-product-images/muse/muse-Naval-1.webp',
+                            )}
+                            alt={`${titleFor('muse-v-neck-female-medical-scrubs-pakistan', 'Muse Scrub Suits')} — Naval Light`}
+                          />
                         </a>
                         {" "}
                         <div className="sfi-img-content">
-                          <ProductCardActions slug="rififi-dress-cy-78795" />
+                          <ProductCardActions slug="muse-v-neck-female-medical-scrubs-pakistan" />
                         </div>
                       </div>
                       <div className="sfi-content">
                         <div className="sfi-name-cat">
-                          <a className="sfi-name" href="/products/rififi-dress-cy-78795">Rififi Dress CY 78795</a>
+                          <a className="sfi-name" href="/products/muse-v-neck-female-medical-scrubs-pakistan">Muse Scrub Suits</a>
                           {" "}
-                          <span className="sfi-cat">T-shirt</span>
+                          <span className="sfi-cat">
+                            <span
+                              className="mr-1 inline-block size-2.5 rounded-full border border-black/20 align-middle"
+                              style={{ backgroundColor: getStandardColorHex('Naval Light') }}
+                            />
+                            Naval Light
+                          </span>
                         </div>
                         <div className="sfi-price-rating">
                           <p className="sfi-price">
                             Price:
                             {" "}
-                            <span>{priceFor('rififi-dress-cy-78795')}</span>
+                            <span>{priceFor('muse-v-neck-female-medical-scrubs-pakistan')}</span>
                           </p>
                           {" "}
                           <div className="rating">
