@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/server';
+import { getAuthSession } from '@/lib/auth/server';
 import { db } from '@/lib/db';
+import { connection } from 'next/server';
 
 export async function GET() {
+  await connection();
   try {
-    const { data: session } = await auth.getSession();
+    const { data: session } = await getAuthSession();
     if (!session?.user?.id) {
       return NextResponse.json({ authenticated: false, address: null });
     }
@@ -85,8 +87,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  await connection();
   try {
-    const { data: session } = await auth.getSession();
+    const { data: session } = await getAuthSession();
     if (!session?.user?.id) {
       return NextResponse.json({ authenticated: false, message: 'Not logged in' });
     }

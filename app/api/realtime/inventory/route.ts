@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/server';
+import { getAuthSession } from '@/lib/auth/server';
 import { sealInventoryQuery } from '@/lib/realtime/server';
+import { connection } from 'next/server';
 
 export async function POST() {
-  const { data: session } = await auth.getSession();
+  await connection();
+  const { data: session } = await getAuthSession();
   if (!session?.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

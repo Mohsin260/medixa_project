@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { auth } from '@/lib/auth/server';
+import { getAuthSession } from '@/lib/auth/server';
 import { PaymentMethod } from '@/generated/prisma/client';
 
 export async function POST(request: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   let validUserId: string | null = null;
 
   try {
-    const { data: session } = await auth.getSession();
+    const { data: session } = await getAuthSession();
     const sessionUserId = session?.user?.id ? String(session.user.id) : null;
     const sessionEmail = session?.user?.email ? String(session.user.email).toLowerCase().trim() : null;
 

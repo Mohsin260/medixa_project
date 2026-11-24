@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/server';
+import { getAuthSession } from '@/lib/auth/server';
 
 export interface AdminUser {
   id: string;
@@ -24,7 +24,7 @@ async function getStaffSession(): Promise<
   | { authorized: true; user: AdminUser; staffRole: StaffRole }
   | { authorized: false; status: 401 | 403; error: string }
 > {
-  const { data: session } = await auth.getSession();
+  const { data: session } = await getAuthSession();
 
   if (!session?.user) {
     return {
