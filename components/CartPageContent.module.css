@@ -115,6 +115,13 @@
   color: #ffffff;
 }
 
+.primaryButton:link,
+.primaryButton:visited,
+.checkoutButton:link,
+.checkoutButton:visited {
+  color: #ffffff;
+}
+
 .primaryButton:hover,
 .primaryButton:focus-visible,
 .checkoutButton:hover,
