@@ -6,8 +6,8 @@ import { ProductBundleSection } from '@/components/ProductBundleSection';
 import ProductGallery from '@/components/ProductGallery';
 import ProductPurchasePanel from '@/components/ProductPurchasePanel';
 import { ProductSelectionProvider } from '@/components/ProductSelection';
-import { formatPrice, getProductBySlug, getProductSlugs, getRelatedProducts } from '@/lib/products';
-import { getStorefrontProduct } from '@/lib/server/products';
+import { formatPrice, getProductBySlug, getProductSlugs } from '@/lib/products';
+import { getStorefrontProduct, getStorefrontRelatedProducts } from '@/lib/server/products';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -71,7 +71,7 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  const related = getRelatedProducts(product);
+  const related = await getStorefrontRelatedProducts(product);
   const discount = Math.round(((product.compareAt - product.price) / product.compareAt) * 100);
 
   return (

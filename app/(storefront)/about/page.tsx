@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { getStorefrontFeaturedProductImage } from '@/lib/server/products';
 
 export const metadata = {
   title: 'About Medixa Pakistan — Precision Medical Apparel',
@@ -8,7 +9,9 @@ export const metadata = {
     'Export-quality medical scrubs engineered specifically for doctors, nurses, and medical students across Pakistan.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const aboutImage = await getStorefrontFeaturedProductImage();
+
   return (
     <>
       <Header />
@@ -37,14 +40,16 @@ export default function AboutPage() {
         <div className="container">
           <div className="row" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
             <div className="col-md-6 col-xs-12" style={{ marginBottom: 30 }}>
-              <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid #e7ecf0', boxShadow: '0 12px 36px rgba(19,27,46, 0.08)' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/img/real-product-images/Forte/Forte-Naval-1.webp"
-                  alt="Medixa Medical Scrubs"
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
-                />
-              </div>
+              {aboutImage ? (
+                <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid #e7ecf0', boxShadow: '0 12px 36px rgba(19,27,46, 0.08)' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={aboutImage}
+                    alt="Medixa Medical Scrubs"
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                  />
+                </div>
+              ) : null}
             </div>
 
             <div className="col-md-6 col-xs-12" style={{ marginBottom: 30 }}>
@@ -130,7 +135,7 @@ export default function AboutPage() {
       {/* Call to action */}
       <div style={{ padding: '60px 0', background: '#131b2e', color: '#ffffff', textAlign: 'center' }}>
         <div className="container">
-          <h2 style={{ fontSize: 28, fontWeight: 800, margin: '0 0 12px' }}>
+          <h2 style={{ color: '#ffffff', fontSize: 28, fontWeight: 800, margin: '0 0 12px' }}>
             Elevate Your Clinical Practice Today
           </h2>
           <p style={{ fontSize: 14, color: '#ccd4e4', maxWidth: 500, margin: '0 auto 24px' }}>

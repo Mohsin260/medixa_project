@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { buildColorImages } from '@/lib/server/products';
+import { buildColorImages, getFeaturedImageColor } from '@/lib/server/products';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         category: true,
         collection: true,
         images: { orderBy: { sortOrder: 'asc' } },
-        colors: true,
+        colors: { orderBy: { sortOrder: 'asc' } },
         sizes: true,
       },
     });
@@ -75,6 +75,7 @@ export async function GET(request: NextRequest) {
           badge: p.badge,
           sku: `${p.slug.toUpperCase()}-STD`,
           image: featuredImage,
+          featuredColor: getFeaturedImageColor(featuredImage, p.colors),
           images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
           colorImages: buildColorImages(p.colors),
           colors: p.colors.map((c) => ({ name: c.name, value: c.hex })),

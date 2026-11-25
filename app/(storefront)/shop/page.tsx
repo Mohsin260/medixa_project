@@ -8,6 +8,8 @@ import Footer from '@/components/Footer';
 import { formatPrice, type Product } from '@/lib/products';
 import { useCart } from '@/lib/cart';
 
+const normalizeColorName = (name: string) => name.trim().replace(/\s+/g, ' ').toLowerCase();
+
 function ShopContent() {
   const searchParams = useSearchParams();
   const paramCategory = searchParams.get('category');
@@ -66,7 +68,12 @@ function ShopContent() {
     }
 
     if (selectedColor !== 'ALL') {
-      list = list.filter((p) => p.colors?.some((c) => c.name.toLowerCase() === selectedColor.toLowerCase()));
+      const selectedColorName = normalizeColorName(selectedColor);
+      list = list.filter(
+        (product) =>
+          product.featuredColor &&
+          normalizeColorName(product.featuredColor) === selectedColorName,
+      );
     }
 
     switch (sort) {

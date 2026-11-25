@@ -16,6 +16,7 @@ export interface Product {
   badge?: string;
   sku: string;
   image: string;
+  featuredColor?: string;
   images: string[];
   colorImages?: Record<string, string[]>;
   colors: ProductColor[];

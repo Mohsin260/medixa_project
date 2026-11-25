@@ -49,6 +49,14 @@ export function buildColorImages(
   return fallback?.colorImages;
 }
 
+export function getFeaturedImageColor(
+  image: string,
+  colors: Array<{ name: string; images: string[] }>,
+): string | undefined {
+  const featuredImage = image.trim();
+  return colors.find((color) => color.images.some((url) => url.trim() === featuredImage))?.name;
+}
+
 export function mapStorefrontProduct(
   p: StorefrontProductRecord,
   fallback: Product | undefined,
@@ -82,6 +90,7 @@ export function mapStorefrontProduct(
     badge: p.badge || fallback?.badge,
     sku: `${p.slug.toUpperCase()}-STD`,
     image: featuredImage,
+    featuredColor: getFeaturedImageColor(featuredImage, p.colors),
     images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
     colorImages: buildColorImages(p.colors, fallback),
     colors:
@@ -122,4 +131,60 @@ export async function getStorefrontProduct(slug: string): Promise<Product | unde
   }
 
   return fallbackGetProduct(slug);
+}
+
+export async function getStorefrontFeaturedProductImage(): Promise<string | undefined> {
+  try {
+    const product = await db.product.findFirst({
+      where: { status: 'PUBLISHED', image: { not: '' } },
+      orderBy: { updatedAt: 'desc' },
+      select: { image: true, images: { select: { url: true }, orderBy: { sortOrder: 'asc' } } },
+    });
+
+    return product?.image || product?.images[0]?.url;
+  } catch (err) {
+    console.error('getStorefrontFeaturedProductImage db fetch error:', err);
+    return undefined;
+  }
+}
+
+export async function getStorefrontRelatedProducts(
+  product: Product,
+  limit = 4,
+): Promise<Product[]> {
+  try {
+    const categoryName = product.category;
+    const records = await db.product.findMany({
+      where: {
+        status: 'PUBLISHED',
+        slug: { not: product.slug },
+        OR: [
+          { category: { is: { name: { contains: categoryName, mode: 'insensitive' } } } },
+          { collection: { is: { name: { equals: product.collection, mode: 'insensitive' } } } },
+        ],
+      },
+      include: {
+        category: true,
+        collection: true,
+        images: { orderBy: { sortOrder: 'asc' } },
+        colors: { orderBy: { sortOrder: 'asc' } },
+        sizes: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit * 4,
+    });
+
+    return records
+      .map((record) => mapStorefrontProduct(record, undefined))
+      .filter((related) => related.category === product.category && Boolean(related.image))
+      .sort(
+        (a, b) =>
+          Number(b.collection === product.collection) -
+          Number(a.collection === product.collection),
+      )
+      .slice(0, limit);
+  } catch (err) {
+    console.error('getStorefrontRelatedProducts db fetch error:', err);
+    return [];
+  }
 }

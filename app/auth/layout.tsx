@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ArrowLeft, BadgeCheck, ShieldCheck, Truck } from 'lucide-react';
+import { getStorefrontFeaturedProductImage } from '@/lib/server/products';
 import './auth.css';
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({ children }: { children: ReactNode }) {
+  const featuredProductImage = await getStorefrontFeaturedProductImage();
+
   return (
     <>
       <link rel="stylesheet" href="/css/montserrat.css" precedence="auth" />
@@ -17,8 +20,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
       <div className="mx-auth">
         <aside className="mx-auth__aside" aria-hidden="true">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="mx-auth__photo" src="/img/real-product-images/Forte/Forte-Naval-1.webp" alt="" />
+          {featuredProductImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="mx-auth__photo" src={featuredProductImage} alt="" />
+          ) : null}
           <div className="mx-auth__aside-inner">
             <Link href="/" className="mx-auth__pill" tabIndex={-1}>
               <ArrowLeft size={14} strokeWidth={2.5} />

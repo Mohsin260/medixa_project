@@ -29,11 +29,11 @@ export default function Home() {
       <Banner2 />
       <FeaturePost />
       <Services />
-      <Newsletter />
-      <Brands />
+      {/* <Newsletter /> */}
+      {/* <Brands /> */}
       <Footer />
-      <NewsletterPopup />
-      <ProductModal />
+      {/* <NewsletterPopup /> */}
+      {/* <ProductModal /> */}
     </>
   );
 }
