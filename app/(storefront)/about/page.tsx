@@ -9,6 +9,8 @@ export const metadata = {
     'Export-quality medical scrubs engineered specifically for doctors, nurses, and medical students across Pakistan.',
 };
 
+export const instant = false;
+
 export default async function AboutPage() {
   const aboutImage = await getStorefrontFeaturedProductImage();
 
