@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "br-square-cell-az6upo0z.storage.c-3.ap-southeast-1.aws.neon.tech",
+        port: "",
+        pathname: "/uploads/**",
+      },
+    ],
+  },
   cacheComponents: true,
   partialPrefetching: true,
   async rewrites() {

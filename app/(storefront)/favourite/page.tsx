@@ -6,18 +6,23 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useWishlist } from '@/lib/wishlist';
 import { useCartStore } from '@/lib/cart';
-import { getProductBySlug, formatPrice } from '@/lib/products';
+import { formatPrice, type Product } from '@/lib/products';
+import { useProducts } from '@/lib/hooks/use-products';
 
 export default function FavouritePage() {
   const { items, toggleWishlist, clear } = useWishlist();
   const addItem = useCartStore((state) => state.addItem);
+  const { data: storefrontProducts = [] } = useProducts();
   const [addedSlug, setAddedSlug] = useState<string | null>(null);
 
+  const storefrontProductsBySlug = new Map(
+    storefrontProducts.map((product) => [product.slug, product]),
+  );
   const favouriteProducts = items
-    .map((slug) => getProductBySlug(slug))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+    .map((slug) => storefrontProductsBySlug.get(slug))
+    .filter((product): product is Product => Boolean(product));
 
-  const handleAddToCart = (product: NonNullable<ReturnType<typeof getProductBySlug>>) => {
+  const handleAddToCart = (product: Product) => {
     addItem({
       slug: product.slug,
       title: product.title,

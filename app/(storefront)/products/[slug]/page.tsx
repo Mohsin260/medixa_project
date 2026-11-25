@@ -190,7 +190,7 @@ export default async function ProductPage({ params }: PageProps) {
                     You may also like
                   </h2>
                 </div>
-                <a href="/" className={styles.viewAll}>
+                <a href="/shop" className={styles.viewAll}>
                   Back to shop <i className="fa fa-arrow-right" aria-hidden="true" />
                 </a>
               </div>
