@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getProductBySlug } from '@/lib/products';
 import { buildColorImages, getFeaturedImageColor } from '@/lib/server/products';
 
 export async function GET(request: NextRequest) {
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
           image: featuredImage,
           featuredColor: getFeaturedImageColor(featuredImage, p.colors),
           images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
-          colorImages: buildColorImages(p.colors),
+          colorImages: buildColorImages(p.colors, getProductBySlug(p.slug), imageList),
           colors: p.colors.map((c) => ({ name: c.name, value: c.hex })),
           sizes: p.sizes.map((s) => s.name),
           description: p.description || '',

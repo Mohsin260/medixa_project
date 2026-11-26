@@ -36,17 +36,33 @@ export interface StorefrontProductRecord {
 export function buildColorImages(
   dbColors: Array<{ name: string; images: string[] }>,
   fallback?: Product,
+  galleryImages: string[] = [],
 ): Record<string, string[]> | undefined {
   const map: Record<string, string[]> = {};
   for (const color of dbColors) {
-    if (Array.isArray(color.images) && color.images.length > 0) {
-      map[color.name] = color.images;
-    }
+    const taggedImages = Array.isArray(color.images) ? color.images : [];
+    const fallbackImages = Object.entries(fallback?.colorImages || {}).find(
+      ([name]) => name.trim().replace(/\s+/g, ' ').toLowerCase() === color.name.trim().replace(/\s+/g, ' ').toLowerCase(),
+    )?.[1] || [];
+    const normalizedColorName = color.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const imagesFromGallery = galleryImages.filter((image) => {
+      const filename = image.split(/[?#]/, 1)[0].split('/').pop() || '';
+      const normalizedFilename = filename
+        .replace(/%20/gi, ' ')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+      return ` ${normalizedFilename} `.includes(` ${normalizedColorName} `);
+    });
+    const images = taggedImages.length > 0
+      ? taggedImages
+      : imagesFromGallery.length > 0
+        ? imagesFromGallery
+        : fallbackImages;
+
+    if (images.length > 0) map[color.name] = images;
   }
-  if (Object.keys(map).length > 0) {
-    return map;
-  }
-  return fallback?.colorImages;
+  return Object.keys(map).length > 0 ? map : undefined;
 }
 
 export function getFeaturedImageColor(
@@ -92,7 +108,7 @@ export function mapStorefrontProduct(
     image: featuredImage,
     featuredColor: getFeaturedImageColor(featuredImage, p.colors),
     images: finalImages.length > 0 ? finalImages : [featuredImage].filter(Boolean),
-    colorImages: buildColorImages(p.colors, fallback),
+    colorImages: buildColorImages(p.colors, fallback, imageList),
     colors:
       p.colors.length > 0
         ? p.colors.map((c) => ({ name: c.name, value: c.hex }))

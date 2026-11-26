@@ -10,6 +10,15 @@ import { useCart } from '@/lib/cart';
 
 const normalizeColorName = (name: string) => name.trim().replace(/\s+/g, ' ').toLowerCase();
 
+function getProductImageForColor(product: Product, colorName: string): string {
+  const normalizedColorName = normalizeColorName(colorName);
+  const colorImages = Object.entries(product.colorImages || {}).find(
+    ([name]) => normalizeColorName(name) === normalizedColorName,
+  )?.[1];
+
+  return colorImages?.[0] || product.image;
+}
+
 function ShopContent() {
   const searchParams = useSearchParams();
   const paramCategory = searchParams.get('category');
@@ -71,8 +80,9 @@ function ShopContent() {
       const selectedColorName = normalizeColorName(selectedColor);
       list = list.filter(
         (product) =>
-          product.featuredColor &&
-          normalizeColorName(product.featuredColor) === selectedColorName,
+          product.colors.some(
+            (color) => normalizeColorName(color.name) === selectedColorName,
+          ),
       );
     }
 
@@ -100,15 +110,28 @@ function ShopContent() {
   }, [products]);
 
   const handleQuickAdd = (product: Product) => {
+    const selectedProductColor =
+      selectedColor === 'ALL'
+        ? undefined
+        : product.colors.find(
+            (productColor) =>
+              normalizeColorName(productColor.name) === normalizeColorName(selectedColor),
+          );
+    const color = selectedProductColor?.name || product.colors[0]?.name || 'Standard';
+
     addToCart({
-      id: `${product.slug}-default`,
+      id: selectedProductColor
+        ? `${product.slug}-${normalizeColorName(color)}`
+        : `${product.slug}-default`,
       slug: product.slug,
       title: product.title,
       price: product.price,
       quantity: 1,
-      image: product.image,
+      image: selectedProductColor
+        ? getProductImageForColor(product, selectedProductColor.name)
+        : product.image,
       size: product.sizes?.[2] || 'M',
-      color: product.colors?.[0]?.name || 'Standard',
+      color,
     });
     setAddedSlug(product.slug);
     setTimeout(() => setAddedSlug(null), 2000);
@@ -371,7 +394,11 @@ function ShopContent() {
                           <Link href={`/products/${product.slug}`} style={{ display: 'block', height: '100%' }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={product.image}
+                              src={
+                                selectedColor !== 'ALL'
+                                  ? getProductImageForColor(product, selectedColor)
+                                  : product.image
+                              }
                               alt={product.title}
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
